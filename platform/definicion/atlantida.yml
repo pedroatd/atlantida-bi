@@ -1,0 +1,1146 @@
+# Documento de definición del sistema de BI de Atlántida Hoteles.
+#
+# Fuente única de verdad: los capítulos del libro generan sus tablas a partir de
+# este fichero; dbt (H4) y Dash (H7) calculan con él el índice de logro; el
+# simulador del PMS (H3) lee de aquí los hoteles, el horizonte simulado, la
+# desagregación de los paquetes y el calendario de las acciones. Se valida con el
+# modelo de atlantida_def.modelos, con el contrato del PMS (contrato_pms.yml) y con
+# el de las fuentes externas (contrato_externo.yml).
+#
+# Cadena de trazabilidad: medida raw (tabla.columna) -> métrica base -> KPI ->
+# criterio de un objetivo -> acción. Las fórmulas de los KPI usan solo
+# identificadores de métricas base (y la función max) y reproducen la tabla C5
+# de la hoja de ruta.
+
+version: "2.5.2"
+organizacion: Atlántida Hoteles
+periodo_base: 2024
+periodo_evaluado: 2025
+# Verde: índice >= verde y todos los guardarraíles cumplidos. Logrado (más exigente):
+# índice 1 (todos los criterios principales cumplen su meta) y todos los guardarraíles
+# cumplidos. Rojo: índice < ambar. Ámbar: el resto.
+semaforo: {verde: 0.9, ambar: 0.6}
+# Seguimiento intermedio: cada mes, el acumulado del año en curso hasta el cierre del
+# mes frente al mismo tramo del año base (atlantida_def.logro.ventanas_ytd).
+seguimiento:
+  frecuencia: mensual
+  comparacion: ytd_vs_ytd_base
+  descripcion: Cada mes, al cierre, se calcula el índice de logro con el acumulado del año en curso frente al mismo tramo del año base. El índice anual del periodo evaluado es el del cierre de diciembre.
+# Histórico que simula el PMS (H3, SIM_START y SIM_END de platform/.env.example).
+# Cubre el año base, el evaluado y las ventanas de todas las acciones (A6's evaluation
+# ends 2026-02-28; the horizon extends to 2026-03-31 as margin); el año evaluado de los
+# objetivos sigue siendo 2025. Las estancias de los huéspedes empiezan antes
+# (historia_huespedes_desde, SIM_HISTORIA_DESDE): la tasa de repetición de 2024 mira
+# 24 meses atrás.
+horizonte_simulado: {inicio: 2023-01-01, fin: 2026-03-31, historia_huespedes_desde: 2022-01-01}
+# Parte del precio de un paquete que es alojamiento, por régimen (rate_plan.board). El
+# PMS ya registra stay_night.room_revenue con esta regla aplicada; el resto del precio
+# se registra como restauración (folio_charge, department = fnb).
+desagregacion_regimen: {RO: 1.0, BB: 0.88, HB: 0.75, FB: 0.65, AI: 0.55}
+
+# ---------------------------------------------------------------------------
+# Hoteles (los consume el simulador de H3; tipo = hotel.hotel_type del PMS)
+# ---------------------------------------------------------------------------
+hoteles:
+  - {codigo: TFN, nombre: Atlántida Anaga Ciudad, isla: Tenerife, municipio: Santa Cruz de Tenerife, tipo: urban, estrellas: 4, habitaciones: 160}
+  - {codigo: ADJ, nombre: Atlántida Costa Adeje, isla: Tenerife, municipio: Adeje, tipo: resort, estrellas: 4, habitaciones: 320}
+  - {codigo: MSP, nombre: Atlántida Mar de Maspalomas, isla: Gran Canaria, municipio: San Bartolomé de Tirajana, tipo: all_inclusive, estrellas: 4, habitaciones: 420}
+  - {codigo: TEJ, nombre: Atlántida Casona Roque Nublo, isla: Gran Canaria, municipio: Tejeda, tipo: rural, estrellas: 3, habitaciones: 42}
+  - {codigo: YAI, nombre: Atlántida Playa Blanca, isla: Lanzarote, municipio: Yaiza, tipo: resort, estrellas: 4, habitaciones: 280}
+  - {codigo: JAN, nombre: Atlántida Jandía Sol, isla: Fuerteventura, municipio: Pájara, tipo: all_inclusive, estrellas: 4, habitaciones: 380}
+
+# ---------------------------------------------------------------------------
+# Actores (especificación §2.2)
+# ---------------------------------------------------------------------------
+actores:
+  - id: direccion
+    nombre: Dirección general
+    nivel: estrategico
+    frecuencia: mensual
+    necesidad: Índice de logro de los objetivos y su evolución
+    kpis: [adr, revpar, trevpar, goppar, cuota_directa, ingreso_perdido_neto, nps, tasa_repeticion, rgi]
+  - id: revenue
+    nombre: Revenue manager
+    nivel: tactico
+    frecuencia: diaria
+    necesidad: Precios, cupos, pickup y posición frente a la competencia
+    kpis: [ocupacion, adr, revpar, pickup, mpi, ari, rgi, tasa_cancelacion, tasa_cancelacion_ota, ingreso_perdido_neto, lead_time_medio, estancia_media]
+  - id: marketing
+    nombre: Dirección de marketing
+    nivel: tactico
+    frecuencia: semanal
+    necesidad: Mix de canal, campañas y coste de adquisición
+    kpis: [ocupacion, goppar, cuota_directa, cuota_directa_captacion, cac_reserva_neta, tasa_repeticion, nps]
+  - id: dir_hotel
+    nombre: Direcciones de hotel
+    nivel: operativo
+    frecuencia: diaria
+    necesidad: Ocupación, incidencias y reseñas de su hotel
+    kpis: [ocupacion, adr, trevpar, goppar, nps, tasa_repeticion, dias_max_aspecto_en_rojo, estancia_media]
+  - id: datos
+    nombre: Analista e ingeniería de datos
+    nivel: soporte
+    frecuencia: continua
+    necesidad: Calidad, frescura y linaje de los datos; mantiene la definición canónica de todos los KPI en la capa semántica
+    kpis: [ocupacion, adr, revpar, trevpar, goppar, cuota_directa, cuota_directa_captacion, cac_reserva_neta, tasa_cancelacion, tasa_cancelacion_ota, ingreso_perdido_neto, nps, tasa_repeticion, dias_max_aspecto_en_rojo, lead_time_medio, estancia_media, pickup, mpi, ari, rgi]
+
+# ---------------------------------------------------------------------------
+# Medidas raw: hechos tal como los registran el PMS y las fuentes externas.
+# id = <tabla>_<columna>. Las del PMS deben existir en contrato_pms.yml.
+# ---------------------------------------------------------------------------
+medidas_raw:
+  # Inventario
+  - {id: room_room_id, fuente: pms, tabla: room, columna: room_id, descripcion: Habitación física del inventario, grano: una fila por habitación}
+  - {id: room_hotel_id, fuente: pms, tabla: room, columna: hotel_id, descripcion: Hotel al que pertenece la habitación, grano: una fila por habitación}
+  - {id: room_room_type_id, fuente: pms, tabla: room, columna: room_type_id, descripcion: Tipo de la habitación física, grano: una fila por habitación}
+  - {id: room_block_room_id, fuente: pms, tabla: room_block, columna: room_id, descripcion: Habitación fuera de servicio, grano: una fila por bloqueo}
+  - {id: room_block_start_date, fuente: pms, tabla: room_block, columna: start_date, descripcion: Primer día del bloqueo, grano: una fila por bloqueo}
+  - {id: room_block_end_date, fuente: pms, tabla: room_block, columna: end_date, descripcion: Último día del bloqueo, grano: una fila por bloqueo}
+  # Noches de estancia
+  - {id: stay_night_stay_night_id, fuente: pms, tabla: stay_night, columna: stay_night_id, descripcion: Noche de habitación ocupada, grano: una fila por habitación y noche}
+  - {id: stay_night_reservation_id, fuente: pms, tabla: stay_night, columna: reservation_id, descripcion: "Clave de unión: reserva a la que pertenece la noche", grano: una fila por habitación y noche}
+  - {id: stay_night_stay_date, fuente: pms, tabla: stay_night, columna: stay_date, descripcion: Fecha de la noche de estancia, grano: una fila por habitación y noche}
+  - {id: stay_night_room_revenue, fuente: pms, tabla: stay_night, columna: room_revenue, descripcion: "Ingreso de alojamiento de la habitación esa noche (EUR, neto de IGIC y ya desagregado del régimen según desagregacion_regimen)", grano: una fila por habitación y noche}
+  # Cargos de folio (otros ingresos)
+  - {id: folio_charge_reservation_id, fuente: pms, tabla: folio_charge, columna: reservation_id, descripcion: "Clave de unión: reserva a cuyo folio se carga (permite segmentar los otros ingresos por canal o huésped)", grano: una fila por cargo}
+  - {id: folio_charge_amount, fuente: pms, tabla: folio_charge, columna: amount, descripcion: "Importe del cargo (EUR, neto de IGIC)", grano: una fila por cargo}
+  - {id: folio_charge_department, fuente: pms, tabla: folio_charge, columna: department, descripcion: "Departamento del cargo: restauración, spa, minibar, excursiones u otros", grano: una fila por cargo}
+  - {id: folio_charge_service_date, fuente: pms, tabla: folio_charge, columna: service_date, descripcion: Fecha en que se prestó el servicio, grano: una fila por cargo}
+  # Costes
+  - {id: cost_entry_amount, fuente: pms, tabla: cost_entry, columna: amount, descripcion: Importe del coste (EUR), grano: un apunte de coste}
+  - {id: cost_entry_category, fuente: pms, tabla: cost_entry, columna: category, descripcion: "Categoría del coste: personal, energía, mantenimiento, coste de restauración, marketing u otros", grano: un apunte de coste}
+  - {id: cost_entry_cost_date, fuente: pms, tabla: cost_entry, columna: cost_date, descripcion: Fecha de imputación del coste, grano: un apunte de coste}
+  - {id: cost_entry_hotel_id, fuente: pms, tabla: cost_entry, columna: hotel_id, descripcion: Hotel al que se imputa el coste, grano: un apunte de coste}
+  # Reservas
+  - {id: reservation_reservation_id, fuente: pms, tabla: reservation, columna: reservation_id, descripcion: Reserva, grano: una fila por reserva}
+  - {id: reservation_hotel_id, fuente: pms, tabla: reservation, columna: hotel_id, descripcion: Hotel reservado, grano: una fila por reserva}
+  - {id: reservation_channel_id, fuente: pms, tabla: reservation, columna: channel_id, descripcion: Canal por el que entra la reserva, grano: una fila por reserva}
+  - {id: reservation_room_type_id, fuente: pms, tabla: reservation, columna: room_type_id, descripcion: Tipo de habitación reservado, grano: una fila por reserva}
+  - {id: reservation_booked_at, fuente: pms, tabla: reservation, columna: booked_at, descripcion: Momento de creación de la reserva, grano: una fila por reserva}
+  - {id: reservation_arrival_date, fuente: pms, tabla: reservation, columna: arrival_date, descripcion: Fecha de llegada, grano: una fila por reserva}
+  - {id: reservation_departure_date, fuente: pms, tabla: reservation, columna: departure_date, descripcion: Fecha de salida, grano: una fila por reserva}
+  - {id: reservation_status, fuente: pms, tabla: reservation, columna: status, descripcion: "Estado: confirmada, cancelada, no presentado, en casa o salida", grano: una fila por reserva}
+  - {id: reservation_total_amount, fuente: pms, tabla: reservation, columna: total_amount, descripcion: "Importe total de la reserva en la divisa del contrato. Supuesto explícito: es el ingreso de habitaciones de toda la estancia, neto de IGIC y desagregado del régimen con la misma regla que stay_night.room_revenue", grano: una fila por reserva}
+  - {id: reservation_guest_id, fuente: pms, tabla: reservation, columna: guest_id, descripcion: Ficha titular de la reserva, grano: una fila por reserva}
+  - {id: reservation_currency, fuente: pms, tabla: reservation, columna: currency, descripcion: "Divisa del importe (los turoperadores contratan en GBP, SEK, NOK…)", grano: una fila por reserva}
+  - {id: reservation_guest_reservation_id, fuente: pms, tabla: reservation_guest, columna: reservation_id, descripcion: "Clave de unión: reserva en la que viaja el huésped", grano: una fila por reserva y huésped}
+  - {id: reservation_guest_guest_id, fuente: pms, tabla: reservation_guest, columna: guest_id, descripcion: Huésped (titular o acompañante) que viaja en la reserva, grano: una fila por reserva y huésped}
+  # Canales y comisiones
+  - {id: channel_channel_type, fuente: pms, tabla: channel, columna: channel_type, descripcion: "Tipo de canal: directo, OTA, turoperador o agencia", grano: una fila por canal}
+  - {id: channel_commission_rate, fuente: pms, tabla: channel_commission, columna: rate, descripcion: Comisión del canal en tanto por uno, grano: una fila por canal y periodo de vigencia}
+  - {id: channel_commission_valid_from, fuente: pms, tabla: channel_commission, columna: valid_from, descripcion: Inicio de vigencia de la comisión, grano: una fila por canal y periodo de vigencia}
+  - {id: channel_commission_valid_to, fuente: pms, tabla: channel_commission, columna: valid_to, descripcion: Fin de vigencia de la comisión, grano: una fila por canal y periodo de vigencia}
+  # Cancelaciones y pagos
+  - {id: cancellation_reservation_id, fuente: pms, tabla: cancellation, columna: reservation_id, descripcion: "Clave de unión: reserva cancelada", grano: una fila por cancelación}
+  - {id: cancellation_cancelled_at, fuente: pms, tabla: cancellation, columna: cancelled_at, descripcion: Momento de la cancelación, grano: una fila por cancelación}
+  - {id: cancellation_reason, fuente: pms, tabla: cancellation, columna: reason, descripcion: "Motivo de la cancelación; las reubicaciones del hotel empiezan por «Reubicación» (supuesto S15)", grano: una fila por cancelación}
+  - {id: cancellation_penalty_amount, fuente: pms, tabla: cancellation, columna: penalty_amount, descripcion: Importe que el hotel retiene al cancelar (EUR), grano: una fila por cancelación}
+  - {id: payment_reservation_id, fuente: pms, tabla: payment, columna: reservation_id, descripcion: "Clave de unión: reserva a la que corresponde el pago", grano: una fila por pago}
+  - {id: payment_amount, fuente: pms, tabla: payment, columna: amount, descripcion: Importe del pago (EUR), grano: una fila por pago}
+  - {id: payment_payment_type, fuente: pms, tabla: payment, columna: payment_type, descripcion: "Tipo de pago: depósito, saldo o devolución", grano: una fila por pago}
+  # Huéspedes (base del golden record)
+  - {id: guest_guest_id, fuente: pms, tabla: guest, columna: guest_id, descripcion: Ficha de huésped (puede estar duplicada entre canales), grano: una fila por ficha}
+  - {id: guest_first_name, fuente: pms, tabla: guest, columna: first_name, descripcion: Nombre, grano: una fila por ficha}
+  - {id: guest_last_name, fuente: pms, tabla: guest, columna: last_name, descripcion: Apellidos, grano: una fila por ficha}
+  - {id: guest_email, fuente: pms, tabla: guest, columna: email, descripcion: Correo electrónico, grano: una fila por ficha}
+  - {id: guest_phone, fuente: pms, tabla: guest, columna: phone, descripcion: Teléfono, grano: una fila por ficha}
+  - {id: guest_document_id, fuente: pms, tabla: guest, columna: document_id, descripcion: Documento de identidad, grano: una fila por ficha}
+  - {id: loyalty_member_guest_id, fuente: pms, tabla: loyalty_member, columna: guest_id, descripcion: "Ficha de huésped dada de alta en el programa de fidelización", grano: una fila por alta}
+  - {id: loyalty_member_enrolled_at, fuente: pms, tabla: loyalty_member, columna: enrolled_at, descripcion: Momento del alta en el programa, grano: una fila por alta}
+  # Reseñas
+  - {id: review_hotel_id, fuente: pms, tabla: review, columna: hotel_id, descripcion: Hotel reseñado, grano: una fila por reseña}
+  - {id: review_posted_at, fuente: pms, tabla: review, columna: posted_at, descripcion: Fecha de publicación de la reseña, grano: una fila por reseña}
+  - {id: review_score, fuente: pms, tabla: review, columna: score, descripcion: Puntuación global de 0 a 10, grano: una fila por reseña}
+  - {id: review_recommend, fuente: pms, tabla: review, columna: recommend, descripcion: Probabilidad de recomendar de 0 a 10 (pregunta NPS), grano: una fila por reseña}
+  - {id: review_reservation_id, fuente: pms, tabla: review, columna: reservation_id, descripcion: "Clave de unión: estancia reseñada (permite segmentar el NPS y los aspectos por canal o tipo de huésped)", grano: una fila por reseña}
+  - {id: review_body, fuente: pms, tabla: review, columna: body, descripcion: Texto libre de la reseña, grano: una fila por reseña}
+  # Fuentes externas (especificación §2.4; columnas en contrato_externo.yml)
+  - {id: istac_frontur_llegadas, fuente: externa, tabla: istac_frontur, columna: llegadas, descripcion: Llegadas de turistas (ISTAC / Frontur-Canarias), grano: isla × mes × país de residencia}
+  - {id: aemet_diario_precipitacion, fuente: externa, tabla: aemet_diario, columna: precipitacion, descripcion: Precipitación diaria en mm (AEMET OpenData), grano: isla × día}
+  - {id: aemet_diario_temperatura_maxima, fuente: externa, tabla: aemet_diario, columna: temperatura_maxima, descripcion: Temperatura máxima diaria en °C (AEMET OpenData), grano: isla × día}
+  - {id: festivos_fecha, fuente: externa, tabla: festivos, columna: fecha, descripcion: "Festivos y vacaciones escolares de España, Canarias y los mercados emisores", grano: mercado × día}
+  - {id: bce_tipos_tipo_cambio, fuente: externa, tabla: bce_tipos, columna: tipo_cambio, descripcion: Tipo de cambio de referencia del BCE (unidades de divisa por euro), grano: divisa × día}
+  - {id: rate_shopper_tarifa, fuente: externa, tabla: rate_shopper, columna: tarifa, descripcion: Tarifa publicada por cada competidor (rate shopper), grano: competidor × fecha de estancia × fecha de consulta}
+  - {id: compset_diario_ocupacion, fuente: externa, tabla: compset_diario, columna: ocupacion, descripcion: "Ocupación del conjunto competitivo (informe tipo STR, sobre todo el inventario)", grano: hotel propio × día}
+  - {id: compset_diario_adr, fuente: externa, tabla: compset_diario, columna: adr, descripcion: ADR del conjunto competitivo en EUR (informe tipo STR), grano: hotel propio × día}
+  - {id: compset_diario_revpar, fuente: externa, tabla: compset_diario, columna: revpar, descripcion: RevPAR del conjunto competitivo en EUR (el informe tipo STR lo publica directamente), grano: hotel propio × día}
+
+
+# ---------------------------------------------------------------------------
+# Métricas base: agregados de las medidas raw para un hotel y un periodo. No
+# todas son aditivas; agregacion dice cómo se combinan entre hoteles y periodos:
+# suma (aditiva), distintos (recuento de entidades distintas: se recalcula sobre
+# el conjunto, no se suma), maximo (se toma el máximo) o publicado (valor de un
+# informe externo: se usa tal cual o ponderado, nunca se suma). Los KPI son
+# cocientes o diferencias de métricas base, calculados siempre al final.
+# ---------------------------------------------------------------------------
+metricas_base:
+  - id: habitaciones_disponibles
+    nombre: Habitaciones disponibles
+    formula: "Σ (habitaciones del inventario × noches del periodo) − noches de habitación bloqueadas en room_block"
+    medidas: [room_room_id, room_hotel_id, room_block_room_id, room_block_start_date, room_block_end_date]
+    unidad: habitaciones-noche
+    agregacion: suma
+    descripcion: Se excluyen las habitaciones fuera de servicio (opción admitida por USALI), porque los indicadores internos no deben penalizar al hotel por cerrar habitaciones para mantenerlas. Para comparar con el compset se usa la métrica habitaciones_disponibles_str.
+  - id: habitaciones_disponibles_str
+    nombre: Habitaciones disponibles (base STR)
+    formula: "Σ (habitaciones del inventario × noches del periodo), sin descontar bloqueos"
+    medidas: [room_room_id, room_hotel_id]
+    unidad: habitaciones-noche
+    agregacion: suma
+    descripcion: Todo el inventario, como cuenta STR los informes del compset. Es el denominador de los índices frente a la competencia (MPI y RGI), para que la ocupación y el RevPAR propios sean comparables con los del compset; con habitaciones_disponibles saldrían algo más altos en los meses con habitaciones bloqueadas.
+  - id: noches_vendidas
+    nombre: Noches vendidas
+    formula: "conteo de stay_night con stay_date en el periodo"
+    medidas: [stay_night_stay_night_id, stay_night_stay_date]
+    unidad: noches
+    agregacion: suma
+    descripcion: Cada noche de habitación ocupada cuenta una vez, en la fecha de la estancia (no en la de la reserva). Es el numerador de la ocupación y la base del ADR.
+  - id: noches_vendidas_directo
+    nombre: Noches vendidas por canal directo
+    formula: "conteo de stay_night cuya reserva entra por un canal con channel_type = direct"
+    medidas: [stay_night_stay_night_id, stay_night_stay_date, stay_night_reservation_id, reservation_channel_id, channel_channel_type]
+    unidad: noches
+    agregacion: suma
+    descripcion: Las noches vendidas cuya reserva entra por un canal directo (el propio hotel, sin intermediarios). Sirve para medir cuánta ocupación se capta por la vía propia.
+  - id: ingreso_habitaciones
+    nombre: Ingreso de habitaciones
+    formula: "Σ stay_night.room_revenue con stay_date en el periodo (EUR, neto de IGIC)"
+    medidas: [stay_night_room_revenue, stay_night_stay_date]
+    unidad: EUR
+    agregacion: suma
+    descripcion: Ingreso por alojamiento, neto de IGIC y en euros, imputado a la fecha de cada noche. No incluye restauración, spa ni otros servicios (véase ingreso_otros). Es el numerador del ADR y del RevPAR.
+  - id: ingreso_otros
+    nombre: Otros ingresos
+    formula: "Σ folio_charge.amount con service_date en el periodo, por departamento (restauración, spa, minibar, excursiones, otros)"
+    medidas: [folio_charge_amount, folio_charge_department, folio_charge_service_date]
+    unidad: EUR
+    agregacion: suma
+    descripcion: Ingreso de los servicios del hotel distintos del alojamiento, imputado a la fecha en que se presta el servicio. Sumado al ingreso de habitaciones da el ingreso total, base del TRevPAR y del GOPPAR.
+  - id: costes_operativos
+    nombre: Costes operativos
+    formula: "Σ cost_entry.amount imputado al hotel con cost_date en el periodo (todas las categorías) + comisiones de intermediación del periodo (la métrica comisiones)"
+    medidas: [cost_entry_amount, cost_entry_cost_date, cost_entry_hotel_id, stay_night_room_revenue, stay_night_stay_date, stay_night_reservation_id, reservation_channel_id, reservation_booked_at, channel_commission_rate, channel_commission_valid_from, channel_commission_valid_to]
+    unidad: EUR
+    agregacion: suma
+    descripcion: GOP simplificado. Las comisiones de los canales no figuran en cost_entry, pero USALI las trata como gasto del departamento de habitaciones; por eso se suman aquí y la fórmula del GOPPAR queda igual que en C5 (ingreso total − costes operativos).
+  - id: comisiones
+    nombre: Comisiones de intermediación
+    formula: "Σ stay_night.room_revenue de las noches con stay_date en el periodo × channel_commission.rate del canal de la reserva vigente en booked_at"
+    medidas: [stay_night_room_revenue, stay_night_stay_date, stay_night_reservation_id, reservation_channel_id, reservation_booked_at, channel_commission_rate, channel_commission_valid_from, channel_commission_valid_to]
+    unidad: EUR
+    agregacion: suma
+    descripcion: Se imputan al devengo, por fecha de estancia, como el ingreso que las origina (USALI); el tipo es el pactado con el canal en la fecha de la reserva. Las reservas canceladas no generan noches y, por tanto, tampoco comisión.
+  - id: coste_marketing_atribuido
+    nombre: Coste de marketing atribuido
+    formula: "Σ cost_entry.amount con category = marketing imputado al hotel y al periodo (incluye el gasto de las campañas)"
+    medidas: [cost_entry_amount, cost_entry_category, cost_entry_cost_date, cost_entry_hotel_id]
+    unidad: EUR
+    agregacion: suma
+    descripcion: Gasto de marketing imputado al hotel y al periodo, incluido el de las campañas. Es el numerador del coste de adquisición y se compara con las reservas netas.
+  - id: reservas_creadas
+    nombre: Reservas creadas
+    formula: "conteo de reservation con booked_at en el periodo"
+    medidas: [reservation_reservation_id, reservation_booked_at]
+    unidad: reservas
+    agregacion: suma
+    descripcion: Reservas registradas en el periodo según su fecha de creación, tanto si después se cancelan como si no. Es la base de la antelación media y de las reservas netas.
+  - id: reservas_netas
+    nombre: Reservas netas
+    formula: "reservas creadas en el periodo (por booked_at) que no están canceladas (status ≠ cancelled; las reubicaciones del hotel también dejan la reserva cancelada, supuesto S15)"
+    medidas: [reservation_reservation_id, reservation_booked_at, reservation_status]
+    unidad: reservas
+    agregacion: suma
+    descripcion: &madurez_reserva "Madurez: el estado de cada reserva se lee en la fecha de corte, un mes después del fin del periodo (o de la ventana de una acción; evaluacion.corte); antes, las reservas recientes aún no han tenido tiempo de cancelarse y la cifra saldría inflada."
+  - id: reservas_llegada
+    nombre: Reservas con llegada en el periodo
+    formula: "conteo de reservation con arrival_date en el periodo, en cualquier estado (también las canceladas)"
+    medidas: [reservation_reservation_id, reservation_arrival_date]
+    unidad: reservas
+    agregacion: suma
+    descripcion: Cohorte de llegada. Al cierre del periodo todas sus reservas están resueltas (han llegado, no se han presentado o se han cancelado), así que la cohorte de un mes cerrado está madura y es comparable con la de cualquier otro mes.
+  - id: reservas_canceladas_llegada
+    nombre: Reservas canceladas con llegada en el periodo
+    formula: "conteo de reservation con arrival_date en el periodo y status = cancelled por el cliente (sin las reubicaciones del hotel: filas de cancellation cuyo motivo empieza por «Reubicación», supuesto S15)"
+    medidas: [reservation_reservation_id, reservation_arrival_date, reservation_status, cancellation_reservation_id, cancellation_reason]
+    unidad: reservas
+    agregacion: suma
+    descripcion: "Cohorte de llegada: reservas con llegada en el periodo que el cliente canceló. Las reubicaciones decididas por el hotel no cuentan como cancelación del cliente. Es el numerador de la tasa de cancelación."
+  - id: reservas_llegada_ota
+    nombre: Reservas OTA con llegada en el periodo
+    formula: "conteo de reservation con arrival_date en el periodo y canal con channel_type = ota, en cualquier estado"
+    medidas: [reservation_reservation_id, reservation_arrival_date, reservation_channel_id, channel_channel_type]
+    unidad: reservas
+    agregacion: suma
+    descripcion: Cohorte de llegada restringida a los canales de agencia online (OTA), en cualquier estado. Es el denominador de la tasa de cancelación OTA.
+  - id: reservas_canceladas_llegada_ota
+    nombre: Reservas OTA canceladas con llegada en el periodo
+    formula: "conteo de reservation con arrival_date en el periodo, canal con channel_type = ota y status = cancelled por el cliente (sin las reubicaciones del hotel: filas de cancellation cuyo motivo empieza por «Reubicación», supuesto S15)"
+    medidas: [reservation_reservation_id, reservation_arrival_date, reservation_status, reservation_channel_id, channel_channel_type, cancellation_reservation_id, cancellation_reason]
+    unidad: reservas
+    agregacion: suma
+    descripcion: Reservas de agencias online (OTA) con llegada en el periodo que el cliente canceló, sin contar las reubicaciones del hotel. Es el numerador de la tasa de cancelación OTA.
+  - id: ingreso_reservado
+    nombre: Ingreso reservado
+    formula: "Σ total_amount (en EUR con el tipo BCE de booked_at) de las reservas con arrival_date en el periodo, en cualquier estado (también las canceladas)"
+    medidas: [reservation_total_amount, reservation_currency, reservation_booked_at, reservation_arrival_date, bce_tipos_tipo_cambio]
+    unidad: EUR
+    agregacion: suma
+    descripcion: Importe de las reservas con llegada en el periodo, en euros al tipo de cambio del día de la reserva y en cualquier estado. Es el denominador de la tasa de ingreso cancelado.
+  - id: ingreso_cancelado
+    nombre: Ingreso cancelado
+    formula: "Σ total_amount (en EUR con el tipo BCE de booked_at) de las reservas con arrival_date en el periodo canceladas por el cliente (status = cancelled, sin reubicaciones, S15)"
+    medidas: [reservation_total_amount, reservation_currency, reservation_booked_at, reservation_arrival_date, reservation_status, cancellation_reservation_id, cancellation_reason, bce_tipos_tipo_cambio]
+    unidad: EUR
+    agregacion: suma
+    descripcion: Importe, en euros al tipo de cambio del día de la reserva, de las reservas con llegada en el periodo que el cliente canceló. Las reubicaciones del hotel no se incluyen. Es el ingreso que se pierde antes de la reventa.
+  - id: penalizaciones_retenidas
+    nombre: Penalizaciones retenidas
+    formula: "Σ cancellation.penalty_amount de las reservas canceladas por el cliente con llegada en el periodo (las reubicaciones no penalizan, S15): depósito no devuelto o penalización; se concilia con payment (depósitos − devoluciones de la reserva)"
+    medidas: [cancellation_penalty_amount, cancellation_reservation_id, cancellation_reason, reservation_arrival_date, payment_reservation_id, payment_amount, payment_payment_type]
+    unidad: EUR
+    agregacion: suma
+    descripcion: Dinero que el hotel conserva de las reservas canceladas por el cliente (depósito no devuelto o penalización). Compensa en parte el ingreso cancelado; las reubicaciones del hotel nunca penalizan.
+  - id: ingreso_reventa
+    nombre: Ingreso de reventa
+    formula: "Σ room_revenue de las noches que liberan las reservas canceladas por el cliente (sin reubicaciones, S15) con llegada en el periodo y que vende una reserva creada después de la cancelación para el mismo hotel, tipo de habitación y fecha de estancia, con el límite del ingreso cancelado de esa noche; solo en las noches en que ese tipo de habitación se llenó, y como mucho tantas noches como habitaciones disponibles, emparejadas por orden de llegada (S17)"
+    medidas: [stay_night_room_revenue, stay_night_stay_date, stay_night_reservation_id, reservation_hotel_id, reservation_room_type_id, reservation_booked_at, reservation_arrival_date, cancellation_reservation_id, cancellation_cancelled_at, cancellation_reason, room_room_id, room_hotel_id, room_room_type_id, room_block_room_id, room_block_start_date, room_block_end_date]
+    unidad: EUR
+    agregacion: suma
+    descripcion: Parte del ingreso cancelado que el hotel recupera vendiendo de nuevo la misma noche, tipo de habitación y hotel, después de la cancelación. Solo cuenta cuando ese tipo de habitación se llenó y nunca supera lo cancelado en esa noche.
+  - id: promotores
+    nombre: Promotores
+    formula: "conteo de reseñas publicadas en el periodo con recommend entre 9 y 10"
+    medidas: [review_recommend, review_posted_at]
+    unidad: reseñas
+    agregacion: suma
+    descripcion: Reseñas publicadas en el periodo cuya puntuación de recomendación es alta (9 o 10). Junto con los detractores y el total de respuestas da el NPS.
+  - id: detractores
+    nombre: Detractores
+    formula: "conteo de reseñas publicadas en el periodo con recommend entre 0 y 6"
+    medidas: [review_recommend, review_posted_at]
+    unidad: reseñas
+    agregacion: suma
+    descripcion: Reseñas publicadas en el periodo cuya puntuación de recomendación es baja (de 0 a 6). Las de 7 y 8 son neutras y no restan ni suman al NPS.
+  - id: respuestas_recomendacion
+    nombre: Respuestas de recomendación
+    formula: "conteo de reseñas publicadas en el periodo con recommend no nulo"
+    medidas: [review_recommend, review_posted_at]
+    unidad: reseñas
+    agregacion: suma
+    descripcion: "La pregunta de recomendación sale de las reseñas, no de una encuesta a todos los huéspedes: solo responde quien escribe una reseña, con sesgo de selección (opinan más los muy satisfechos y los muy insatisfechos). El NPS resultante se usa para seguir la tendencia y comparar hoteles con la misma fuente, no como el NPS de una encuesta."
+  - id: huespedes_con_estancia
+    nombre: Huéspedes con estancia
+    formula: "conteo de huéspedes distintos del golden record (fichas guest deduplicadas por nombre, correo, teléfono y documento), contando el titular de cada reserva (la ficha de reservation.guest_id) con status = checked_out y llegada en el periodo"
+    medidas: [guest_guest_id, guest_first_name, guest_last_name, guest_email, guest_phone, guest_document_id, reservation_guest_id, reservation_reservation_id, reservation_status, reservation_arrival_date]
+    unidad: huéspedes
+    agregacion: distintos
+    descripcion: Personas distintas que se alojaron en el periodo, contando cada persona una sola vez aunque tenga varias fichas en el PMS (ficha única del huésped, golden record). Es el denominador de la tasa de repetición.
+  - id: huespedes_repetidores
+    nombre: Huéspedes repetidores
+    formula: "de los huéspedes con estancia en el periodo (titulares), los que tienen otra estancia como titular (status = checked_out) con llegada en los 24 meses anteriores a la llegada de alguna de sus estancias del periodo, en el golden record"
+    medidas: [guest_guest_id, guest_first_name, guest_last_name, guest_email, guest_phone, guest_document_id, reservation_guest_id, reservation_reservation_id, reservation_status, reservation_arrival_date]
+    unidad: huéspedes
+    agregacion: distintos
+    descripcion: Ventana fija de 24 meses hacia atrás, la misma para el periodo base y el evaluado, para que la tasa no crezca solo porque el histórico es más largo. Una estancia anterior dentro del mismo periodo también cuenta.
+  - id: dias_aspecto_en_rojo
+    nombre: Días con un aspecto en rojo
+    formula: "por hotel y aspecto (limpieza, ruido, climatización, comida, personal…), número de días consecutivos en rojo; un aspecto está en rojo un día si el sentimiento medio de ese aspecto en las reseñas de los 30 días anteriores (por posted_at) está por debajo del umbral. El sentimiento por aspecto lo extrae de review.body el enriquecimiento con IA"
+    nota_docente: "El enriquecimiento con IA que extrae el sentimiento por aspecto se construye en el capítulo 17."
+    medidas: [review_body, review_posted_at, review_hotel_id]
+    unidad: días
+    agregacion: maximo
+    # Semáforo (versión 2.4.0): media de la polaridad (−1, 0, 1) de las menciones de los
+    # ventana_dias días anteriores por debajo de umbral con al menos menciones_min menciones; un
+    # día sin muestra suficiente conserva el estado como mucho hueco_max_dias días. Solo cuenta
+    # el modelo de IA oficial (modelo, el elegido por validación cruzada; el almacén lo lee de su
+    # ficha oficial) en la versión con la que se fijó el umbral (version_modelo: si el modelo
+    # cambia, una prueba lo señala y hay que volver a confirmar el umbral). Las rachas se cuentan dentro del
+    # periodo: una racha que empezó antes cuenta solo sus días del periodo (el guardarraíl de O4
+    # mide el año evaluado).
+    parametros: {ventana_dias: 30, umbral: -0.2, menciones_min: 8, hueco_max_dias: 14, modelo: clasico_lexico, version_modelo: "28fca1b20e5a"}
+    descripcion: Para cada hotel y aspecto de la estancia (limpieza, ruido, climatización, comida, personal…), cuántos días seguidos lleva en rojo, es decir, con un sentimiento medio de las reseñas de los días anteriores por debajo del umbral. Al agregar se toma la racha más larga, no la suma.
+  - id: lead_time
+    nombre: Antelación acumulada
+    formula: "Σ (arrival_date − fecha de booked_at) en días, sobre las reservas creadas en el periodo"
+    medidas: [reservation_booked_at, reservation_arrival_date]
+    unidad: días
+    agregacion: suma
+    descripcion: Suma de los días que pasan entre la reserva y la llegada, en las reservas creadas en el periodo. Se divide entre las reservas creadas para obtener la antelación media.
+  - id: noches_por_reserva
+    nombre: Noches reservadas
+    formula: "Σ (departure_date − arrival_date) en noches, sobre las reservas netas (no canceladas) creadas en el periodo (por fecha de creación, no por salidas)"
+    medidas: [reservation_arrival_date, reservation_departure_date, reservation_status, reservation_booked_at]
+    unidad: noches
+    agregacion: suma
+    descripcion: *madurez_reserva
+  - id: noches_reservadas_directo
+    nombre: Noches reservadas por canal directo
+    formula: "Σ (departure_date − arrival_date) en noches, sobre las reservas netas (no canceladas) creadas en el periodo por un canal con channel_type = direct"
+    medidas: [reservation_arrival_date, reservation_departure_date, reservation_status, reservation_booked_at, reservation_channel_id, channel_channel_type]
+    unidad: noches
+    agregacion: suma
+    descripcion: *madurez_reserva
+  - id: noches_captadas_ventana
+    nombre: Noches captadas en la ventana
+    formula: "en una fecha de corte, Σ noches de las reservas con booked_at en los 7 días anteriores y estancia (arrival_date a departure_date) posterior al corte"
+    medidas: [reservation_booked_at, reservation_arrival_date, reservation_departure_date]
+    unidad: noches
+    agregacion: suma
+    descripcion: Noches futuras reservadas en los 7 días anteriores a la fecha de corte. Junto con las canceladas en la ventana da el pickup neto, que indica si la demanda futura se acelera o se frena.
+  - id: noches_canceladas_ventana
+    nombre: Noches canceladas en la ventana
+    formula: "en una fecha de corte, Σ noches futuras (posteriores al corte) de las reservas con cancelled_at en los 7 días anteriores"
+    medidas: [cancellation_reservation_id, cancellation_cancelled_at, reservation_arrival_date, reservation_departure_date]
+    unidad: noches
+    agregacion: suma
+    descripcion: Noches futuras que los clientes han cancelado en los 7 días anteriores a la fecha de corte. Se resta de las captadas para obtener el pickup neto.
+  - id: ocupacion_compset
+    nombre: Ocupación del compset
+    formula: "ocupación media del conjunto competitivo en el periodo, ponderada por días (informe tipo STR)"
+    medidas: [compset_diario_ocupacion]
+    unidad: tanto por uno
+    agregacion: publicado
+    descripcion: Ocupación que publica el informe de la competencia (conjunto competitivo), promediada por días. Es una razón ya calculada por el proveedor, no una suma, y es nula si no hay informe. Sirve de denominador del índice de penetración (MPI).
+  - id: adr_compset
+    nombre: ADR del compset
+    formula: "ADR del conjunto competitivo en el periodo (informe tipo STR)"
+    medidas: [compset_diario_adr]
+    unidad: EUR
+    agregacion: publicado
+    descripcion: "ADR agregado ponderado por habitaciones: Σ ingreso de habitaciones del compset / Σ noches vendidas del compset, no la media simple de los ADR diarios."
+  - id: revpar_compset
+    nombre: RevPAR del compset
+    formula: "RevPAR del conjunto competitivo en el periodo, tal como lo publica el informe tipo STR"
+    medidas: [compset_diario_revpar]
+    unidad: EUR
+    agregacion: publicado
+    descripcion: "Se toma directamente del informe en lugar de multiplicar ocupación × ADR medios, porque el producto de medias no es la media del producto."
+
+# ---------------------------------------------------------------------------
+# KPI (tabla C5). formula: expresión con ids de métricas base. actores: quién
+# lo consulta; propietario: el actor de negocio que responde de su definición y
+# de su resultado (el equipo de datos custodia el cálculo de todos, pero no es
+# propietario de ninguno); latencia: cuándo está disponible el dato.
+# ---------------------------------------------------------------------------
+kpis:
+  - id: ocupacion
+    nombre: Ocupación
+    definicion: Proporción de las habitaciones disponibles que se han vendido.
+    formula: noches_vendidas / habitaciones_disponibles
+    metricas: [noches_vendidas, habitaciones_disponibles]
+    unidad: ratio
+    sentido: subir
+    actores: [revenue, marketing, dir_hotel, datos]
+    propietario: revenue
+    latencia: D-1, a las 07:00
+  - id: adr
+    nombre: ADR (tarifa media diaria)
+    definicion: Ingreso medio por cada noche de habitación vendida.
+    formula: ingreso_habitaciones / noches_vendidas
+    metricas: [ingreso_habitaciones, noches_vendidas]
+    unidad: eur
+    sentido: subir
+    actores: [direccion, revenue, dir_hotel, datos]
+    propietario: revenue
+    latencia: D-1, a las 07:00
+  - id: revpar
+    nombre: RevPAR
+    definicion: Ingreso de habitaciones por habitación disponible; combina ocupación y precio (RevPAR = ocupación × ADR).
+    formula: ingreso_habitaciones / habitaciones_disponibles
+    metricas: [ingreso_habitaciones, habitaciones_disponibles]
+    unidad: eur
+    sentido: subir
+    actores: [direccion, revenue, datos]
+    propietario: revenue
+    latencia: D-1, a las 07:00
+  - id: trevpar
+    nombre: TRevPAR
+    definicion: Ingreso total (habitaciones más restauración, spa y extras) por habitación disponible.
+    formula: (ingreso_habitaciones + ingreso_otros) / habitaciones_disponibles
+    metricas: [ingreso_habitaciones, ingreso_otros, habitaciones_disponibles]
+    unidad: eur
+    sentido: subir
+    actores: [direccion, dir_hotel, datos]
+    propietario: dir_hotel
+    latencia: D-1, a las 07:00; definitivo al cierre del mes
+  - id: goppar
+    nombre: GOPPAR
+    definicion: Beneficio operativo bruto (ingreso total menos costes operativos) por habitación disponible; versión simplificada.
+    formula: (ingreso_habitaciones + ingreso_otros - costes_operativos) / habitaciones_disponibles
+    metricas: [ingreso_habitaciones, ingreso_otros, costes_operativos, habitaciones_disponibles]
+    unidad: eur
+    sentido: subir
+    actores: [direccion, marketing, dir_hotel, datos]
+    propietario: direccion
+    latencia: Mensual, al cierre contable (día 5 del mes siguiente)
+  - id: cuota_directa
+    nombre: Cuota de venta directa
+    definicion: Proporción de las noches vendidas (por fecha de estancia) que entran por el canal directo (web y teléfono propios), sin intermediarios.
+    formula: noches_vendidas_directo / noches_vendidas
+    metricas: [noches_vendidas_directo, noches_vendidas]
+    unidad: ratio
+    sentido: subir
+    actores: [direccion, marketing, datos]
+    propietario: marketing
+    latencia: D-1, a las 07:00
+  - id: cuota_directa_captacion
+    nombre: Cuota directa de captación
+    definicion: Proporción de las noches netas reservadas en el periodo (por fecha de creación de la reserva, sin las canceladas) que entran por el canal directo. Reacciona a una campaña mientras dura, antes que la cuota por fecha de estancia, que depende de cuándo se alojan los clientes.
+    formula: noches_reservadas_directo / noches_por_reserva
+    metricas: [noches_reservadas_directo, noches_por_reserva]
+    unidad: ratio
+    sentido: subir
+    actores: [marketing, datos]
+    propietario: marketing
+    latencia: D-1, a las 07:00
+  - id: cac_reserva_neta
+    nombre: Coste de adquisición por reserva neta
+    definicion: Lo que cuesta conseguir cada reserva que no se cancela, sumando comisiones de intermediarios y gasto de marketing.
+    formula: (comisiones + coste_marketing_atribuido) / reservas_netas
+    metricas: [comisiones, coste_marketing_atribuido, reservas_netas]
+    unidad: eur
+    sentido: bajar
+    actores: [marketing, datos]
+    propietario: marketing
+    latencia: Mensual, al cierre contable (día 5 del mes siguiente)
+  - id: tasa_cancelacion
+    nombre: Tasa de cancelación
+    definicion: Proporción de las reservas con llegada en el periodo que se cancelaron (cohorte de llegada). Al cierre del periodo todas esas reservas están resueltas, así que la tasa de un mes cerrado es madura y comparable con la de cualquier otro; contada por fecha de creación, los meses recientes estarían inmaduros (aún les faltarían cancelaciones).
+    formula: reservas_canceladas_llegada / reservas_llegada
+    metricas: [reservas_canceladas_llegada, reservas_llegada]
+    unidad: ratio
+    sentido: bajar
+    actores: [revenue, datos]
+    propietario: revenue
+    latencia: D-1, a las 07:00; definitiva al cerrar el mes de llegada
+  - id: tasa_cancelacion_ota
+    nombre: Tasa de cancelación OTA
+    definicion: Tasa de cancelación por cohorte de llegada restringida a las reservas que entran por agencias de viajes en línea (OTA); como la general, es madura al cierre del periodo.
+    formula: reservas_canceladas_llegada_ota / reservas_llegada_ota
+    metricas: [reservas_canceladas_llegada_ota, reservas_llegada_ota]
+    unidad: ratio
+    sentido: bajar
+    actores: [revenue, datos]
+    propietario: revenue
+    latencia: D-1, a las 07:00; definitiva al cerrar el mes de llegada
+  - id: ingreso_perdido_neto
+    nombre: Ingreso perdido neto por cancelación
+    definicion: Proporción del ingreso de habitaciones reservado para las llegadas del periodo que se pierde por cancelaciones, después de descontar lo que el hotel retiene y lo que recupera revendiendo las noches liberadas. Se cuenta por cohorte de llegada y en proporción, para que no crezca solo porque se vende más.
+    formula: (ingreso_cancelado - penalizaciones_retenidas - ingreso_reventa) / ingreso_reservado
+    metricas: [ingreso_cancelado, penalizaciones_retenidas, ingreso_reventa, ingreso_reservado]
+    unidad: ratio
+    sentido: bajar
+    actores: [direccion, revenue, datos]
+    propietario: revenue
+    latencia: Mensual, al cierre del mes de llegada
+  - id: nps
+    nombre: NPS (Net Promoter Score)
+    definicion: Porcentaje de promotores (recomendación 9–10) menos porcentaje de detractores (0–6) en las reseñas; va de −100 a 100.
+    formula: 100 * (promotores - detractores) / respuestas_recomendacion
+    metricas: [promotores, detractores, respuestas_recomendacion]
+    unidad: puntos
+    sentido: subir
+    actores: [direccion, marketing, dir_hotel, datos]
+    propietario: dir_hotel
+    latencia: D-1, a las 07:00
+  - id: tasa_repeticion
+    nombre: Tasa de repetición
+    definicion: Huéspedes con otra estancia en los 24 meses anteriores entre los huéspedes con estancia en el periodo, contados sobre el golden record (el huésped único tras deduplicar fichas entre canales).
+    formula: huespedes_repetidores / huespedes_con_estancia
+    metricas: [huespedes_repetidores, huespedes_con_estancia]
+    unidad: ratio
+    sentido: subir
+    actores: [direccion, marketing, dir_hotel, datos]
+    propietario: marketing
+    latencia: Mensual, tras actualizar el golden record
+  - id: dias_max_aspecto_en_rojo
+    nombre: Días máximos de un aspecto en rojo
+    definicion: Mayor número de días seguidos que cualquier aspecto de la experiencia (limpieza, ruido, climatización…) ha estado en rojo en algún hotel.
+    formula: max(dias_aspecto_en_rojo)
+    metricas: [dias_aspecto_en_rojo]
+    unidad: dias
+    sentido: bajar
+    actores: [dir_hotel, datos]
+    propietario: dir_hotel
+    latencia: D-1, a las 07:00
+  - id: lead_time_medio
+    nombre: Antelación media (lead time)
+    definicion: Días que median de media entre la creación de la reserva y la llegada. Es un indicador de diagnóstico, sin sentido de mejora fijo, porque más antelación da más visibilidad de la demanda, pero una ventana de reserva larga se asocia a más riesgo de cancelación.
+    formula: lead_time / reservas_creadas
+    metricas: [lead_time, reservas_creadas]
+    unidad: dias
+    sentido: neutro
+    actores: [revenue, datos]
+    propietario: revenue
+    latencia: D-1, a las 07:00
+  - id: estancia_media
+    nombre: Estancia media
+    definicion: Número medio de noches por reserva no cancelada, contado por fecha de creación de la reserva (el ALOS clásico se cuenta por salidas del periodo). Es un indicador de diagnóstico, sin sentido de mejora fijo; se interpreta junto con la ocupación y el ADR.
+    formula: noches_por_reserva / reservas_netas
+    metricas: [noches_por_reserva, reservas_netas]
+    unidad: dias
+    sentido: neutro
+    actores: [revenue, dir_hotel, datos]
+    propietario: revenue
+    latencia: D-1, a las 07:00
+  - id: pickup
+    nombre: Pickup
+    definicion: Noches netas captadas en la última semana para fechas de estancia futuras (nuevas reservas menos cancelaciones); mide el ritmo de entrada de la demanda.
+    formula: noches_captadas_ventana - noches_canceladas_ventana
+    metricas: [noches_captadas_ventana, noches_canceladas_ventana]
+    unidad: conteo
+    sentido: subir
+    actores: [revenue, datos]
+    propietario: revenue
+    latencia: D-1, a las 07:00
+  - id: mpi
+    nombre: MPI (índice de penetración de mercado)
+    definicion: Ocupación propia frente a la del conjunto competitivo; 100 significa paridad. La ocupación propia se calcula sobre todo el inventario (base STR), como la del compset.
+    formula: 100 * (noches_vendidas / habitaciones_disponibles_str) / ocupacion_compset
+    metricas: [noches_vendidas, habitaciones_disponibles_str, ocupacion_compset]
+    unidad: puntos
+    sentido: subir
+    actores: [revenue, datos]
+    propietario: revenue
+    latencia: Semanal, con el informe del compset de cada lunes
+  - id: ari
+    nombre: ARI (índice de tarifa media)
+    definicion: ADR propio frente al del conjunto competitivo; 100 significa paridad.
+    formula: 100 * (ingreso_habitaciones / noches_vendidas) / adr_compset
+    metricas: [ingreso_habitaciones, noches_vendidas, adr_compset]
+    unidad: puntos
+    sentido: subir
+    actores: [revenue, datos]
+    propietario: revenue
+    latencia: Semanal, con el informe del compset de cada lunes
+  - id: rgi
+    nombre: RGI (índice de generación de ingresos)
+    definicion: RevPAR propio frente al del conjunto competitivo; 100 significa paridad (RGI = MPI × ARI / 100). El RevPAR propio se calcula sobre todo el inventario (base STR), como el del compset.
+    formula: 100 * (ingreso_habitaciones / habitaciones_disponibles_str) / revpar_compset
+    metricas: [ingreso_habitaciones, habitaciones_disponibles_str, revpar_compset]
+    unidad: puntos
+    sentido: subir
+    actores: [direccion, revenue, datos]
+    propietario: revenue
+    latencia: Semanal, con el informe del compset de cada lunes
+
+# ---------------------------------------------------------------------------
+# Objetivos (especificación §2.1). Cada uno combina criterios principales
+# ponderados (pesos que suman 1) y guardarraíles. Donde la especificación dice
+# «disminuye» o «sube» sin cifra, se fija −10 % para el CAC y +10 % para la
+# repetición: un criterio principal necesita una meta para medir el progreso.
+# Desviaciones registradas en la versión 2.0.0 (supuesto S1): guardarraíl de
+# ocupación en O3 y de margen (GOPPAR) en O2; la especificación no los listaba.
+# responsable: actor que responde del objetivo (consulta todos sus KPI).
+# linea_base: valor de cada KPI de los criterios en el periodo base, calculado en
+# el almacén con los datos de 2024 (supuesto S10); null mientras el almacén no
+# calcula alguno de sus KPI (no se inventa).
+# ---------------------------------------------------------------------------
+objetivos:
+  - id: O1
+    verbo: Aumentar
+    enunciado: Aumentar la rentabilidad por habitación disponible
+    responsable: direccion
+    linea_base: {revpar: 86.38, goppar: 43.13, adr: 102.26}
+    criterios:
+      - {kpi: revpar, papel: principal, peso: 1.0, comparacion: {tipo: variacion_relativa, sentido: al_menos, meta: 0.08}}
+      - {kpi: goppar, papel: guardarrail, comparacion: {tipo: variacion_relativa, sentido: al_menos, meta: 0}}
+      - {kpi: adr, papel: guardarrail, comparacion: {tipo: variacion_relativa, sentido: al_menos, meta: -0.03}}
+  - id: O2
+    verbo: Reducir
+    enunciado: Reducir la dependencia de intermediarios
+    responsable: marketing
+    linea_base: {cuota_directa: 0.2224, cac_reserva_neta: 121.1, ocupacion: 0.8447, goppar: 43.13}
+    criterios:
+      - {kpi: cuota_directa, papel: principal, peso: 0.7, comparacion: {tipo: umbral, sentido: al_menos, meta: 0.30}}
+      - {kpi: cac_reserva_neta, papel: principal, peso: 0.3, comparacion: {tipo: variacion_relativa, sentido: como_maximo, meta: -0.10}}
+      - {kpi: ocupacion, papel: guardarrail, comparacion: {tipo: variacion_absoluta, sentido: al_menos, meta: -0.02}}
+      - {kpi: goppar, papel: guardarrail, comparacion: {tipo: variacion_relativa, sentido: al_menos, meta: 0}}
+  - id: O3
+    verbo: Disminuir
+    enunciado: Disminuir la pérdida de ingresos por cancelaciones
+    responsable: revenue
+    linea_base: {tasa_cancelacion_ota: 0.2605, ingreso_perdido_neto: 0.1259, ocupacion: 0.8447}
+    criterios:
+      - {kpi: tasa_cancelacion_ota, papel: principal, peso: 0.5, comparacion: {tipo: umbral, sentido: como_maximo, meta: 0.18}}
+      - {kpi: ingreso_perdido_neto, papel: principal, peso: 0.5, comparacion: {tipo: variacion_relativa, sentido: como_maximo, meta: -0.25}}
+      - {kpi: ocupacion, papel: guardarrail, comparacion: {tipo: variacion_absoluta, sentido: al_menos, meta: -0.02}}
+  - id: O4
+    verbo: Mejorar
+    enunciado: Mejorar la experiencia del huésped
+    responsable: dir_hotel
+    linea_base: {nps: 38.91, tasa_repeticion: 0.1265, dias_max_aspecto_en_rojo: 0.0}
+    criterios:
+      - {kpi: nps, papel: principal, peso: 0.6, comparacion: {tipo: umbral, sentido: al_menos, meta: 45}}
+      - {kpi: tasa_repeticion, papel: principal, peso: 0.4, comparacion: {tipo: variacion_relativa, sentido: al_menos, meta: 0.10}}
+      - {kpi: dias_max_aspecto_en_rojo, papel: guardarrail, comparacion: {tipo: umbral, sentido: como_maximo, meta: 30}}
+
+# ---------------------------------------------------------------------------
+# Acciones (especificación §2.6). criterio_exito se evalúa sobre kpi_exito en
+# la ventana (ventana_dias desde inicio); los guardarraíles vigilan efectos
+# secundarios. inicio y fin delimitan la intervención (fin nulo: sigue activa).
+# regla_pms: fila que escribe el reverse ETL (vocabulario en contrato_pms.yml).
+# ---------------------------------------------------------------------------
+acciones:
+  - id: A1
+    nombre: Depósito obligatorio en reservas OTA con más de 60 días de antelación
+    objetivos: [O3]
+    disparador: La tasa de cancelación OTA supera la meta del objetivo O3 y el análisis por canal y antelación de la reserva señala un segmento de riesgo.
+    descripcion: >-
+      Regla comercial de cobro. Hoy las reservas de OTA se garantizan con tarjeta y se
+      cobran a la llegada; en el segmento de la acción (reservas OTA con más de 60 días de
+      antelación) se cobra al reservar un depósito no reembolsable, con el porcentaje del
+      plan de tarifa (rate_plan.deposit_pct). La regla se devuelve al PMS por reverse ETL
+      como una fila de rate_restriction por hotel piloto y canal OTA (rule =
+      deposito_obligatorio, parametro = antelación mínima en días).
+    responsable: revenue
+    kpi_exito: tasa_cancelacion_ota
+    criterio_exito: {tipo: variacion_absoluta, sentido: como_maximo, meta: -0.05}
+    guardarrailes:
+      - {kpi: ocupacion, papel: guardarrail, comparacion: {tipo: variacion_absoluta, sentido: al_menos, meta: -0.02}}
+    ventana_dias: 120
+    inicio: 2025-03-01
+    fin: null
+    evaluacion: {base: llegada, desde: 2025-04-30, hasta: 2025-08-27, corte: 2025-08-27, reservas_desde: 2025-03-01}
+    metodo_evaluacion: diferencias_en_diferencias
+    ambito: >-
+      Piloto en 3 hoteles con los otros 3 como control, emparejados por tipología:
+      vacacional de sol y playa (ADJ frente a YAI), todo incluido (MSP frente a JAN) y el
+      urbano frente al
+      rural (TFN frente a TEJ), los dos de menor volumen OTA. Calendario: la regla rige
+      desde el 2025-03-01 y sigue activa después de la ventana. Como solo afecta a las
+      reservas hechas con más de 60 días de antelación, la evaluación empieza 60 días
+      después del inicio: cohorte de llegada de 120 días (llegadas del 2025-04-30 al
+      2025-08-27), contando solo las reservas creadas desde el 2025-03-01; al cerrar la
+      ventana todas esas reservas están resueltas. La campaña A2 (del 2025-06-01 al
+      2025-08-31) coincide con 88 días de esa ventana, y A6 empieza en diciembre con A1
+      todavía activa: el solape queda escrito y se corrige al evaluar.
+    hoteles_piloto: [ADJ, MSP, TFN]
+    hoteles_control: [YAI, JAN, TEJ]
+    mecanismo: reverse_etl
+    regla_pms: {tabla: rate_restriction, valor: deposito_obligatorio, parametro: 60}
+    nota_docente: El capítulo 20 usa el solape de la campaña A2 con la ventana de A1, tal como lo describe este documento, para enseñar el método ante acciones simultáneas; la estimación con los datos es trabajo de laboratorio.
+  - id: A2
+    nombre: Campaña de venta directa con ventaja exclusiva
+    objetivos: [O2]
+    disparador: La cuota de venta directa está estancada, lejos de la meta del objetivo O2, y el coste de adquisición por reserva neta no baja.
+    descripcion: >-
+      Campaña en la web propia que ofrece una ventaja exclusiva al reservar directo
+      (desayuno incluido o traslado gratuito) y se registra en campaign y campaign_hotel.
+      Se aplica en todos los hoteles salvo YAI, que actúa como control. Se mide con la
+      cuota directa de captación (noches reservadas mientras dura la campaña); la cuota
+      por fecha de estancia, la del objetivo O2, recoge el efecto más tarde.
+    responsable: marketing
+    kpi_exito: cuota_directa_captacion
+    criterio_exito: {tipo: variacion_absoluta, sentido: al_menos, meta: 0.04}
+    guardarrailes:
+      - {kpi: adr, papel: guardarrail, comparacion: {tipo: variacion_relativa, sentido: al_menos, meta: -0.03}}
+      - {kpi: cac_reserva_neta, papel: guardarrail, comparacion: {tipo: variacion_relativa, sentido: como_maximo, meta: 0}}
+    ventana_dias: 90
+    inicio: 2025-06-01
+    fin: 2025-08-31
+    evaluacion: {base: reserva, desde: 2025-06-01, hasta: 2025-08-29, corte: 2025-09-28}
+    metodo_evaluacion: diferencias_en_diferencias
+    ambito: >-
+      Todos los hoteles salvo uno de control. Se elige YAI (Lanzarote) porque su perfil,
+      vacacional de sol y playa de cuatro estrellas, es el más parecido al de ADJ y su
+      cuota directa de partida es similar; mantenerlo sin campaña permite estimar el efecto
+      por diferencias en diferencias. Calendario: campaña del 2025-06-01 al 2025-08-31; se
+      evalúan las reservas creadas en los 90 días desde el inicio, con su estado leído el
+      2025-09-28, un mes después (madurez). La campaña coincide 88 días con la ventana de
+      evaluación de A1 (llegadas del 2025-04-30 al 2025-08-27), que además sigue activa en
+      los hoteles piloto de A1 (YAI es control en las dos) y puede contaminar la
+      comparación; A6 empieza cuando la campaña ya ha terminado.
+    hoteles_piloto: [TFN, ADJ, MSP, TEJ, JAN]
+    hoteles_control: [YAI]
+    mecanismo: manual
+    nota_docente: El capítulo 20 vuelve sobre la contaminación de esta comparación por A1.
+  - id: A3
+    nombre: Programa de fidelización para repetidores
+    objetivos: [O4, O1]
+    disparador: La tasa de repetición es baja frente a la meta del objetivo O4.
+    descripcion: >-
+      Programa de ventajas por estancias acumuladas (tarifa de socio, salida tardía,
+      crédito en restauración y spa) para huéspedes identificados en el golden record.
+    responsable: marketing
+    kpi_exito: tasa_repeticion
+    criterio_exito: {tipo: variacion_relativa, sentido: al_menos, meta: 0.10}
+    guardarrailes:
+      - {kpi: adr, papel: guardarrail, comparacion: {tipo: variacion_relativa, sentido: al_menos, meta: -0.03}}
+      - {kpi: goppar, papel: guardarrail, comparacion: {tipo: variacion_relativa, sentido: al_menos, meta: 0}}
+    ventana_dias: 365
+    inicio: 2025-03-01
+    fin: null
+    evaluacion: {base: llegada, desde: 2025-03-01, hasta: 2026-02-28, corte: 2026-02-28}
+    metodo_evaluacion: grupo_control
+    ambito: >-
+      Toda la cadena; un 20 % de los huéspedes elegibles, elegido al azar, queda fuera del
+      programa como grupo de control. Calendario: programa permanente desde el 2025-03-01;
+      la ventana de 365 días cubre un ciclo anual completo, porque la repetición tiene
+      estacionalidad y una ventana más corta compararía temporadas distintas.
+      La pertenencia al programa se registra en el PMS (loyalty_member): el programa da de
+      alta automáticamente a los huéspedes elegibles identificables (con documento o con un
+      correo propio, no el alias de una OTA) que aceptan las comunicaciones, un 30-40 % de
+      los elegibles; los elegibles identificables sin alta (el control aleatorio y quienes no
+      aceptan) son el grupo de comparación.
+    mecanismo: manual
+  - id: A4
+    nombre: Intervención de mantenimiento correctivo en el hotel afectado
+    objetivos: [O4]
+    disparador: Un hotel muestra un aspecto de las reseñas en rojo de forma persistente.
+    descripcion: >-
+      Mantenimiento correctivo del sistema o instalación al que apuntan las reseñas; el
+      sistema concreto se determina con el análisis por aspectos. Las habitaciones afectadas
+      se bloquean por tandas (room_block) para no vaciar el hotel.
+    responsable: dir_hotel
+    kpi_exito: dias_max_aspecto_en_rojo
+    criterio_exito: {tipo: umbral, sentido: como_maximo, meta: 30}
+    guardarrailes:
+      - {kpi: ocupacion, papel: guardarrail, comparacion: {tipo: variacion_absoluta, sentido: al_menos, meta: -0.02}}
+    ventana_dias: 90
+    inicio: 2025-07-01
+    fin: 2025-08-31
+    evaluacion: {base: publicacion, desde: 2025-07-01, hasta: 2025-09-28, corte: 2025-09-28}
+    metodo_evaluacion: antes_despues
+    ambito: >-
+      Hotel afectado, identificado en el análisis de reseñas por aspectos; el KPI de éxito
+      se mide solo sobre ese hotel. Como «en rojo» usa la media móvil del sentimiento de
+      las reseñas del último mes, la recuperación tarda semanas en reflejarse; por eso la
+      ventana es de 90 días y la meta tolera ese retraso. Calendario: obras del 2025-07-01
+      al 2025-08-31, por tandas de habitaciones.
+    mecanismo: manual
+    nota_docente: El análisis de reseñas por aspectos que identifica el hotel afectado se construye en el capítulo 17.
+  - id: A5
+    nombre: Ajuste de tarifas según el índice de competencia
+    objetivos: [O1]
+    disparador: El RevPAR crece por debajo de la meta del objetivo O1 y el índice de generación de ingresos (RGI) frente al compset está por debajo de 100.
+    descripcion: >-
+      Revisar las tarifas base de los tipos de habitación y temporadas en los que ARI y MPI
+      se desequilibran, buscando subir el RGI sin destruir precio.
+    responsable: revenue
+    kpi_exito: rgi
+    criterio_exito: {tipo: variacion_absoluta, sentido: al_menos, meta: 3}
+    guardarrailes:
+      - {kpi: adr, papel: guardarrail, comparacion: {tipo: variacion_relativa, sentido: al_menos, meta: -0.03}}
+      - {kpi: ocupacion, papel: guardarrail, comparacion: {tipo: variacion_absoluta, sentido: al_menos, meta: -0.02}}
+    ventana_dias: 90
+    inicio: 2025-09-01
+    fin: null
+    evaluacion: {base: estancia, desde: 2025-09-01, hasta: 2025-11-29, corte: 2025-11-29}
+    metodo_evaluacion: antes_despues
+    ambito: >-
+      Hoteles con ARI > 100 y MPI < 100 en el último trimestre cerrado antes del inicio (de
+      junio a agosto de 2025). Calendario: tarifas revisadas desde el 2025-09-01; la ventana
+      termina antes del arranque de A6.
+    mecanismo: manual
+  - id: A6
+    nombre: Estancia mínima en OTA en temporada alta
+    objetivos: [O2, O3]
+    disparador: >-
+      Se sospecha que, en temporada alta, las estancias cortas captadas por OTA desplazan a
+      la venta directa y elevan las cancelaciones; la acción se evalúa como experimento para
+      confirmar o descartar la hipótesis.
+    descripcion: >-
+      Fijar una estancia mínima en los canales OTA durante las fechas de temporada alta. La
+      regla se devuelve al PMS por reverse ETL como filas de rate_restriction
+      (rule = estancia_minima, parametro = noches mínimas) por hotel vacacional, canal y
+      rango de fechas.
+    responsable: revenue
+    kpi_exito: cuota_directa
+    criterio_exito: {tipo: variacion_absoluta, sentido: al_menos, meta: 0.02}
+    guardarrailes:
+      - {kpi: ocupacion, papel: guardarrail, comparacion: {tipo: variacion_absoluta, sentido: al_menos, meta: -0.02}}
+      - {kpi: tasa_cancelacion_ota, papel: guardarrail, comparacion: {tipo: variacion_absoluta, sentido: como_maximo, meta: 0}}
+    ventana_dias: 90
+    inicio: 2025-12-01
+    fin: 2026-02-28
+    evaluacion: {base: estancia, desde: 2025-12-01, hasta: 2026-02-28, corte: 2026-02-28}
+    metodo_evaluacion: antes_despues
+    ambito: >-
+      Los cuatro hoteles vacacionales (de sol y playa y todo incluido), en la temporada alta de
+      invierno: del 2025-12-01 al 2026-02-28, después de la campaña A2. El urbano y el rural
+      quedan fuera: sus estancias son cortas por naturaleza (escapadas y viajes de trabajo)
+      y una estancia mínima expulsaría demanda legítima. La evaluación compara las noches de
+      la temporada con las del mismo tramo del año anterior y termina dentro del histórico
+      disponible. A1 sigue activa en los hoteles piloto, de modo que la comparación antes y
+      después mezcla ambos efectos.
+    hoteles_piloto: [ADJ, MSP, YAI, JAN]
+    mecanismo: reverse_etl
+    regla_pms: {tabla: rate_restriction, valor: estancia_minima, parametro: 5}
+    nota_docente: El capítulo 20 enseña con datos inventados los límites de una evaluación antes y después cuando otra acción sigue activa en el mismo ámbito; aplicarlo a esta acción es trabajo de laboratorio.
+  - id: A7
+    nombre: Marcar a los huéspedes de alto valor como VIP en el PMS
+    objetivos: [O4]
+    disparador: El NPS no alcanza la meta del objetivo O4 y los huéspedes de mayor valor no puntúan mejor que el resto.
+    descripcion: >-
+      Calcular en el DWH el valor de cada huésped del golden record y devolver al PMS por
+      reverse ETL una fila de guest_flag (flag = vip) para los de mayor valor, de modo que
+      recepción los reconozca y les ofrezca atención preferente.
+    responsable: dir_hotel
+    kpi_exito: nps
+    criterio_exito: {tipo: variacion_absoluta, sentido: al_menos, meta: 5}
+    guardarrailes:
+      - {kpi: goppar, papel: guardarrail, comparacion: {tipo: variacion_relativa, sentido: al_menos, meta: 0}}
+    ventana_dias: 180
+    inicio: 2025-04-01
+    fin: null
+    evaluacion: {base: publicacion, desde: 2025-04-01, hasta: 2025-09-27, corte: 2025-09-27}
+    metodo_evaluacion: grupo_control
+    ambito: >-
+      Toda la cadena; los huéspedes de alto valor que no se marcan (elegidos al azar) forman
+      el grupo de control. Calendario: marcado desde el 2025-04-01 y actualizado cada mes.
+    mecanismo: reverse_etl
+    regla_pms: {tabla: guest_flag, valor: vip, seleccion: {percentil_valor: 0.9, fraccion_control: 0.25, meses_valor: 18}}
+
+# ---------------------------------------------------------------------------
+# Alertas (capítulos 2 y 18): reglas sobre los KPI que avisan al destinatario y, si citan
+# una acción de reverse ETL, escriben su regla_pms en el PMS (sensor alertas_kpi de Dagster,
+# atlantida-accion). Se evalúan en el último mes cerrado (completo) de cada ámbito; un mes sin
+# dato no dispara. Deterioro: el KPI empeora más del margen frente al mismo mes del año anterior
+# del propio ámbito (la estacionalidad y el nivel de cada hotel quedan en la referencia); el
+# margen es el cambio que este documento ya considera material en ese KPI (el criterio de éxito
+# de la acción que dispara). La meta anual de un objetivo no es un umbral de alerta: un hotel
+# puede estar por encima de la meta de la cadena todos los meses por su estructura, y eso lo
+# sigue el cuadro de objetivos, no una alerta. Muestra mínima: el mes y su referencia deben
+# tener al menos esas unidades (la misma que exige la medición del impacto); con menos, el KPI
+# de un mes varía varios puntos solo por azar y la alerta no salta. Anomalía: un día marcado en
+# ml.anomalia_kpi (solo aviso).
+# ---------------------------------------------------------------------------
+alertas:
+  - id: AL1
+    nombre: Cancelación OTA de un hotel que empeora frente al mismo mes del año anterior
+    tipo: deterioro
+    kpi: tasa_cancelacion_ota
+    ambito: hotel
+    periodo: mes
+    sentido: por_encima
+    margen: 0.05
+    muestra_minima: {metrica: reservas_llegada_ota, minimo: 50}
+    destinatario: revenue
+    accion: A1
+  - id: AL2
+    nombre: NPS de la cadena que empeora frente al mismo mes del año anterior
+    tipo: deterioro
+    kpi: nps
+    ambito: cadena
+    periodo: mes
+    sentido: por_debajo
+    margen: 5
+    muestra_minima: {metrica: respuestas_recomendacion, minimo: 50}
+    destinatario: dir_hotel
+    accion: A7
+  - id: AL3
+    nombre: Día anómalo de RevPAR en un hotel
+    tipo: anomalia
+    kpi: revpar
+    ambito: hotel
+    destinatario: revenue
+
+# ---------------------------------------------------------------------------
+# Supuestos y decisiones de diseño que cambian una cifra (sección «Supuestos»
+# del documento). Las metas no se repiten aquí: viven en las comparaciones.
+# ---------------------------------------------------------------------------
+supuestos:
+  - id: S1
+    nombre: Guardarraíles añadidos a O2 y O3
+    texto: >-
+      El plan estratégico solo fijaba guardarraíles para O1, para la ocupación de O2 y para
+      O4. Para que cada objetivo vigile el efecto secundario más probable de sus criterios
+      principales, la versión 2.0.0 añade a O3 un guardarraíl de ocupación con el mismo
+      margen que el de O2 (endurecer las condiciones de venta no debe vaciar los hoteles) y
+      a O2 un guardarraíl de margen, el GOPPAR que no baja (ganar venta directa no debe
+      costar más de lo que ahorra en comisiones).
+  - id: S2
+    nombre: Cancelaciones e ingreso perdido por cohorte de llegada
+    texto: >-
+      Las tasas de cancelación y el ingreso perdido neto se cuentan sobre las reservas con
+      llegada en el periodo. Al cierre del periodo todas están resueltas, así que un mes
+      cerrado es maduro y comparable con cualquier otro; por fecha de creación, los meses
+      recientes aún acumularían cancelaciones. El ingreso perdido neto se expresa en
+      proporción del ingreso de habitaciones reservado para esas llegadas, para que no
+      crezca solo porque se vende más; la meta de reducción relativa conserva su sentido.
+  - id: S3
+    nombre: Habitaciones disponibles internas y base STR
+    texto: >-
+      Los indicadores internos (ocupación, RevPAR, TRevPAR, GOPPAR) excluyen las
+      habitaciones fuera de servicio. Los índices frente al compset (MPI y RGI) usan todo el
+      inventario, como el informe tipo STR, para que la comparación sea homogénea.
+  - id: S4
+    nombre: Comisiones al devengo
+    texto: >-
+      Las comisiones de intermediación se imputan por fecha de estancia, como el ingreso que
+      las origina (USALI), con el tipo pactado en la fecha de la reserva. El coste de
+      adquisición por reserva neta divide esas comisiones entre las reservas netas creadas
+      en el periodo: en un mes aislado los dos calendarios no coinciden, pero en el año
+      completo la diferencia es pequeña y la definición es la misma en la base y en el
+      periodo evaluado.
+  - id: S5
+    nombre: Desagregación de los paquetes por régimen
+    texto: >-
+      El ingreso de habitaciones es solo alojamiento. En los regímenes con comidas (BB, HB,
+      FB, AI) el PMS reparte el precio del paquete con una regla fija por régimen (campo
+      desagregacion_regimen: parte del precio que es alojamiento) y registra el resto como
+      restauración en los cargos de folio. El importe total de la reserva sigue la misma
+      regla.
+  - id: S6
+    nombre: Política de cobro de las reservas OTA
+    texto: >-
+      Las reservas que entran por OTA se garantizan con tarjeta y se cobran a la llegada,
+      también las de tarifa no reembolsable. La acción A1 cambia esa regla comercial en su
+      segmento: cobro anticipado de un depósito al reservar.
+  - id: S7
+    nombre: Repetición con ventana fija
+    texto: >-
+      Un huésped es repetidor si tiene otra estancia en los 24 meses anteriores a una de sus
+      estancias del periodo. La ventana es la misma para el periodo base y el evaluado; por
+      eso el histórico de estancias de huéspedes empieza el 2022-01-01
+      (horizonte_simulado.historia_huespedes_desde), 24 meses antes del periodo base.
+  - id: S8
+    nombre: NPS a partir de las reseñas
+    texto: >-
+      La pregunta de recomendación procede de las reseñas, no de una encuesta a todos los
+      huéspedes. Tiene sesgo de selección (opinan más los muy satisfechos y los muy
+      insatisfechos), así que el NPS se usa para seguir la tendencia y comparar hoteles con
+      la misma fuente, no como el NPS de una encuesta.
+  - id: S9
+    nombre: Umbral de cancelación OTA «como máximo»
+    texto: >-
+      El plan estratégico formulaba la tasa de cancelación OTA con una desigualdad estricta
+      («por debajo de»). El documento usa «como máximo» (≤), el mismo convenio que el resto
+      de umbrales, para que alcanzar exactamente la meta cuente como cumplirla.
+  - id: S10
+    nombre: Línea base
+    texto: >-
+      La línea base de cada criterio es el valor del indicador en el periodo base calculado
+      con las definiciones de esta versión, y se registra en el campo linea_base de cada
+      objetivo. Se fijó con los datos del periodo base al cargar el almacén (escala 1,
+      semilla por defecto) para O1, O2 y O3 (2.3.0) y la de O4 con el indicador de aspectos
+      en rojo (2.4.1). Con otra escala o semilla, el cuadro de mando calcula su
+      propia base en el almacén (`atlantida-dbt logro` la muestra) y no coincide con la del
+      documento.
+  - id: S11
+    nombre: Logrado, verde y seguimiento mensual
+    texto: >-
+      Un objetivo está logrado si todos sus criterios principales cumplen la meta (índice 1)
+      y se cumplen todos sus guardarraíles; está en verde si el índice alcanza el umbral
+      verde con todos los guardarraíles cumplidos. Cada mes se sigue el acumulado del año
+      frente al mismo tramo del año base.
+  - id: S12
+    nombre: Histórico disponible
+    texto: >-
+      El histórico completo del PMS cubre del 2023-01-01 al 2026-03-31: el periodo base, el
+      evaluado y las ventanas de evaluación de todas las acciones, con sus fechas de corte
+      (la última termina en febrero de 2026). Además, el PMS conserva las estancias de los
+      huéspedes desde el 2022-01-01, solo para calcular la repetición del periodo base. Los
+      objetivos se evalúan sobre 2025.
+  - id: S13
+    nombre: Cuota directa de captación
+    texto: >-
+      La campaña A2 se mide con la cuota de las noches reservadas mientras dura (por fecha de
+      creación de la reserva), que reacciona en la propia ventana. El objetivo O2 conserva la
+      cuota por fecha de estancia, que es la que refleja el peso real de cada canal en el
+      negocio.
+  - id: S14
+    nombre: Madurez de las métricas por fecha de reserva
+    texto: >-
+      Las métricas que cuentan reservas por fecha de creación sin las canceladas (reservas
+      netas, noches reservadas y noches reservadas por canal directo, base del coste de
+      adquisición y de la cuota directa de captación) leen el estado de las reservas un mes
+      después del fin del periodo o de la ventana, cuando las cancelaciones de esas reservas
+      ya se han producido en su mayoría; cada acción fija esa fecha en evaluacion.corte.
+  - id: S15
+    nombre: Reubicaciones del hotel
+    texto: >-
+      Cuando el hotel no tiene habitación para un cliente que llega y lo aloja en otro
+      establecimiento, el PMS lo registra como una cancelación con un motivo que empieza por
+      «Reubicación». No es una decisión del cliente: no cuenta como cancelación del cliente ni
+      en el ingreso cancelado ni en las penalizaciones (no las hay), aunque la reserva deja de
+      ser neta. Es una aclaración de las definiciones, fijada antes de calcular la línea base.
+  - id: S16
+    nombre: Mercado emisor de los residentes en Austria
+    texto: >-
+      Los huéspedes residentes en Austria se agrupan con el mercado alemán, como hace la
+      segmentación comercial de la cadena; la estadística de llegadas del ISTAC los incluye en
+      otros mercados, así que la comparación por mercado con el ISTAC lo tiene en cuenta.
+  - id: S17
+    nombre: Reventa solo con demanda desplazada
+    texto: >-
+      Una venta posterior a una cancelación del cliente cuenta como reventa de la noche liberada
+      solo si la cancelación desplazó demanda: esa noche, ese tipo de habitación del hotel acabó
+      lleno (noches vendidas mayores o iguales que las habitaciones disponibles de ese tipo, sin
+      las bloqueadas; con sobreventa pueden ser más). En una noche que no se llenó, la venta
+      posterior es demanda ordinaria y el ingreso cancelado sigue perdido. En las noches llenas,
+      cada venta repone la noche liberada más antigua aún sin reponer (orden de llegada), cada
+      noche se repone una sola vez y como mucho se reponen tantas noches como habitaciones
+      disponibles. Es una aclaración de la definición, fijada antes de calcular la línea base.
+
+# ---------------------------------------------------------------------------
+# Riesgos del sistema de BI (sección «Riesgos» del documento). El responsable
+# es un actor.
+# ---------------------------------------------------------------------------
+riesgos:
+  - id: R1
+    nombre: Calidad y madurez de los datos
+    efecto: Un error en una medida raw se propaga a todos los KPI que la usan; los meses recientes aún no han acumulado todas sus cancelaciones.
+    mitigacion: Pruebas de calidad en la carga; comprobar la definición, la calidad y la madurez antes de analizar una señal, y comparar cohortes con la misma antigüedad.
+    responsable: datos
+  - id: R2
+    nombre: Interferencia entre acciones
+    efecto: Acciones que se solapan en el calendario (A1, A2 y A6) pueden atribuirse efectos ajenos.
+    mitigacion: Calendario escalonado, hoteles de control fijados de antemano y estimación por diferencias en diferencias; cuando el solape es inevitable, se deja escrito y se corrige al evaluar.
+    responsable: revenue
+  - id: R3
+    nombre: Pocos hoteles para comparar
+    efecto: Con seis hoteles, las comparaciones entre hoteles tienen poca potencia estadística, y alguna pareja piloto-control no comparte tipología.
+    mitigacion: Emparejar por tipología, comprobar que piloto y control evolucionaban en paralelo antes de la acción y repetir la estimación sin la pareja más débil.
+    responsable: datos
+  - id: R4
+    nombre: Ley de Goodhart
+    efecto: Perseguir un indicador por el camino más corto, por ejemplo subir la cuota directa vendiendo menos habitaciones.
+    mitigacion: Guardarraíles en los objetivos y en las acciones; un guardarraíl incumplido nunca da verde.
+    responsable: direccion
+  - id: R5
+    nombre: Cambio de definición a mitad de periodo
+    efecto: El indicador del periodo evaluado deja de ser comparable con la línea base.
+    mitigacion: Versionado del documento, recálculo de la línea base y registro del cambio en el historial.
+    responsable: datos
+  - id: R6
+    nombre: Dependencia de fuentes externas
+    efecto: El informe del compset o un tipo de cambio llega tarde, con huecos o con otro formato.
+    mitigacion: Validación de cada entrega, versión archivada de cada fuente y aviso al equipo de datos.
+    responsable: datos
+  - id: R7
+    nombre: Fichas de huésped duplicadas
+    efecto: El mismo huésped con varias fichas cuenta como varios, y la tasa de repetición se subestima.
+    mitigacion: Resolución de entidades y golden record antes de calcular la repetición.
+    responsable: datos
+
+# ---------------------------------------------------------------------------
+# Control del documento (sección «Gobierno del documento»). propietario y
+# custodio son actores. Las fechas son ficticias: la versión 1.0.0 se aprobó al
+# empezar el periodo evaluado; la 2.0.0, la 2.1.0 y la 2.2.0, antes de fijar la línea base y de
+# la primera acción del calendario; la 2.3.0 aclara definiciones y fija la línea base, la 2.4.0
+# fija el semáforo de aspectos, la 2.4.1, la línea base de O4, la 2.5.0, las alertas sobre KPI y
+# la selección de los huéspedes de A7 (antes de su inicio), la 2.5.1, el deterioro de AL1 y AL2,
+# y la 2.5.2 (vigente), dos notas para el libro (nota_docente), sin cambiar ninguna definición.
+# La última entrada del historial es la versión vigente (campo version).
+# ---------------------------------------------------------------------------
+documento:
+  propietario: direccion
+  custodio: datos
+  estado: aprobado
+  fecha_aprobacion: 2025-02-14
+  revision_ordinaria: Al cierre del periodo evaluado, en enero del año siguiente; se evalúan los objetivos, se revisan las metas y se fija el periodo siguiente.
+  revision_extraordinaria: Cuando cambia la definición de un KPI, se añade o retira un objetivo o una acción, o un riesgo se materializa.
+  historial:
+    - {version: "1.0.0", fecha: 2025-01-15, cambio: "Versión inicial: objetivos, actores, medidas, métricas base, KPI, acciones, medida de éxito, supuestos y riesgos.", aprobado_por: direccion}
+    - {version: "2.0.0", fecha: 2025-02-14, cambio: "Revisión antes de fijar la línea base y de lanzar la primera acción. Cancelaciones e ingreso perdido por cohorte de llegada (el ingreso perdido, en proporción del ingreso reservado); base STR en los índices frente al compset; comisiones al devengo; cuota directa de captación para A2; repetición con ventana fija; guardarraíles nuevos en O2 (margen) y O3 (ocupación), que el plan estratégico no listaba; responsables de los objetivos, propietarios y latencias de los KPI; seguimiento mensual del acumulado del año; calendario estructurado de las acciones; contrato de las fuentes externas y vocabulario de reverse ETL.", aprobado_por: direccion}
+    - {version: "2.1.0", fecha: 2025-02-14, cambio: "Registro de los miembros del programa de fidelización en el PMS (loyalty_member) para evaluar A3 con datos operacionales; cambio aditivo que no altera ninguna definición.", aprobado_por: direccion}
+    - {version: "2.2.0", fecha: 2025-02-14, cambio: "Ámbito de A3: el alta automática en el programa de fidelización es solo para huéspedes identificables (documento o correo propio) que aceptan las comunicaciones, no para un 80 % de todos los elegibles; el grupo de comparación son los elegibles identificables sin alta. Cambia el ámbito de una acción, no la definición de ningún KPI.", aprobado_por: direccion}
+    - {version: "2.3.0", fecha: 2025-02-14, cambio: "Aclaraciones antes de evaluar: las reubicaciones del hotel no son cancelaciones del cliente (S15), la repetición cuenta titulares y los residentes en Austria van con el mercado alemán (S16). La reventa solo cuenta en las noches que se llenaron (demanda desplazada, S17) y repone cada noche liberada con una sola venta posterior, por orden de llegada. Línea base de O1, O2 y O3 con los datos del periodo base (S10); la de O4 queda pendiente del indicador de aspectos en rojo.", aprobado_por: direccion}
+    - {version: "2.4.0", fecha: 2025-02-14, cambio: "Parámetros explícitos del semáforo de aspectos en la métrica base dias_aspecto_en_rojo (ventana, umbral, menciones mínimas, días máximos que un hueco sin muestra conserva el estado y modelo de IA oficial): antes eran variables del almacén. El hueco sin muestra deja de conservar el estado sin límite. Las rachas se cuentan dentro del periodo. Cambia la definición del KPI dias_max_aspecto_en_rojo; la línea base de O4 sigue pendiente.", aprobado_por: direccion}
+    - {version: "2.4.1", fecha: 2025-02-14, cambio: "Línea base de O4 (NPS, tasa de repetición y días máximos de un aspecto en rojo) con los datos del periodo base, calculada en el almacén con el modelo de IA oficial y el umbral fijado con el periodo base (S10).", aprobado_por: direccion}
+    - {version: "2.5.0", fecha: 2025-02-14, cambio: "Alertas sobre KPI (AL1–AL3) con su destinatario y la acción de reverse ETL que disparan, y criterio de selección de los huéspedes de A7 (percentil de valor, fracción de control y meses de valor).", aprobado_por: direccion}
+    - {version: "2.5.1", fecha: 2025-02-14, cambio: "AL1 y AL2 avisan de un deterioro frente al mismo mes del año anterior del propio ámbito, con el margen del criterio de éxito de su acción y una muestra mínima, en lugar de comparar un mes con la meta anual de la cadena (saltaban casi todos los meses). Cambia solo las alertas, no la definición de ningún KPI.", aprobado_por: direccion}
+    - {version: "2.5.2", fecha: 2025-02-14, cambio: "Revisión de las notas internas de las acciones A1 y A6. No cambia ninguna definición, objetivo, acción ni KPI.", aprobado_por: direccion}

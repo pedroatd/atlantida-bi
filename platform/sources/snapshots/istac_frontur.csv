@@ -1,0 +1,2720 @@
+periodo_mes,isla,pais_origen,llegadas
+2021-01,Fuerteventura,BE,400
+2021-01,Fuerteventura,DE,11333
+2021-01,Fuerteventura,ES,3995
+2021-01,Fuerteventura,FR,1658
+2021-01,Fuerteventura,GB,352
+2021-01,Fuerteventura,IE,523
+2021-01,Fuerteventura,IT,690
+2021-01,Fuerteventura,NL,116
+2021-01,Fuerteventura,NORD,895
+2021-01,Fuerteventura,OTROS,3336
+2021-01,Gran Canaria,BE,1607
+2021-01,Gran Canaria,DE,11849
+2021-01,Gran Canaria,ES,11006
+2021-01,Gran Canaria,FR,2075
+2021-01,Gran Canaria,GB,686
+2021-01,Gran Canaria,IE,604
+2021-01,Gran Canaria,IT,1498
+2021-01,Gran Canaria,NL,763
+2021-01,Gran Canaria,NORD,4566
+2021-01,Gran Canaria,OTROS,6587
+2021-01,Lanzarote,BE,520
+2021-01,Lanzarote,DE,6288
+2021-01,Lanzarote,ES,4661
+2021-01,Lanzarote,FR,2018
+2021-01,Lanzarote,GB,481
+2021-01,Lanzarote,IE,1292
+2021-01,Lanzarote,IT,354
+2021-01,Lanzarote,NL,114
+2021-01,Lanzarote,NORD,122
+2021-01,Lanzarote,OTROS,1679
+2021-01,Tenerife,BE,3345
+2021-01,Tenerife,DE,11915
+2021-01,Tenerife,ES,13816
+2021-01,Tenerife,FR,6637
+2021-01,Tenerife,GB,1483
+2021-01,Tenerife,IE,1976
+2021-01,Tenerife,IT,2999
+2021-01,Tenerife,NL,808
+2021-01,Tenerife,NORD,1188
+2021-01,Tenerife,OTROS,12111
+2021-02,Fuerteventura,BE,62
+2021-02,Fuerteventura,DE,7231
+2021-02,Fuerteventura,ES,2568
+2021-02,Fuerteventura,FR,1893
+2021-02,Fuerteventura,GB,149
+2021-02,Fuerteventura,IE,179
+2021-02,Fuerteventura,IT,583
+2021-02,Fuerteventura,NL,177
+2021-02,Fuerteventura,NORD,786
+2021-02,Fuerteventura,OTROS,2253
+2021-02,Gran Canaria,BE,162
+2021-02,Gran Canaria,DE,7692
+2021-02,Gran Canaria,ES,10479
+2021-02,Gran Canaria,FR,2121
+2021-02,Gran Canaria,GB,569
+2021-02,Gran Canaria,IE,192
+2021-02,Gran Canaria,IT,1056
+2021-02,Gran Canaria,NL,434
+2021-02,Gran Canaria,NORD,2975
+2021-02,Gran Canaria,OTROS,6144
+2021-02,Lanzarote,BE,69
+2021-02,Lanzarote,DE,3200
+2021-02,Lanzarote,ES,3136
+2021-02,Lanzarote,FR,3647
+2021-02,Lanzarote,GB,254
+2021-02,Lanzarote,IE,152
+2021-02,Lanzarote,IT,346
+2021-02,Lanzarote,NL,62
+2021-02,Lanzarote,NORD,32
+2021-02,Lanzarote,OTROS,1005
+2021-02,Tenerife,BE,848
+2021-02,Tenerife,DE,9921
+2021-02,Tenerife,ES,12344
+2021-02,Tenerife,FR,13016
+2021-02,Tenerife,GB,1244
+2021-02,Tenerife,IE,593
+2021-02,Tenerife,IT,3293
+2021-02,Tenerife,NL,930
+2021-02,Tenerife,NORD,1143
+2021-02,Tenerife,OTROS,14130
+2021-03,Fuerteventura,BE,53
+2021-03,Fuerteventura,DE,13599
+2021-03,Fuerteventura,ES,4198
+2021-03,Fuerteventura,FR,1781
+2021-03,Fuerteventura,GB,137
+2021-03,Fuerteventura,IE,90
+2021-03,Fuerteventura,IT,1516
+2021-03,Fuerteventura,NL,104
+2021-03,Fuerteventura,NORD,984
+2021-03,Fuerteventura,OTROS,2720
+2021-03,Gran Canaria,BE,285
+2021-03,Gran Canaria,DE,14546
+2021-03,Gran Canaria,ES,14622
+2021-03,Gran Canaria,FR,2963
+2021-03,Gran Canaria,GB,1198
+2021-03,Gran Canaria,IE,146
+2021-03,Gran Canaria,IT,1745
+2021-03,Gran Canaria,NL,447
+2021-03,Gran Canaria,NORD,3293
+2021-03,Gran Canaria,OTROS,8729
+2021-03,Lanzarote,BE,68
+2021-03,Lanzarote,DE,5966
+2021-03,Lanzarote,ES,6200
+2021-03,Lanzarote,FR,2664
+2021-03,Lanzarote,GB,197
+2021-03,Lanzarote,IE,205
+2021-03,Lanzarote,IT,608
+2021-03,Lanzarote,NL,75
+2021-03,Lanzarote,NORD,124
+2021-03,Lanzarote,OTROS,1369
+2021-03,Tenerife,BE,1472
+2021-03,Tenerife,DE,17156
+2021-03,Tenerife,ES,19842
+2021-03,Tenerife,FR,11082
+2021-03,Tenerife,GB,1129
+2021-03,Tenerife,IE,484
+2021-03,Tenerife,IT,4402
+2021-03,Tenerife,NL,416
+2021-03,Tenerife,NORD,1576
+2021-03,Tenerife,OTROS,17819
+2021-04,Fuerteventura,BE,111
+2021-04,Fuerteventura,DE,12074
+2021-04,Fuerteventura,ES,4087
+2021-04,Fuerteventura,FR,2392
+2021-04,Fuerteventura,GB,163
+2021-04,Fuerteventura,IE,95
+2021-04,Fuerteventura,IT,2762
+2021-04,Fuerteventura,NL,191
+2021-04,Fuerteventura,NORD,605
+2021-04,Fuerteventura,OTROS,4597
+2021-04,Gran Canaria,BE,655
+2021-04,Gran Canaria,DE,16183
+2021-04,Gran Canaria,ES,15885
+2021-04,Gran Canaria,FR,3019
+2021-04,Gran Canaria,GB,544
+2021-04,Gran Canaria,IE,136
+2021-04,Gran Canaria,IT,2568
+2021-04,Gran Canaria,NL,1012
+2021-04,Gran Canaria,NORD,1508
+2021-04,Gran Canaria,OTROS,10756
+2021-04,Lanzarote,BE,318
+2021-04,Lanzarote,DE,6088
+2021-04,Lanzarote,ES,7413
+2021-04,Lanzarote,FR,3884
+2021-04,Lanzarote,GB,273
+2021-04,Lanzarote,IE,164
+2021-04,Lanzarote,IT,1201
+2021-04,Lanzarote,NL,135
+2021-04,Lanzarote,NORD,104
+2021-04,Lanzarote,OTROS,2609
+2021-04,Tenerife,BE,3229
+2021-04,Tenerife,DE,15352
+2021-04,Tenerife,ES,25360
+2021-04,Tenerife,FR,9129
+2021-04,Tenerife,GB,1416
+2021-04,Tenerife,IE,368
+2021-04,Tenerife,IT,6630
+2021-04,Tenerife,NL,661
+2021-04,Tenerife,NORD,645
+2021-04,Tenerife,OTROS,23369
+2021-05,Fuerteventura,BE,645
+2021-05,Fuerteventura,DE,16420
+2021-05,Fuerteventura,ES,8672
+2021-05,Fuerteventura,FR,4201
+2021-05,Fuerteventura,GB,223
+2021-05,Fuerteventura,IT,3917
+2021-05,Fuerteventura,NL,482
+2021-05,Fuerteventura,NORD,749
+2021-05,Fuerteventura,OTROS,6507
+2021-05,Gran Canaria,BE,2218
+2021-05,Gran Canaria,DE,20263
+2021-05,Gran Canaria,ES,21679
+2021-05,Gran Canaria,FR,4906
+2021-05,Gran Canaria,GB,1068
+2021-05,Gran Canaria,IE,127
+2021-05,Gran Canaria,IT,2489
+2021-05,Gran Canaria,NL,2614
+2021-05,Gran Canaria,NORD,2645
+2021-05,Gran Canaria,OTROS,11195
+2021-05,Lanzarote,BE,891
+2021-05,Lanzarote,DE,8120
+2021-05,Lanzarote,ES,13517
+2021-05,Lanzarote,FR,7808
+2021-05,Lanzarote,GB,887
+2021-05,Lanzarote,IE,377
+2021-05,Lanzarote,IT,1790
+2021-05,Lanzarote,NL,337
+2021-05,Lanzarote,NORD,401
+2021-05,Lanzarote,OTROS,2953
+2021-05,Tenerife,BE,7014
+2021-05,Tenerife,DE,19801
+2021-05,Tenerife,ES,35168
+2021-05,Tenerife,FR,15678
+2021-05,Tenerife,GB,1887
+2021-05,Tenerife,IE,503
+2021-05,Tenerife,IT,7407
+2021-05,Tenerife,NL,2192
+2021-05,Tenerife,NORD,628
+2021-05,Tenerife,OTROS,24011
+2021-06,Fuerteventura,BE,954
+2021-06,Fuerteventura,DE,22739
+2021-06,Fuerteventura,ES,10985
+2021-06,Fuerteventura,FR,4626
+2021-06,Fuerteventura,GB,1184
+2021-06,Fuerteventura,IE,124
+2021-06,Fuerteventura,IT,3884
+2021-06,Fuerteventura,NL,1970
+2021-06,Fuerteventura,NORD,1837
+2021-06,Fuerteventura,OTROS,7108
+2021-06,Gran Canaria,BE,4641
+2021-06,Gran Canaria,DE,22314
+2021-06,Gran Canaria,ES,32786
+2021-06,Gran Canaria,FR,3669
+2021-06,Gran Canaria,GB,2269
+2021-06,Gran Canaria,IE,215
+2021-06,Gran Canaria,IT,3774
+2021-06,Gran Canaria,NL,9194
+2021-06,Gran Canaria,NORD,4970
+2021-06,Gran Canaria,OTROS,12574
+2021-06,Lanzarote,BE,1459
+2021-06,Lanzarote,DE,7709
+2021-06,Lanzarote,ES,23992
+2021-06,Lanzarote,FR,6698
+2021-06,Lanzarote,GB,2453
+2021-06,Lanzarote,IE,688
+2021-06,Lanzarote,IT,2815
+2021-06,Lanzarote,NL,2041
+2021-06,Lanzarote,NORD,1657
+2021-06,Lanzarote,OTROS,3217
+2021-06,Tenerife,BE,10117
+2021-06,Tenerife,DE,20181
+2021-06,Tenerife,ES,49731
+2021-06,Tenerife,FR,11301
+2021-06,Tenerife,GB,7636
+2021-06,Tenerife,IE,1027
+2021-06,Tenerife,IT,7687
+2021-06,Tenerife,NL,7138
+2021-06,Tenerife,NORD,603
+2021-06,Tenerife,OTROS,23592
+2021-07,Fuerteventura,BE,1616
+2021-07,Fuerteventura,DE,42765
+2021-07,Fuerteventura,ES,20181
+2021-07,Fuerteventura,FR,8054
+2021-07,Fuerteventura,GB,5845
+2021-07,Fuerteventura,IE,832
+2021-07,Fuerteventura,IT,5726
+2021-07,Fuerteventura,NL,2318
+2021-07,Fuerteventura,NORD,4799
+2021-07,Fuerteventura,OTROS,13745
+2021-07,Gran Canaria,BE,6762
+2021-07,Gran Canaria,DE,33756
+2021-07,Gran Canaria,ES,41775
+2021-07,Gran Canaria,FR,9311
+2021-07,Gran Canaria,GB,9242
+2021-07,Gran Canaria,IE,1708
+2021-07,Gran Canaria,IT,4224
+2021-07,Gran Canaria,NL,10805
+2021-07,Gran Canaria,NORD,8071
+2021-07,Gran Canaria,OTROS,21915
+2021-07,Lanzarote,BE,3232
+2021-07,Lanzarote,DE,12170
+2021-07,Lanzarote,ES,42560
+2021-07,Lanzarote,FR,13921
+2021-07,Lanzarote,GB,18166
+2021-07,Lanzarote,IE,6465
+2021-07,Lanzarote,IT,4540
+2021-07,Lanzarote,NL,3180
+2021-07,Lanzarote,NORD,2780
+2021-07,Lanzarote,OTROS,6423
+2021-07,Tenerife,BE,17134
+2021-07,Tenerife,DE,27686
+2021-07,Tenerife,ES,74083
+2021-07,Tenerife,FR,17998
+2021-07,Tenerife,GB,27224
+2021-07,Tenerife,IE,3872
+2021-07,Tenerife,IT,11185
+2021-07,Tenerife,NL,9414
+2021-07,Tenerife,NORD,2312
+2021-07,Tenerife,OTROS,42690
+2021-08,Fuerteventura,BE,1023
+2021-08,Fuerteventura,DE,39706
+2021-08,Fuerteventura,ES,35274
+2021-08,Fuerteventura,FR,14244
+2021-08,Fuerteventura,GB,17020
+2021-08,Fuerteventura,IE,1255
+2021-08,Fuerteventura,IT,11427
+2021-08,Fuerteventura,NL,4489
+2021-08,Fuerteventura,NORD,2995
+2021-08,Fuerteventura,OTROS,13596
+2021-08,Gran Canaria,BE,7617
+2021-08,Gran Canaria,DE,28468
+2021-08,Gran Canaria,ES,68367
+2021-08,Gran Canaria,FR,13156
+2021-08,Gran Canaria,GB,23019
+2021-08,Gran Canaria,IE,3430
+2021-08,Gran Canaria,IT,6165
+2021-08,Gran Canaria,NL,16954
+2021-08,Gran Canaria,NORD,6420
+2021-08,Gran Canaria,OTROS,20310
+2021-08,Lanzarote,BE,3114
+2021-08,Lanzarote,DE,11057
+2021-08,Lanzarote,ES,63066
+2021-08,Lanzarote,FR,13824
+2021-08,Lanzarote,GB,46661
+2021-08,Lanzarote,IE,16572
+2021-08,Lanzarote,IT,5994
+2021-08,Lanzarote,NL,5103
+2021-08,Lanzarote,NORD,1784
+2021-08,Lanzarote,OTROS,6809
+2021-08,Tenerife,BE,18321
+2021-08,Tenerife,DE,32339
+2021-08,Tenerife,ES,104534
+2021-08,Tenerife,FR,22681
+2021-08,Tenerife,GB,65234
+2021-08,Tenerife,IE,7508
+2021-08,Tenerife,IT,19319
+2021-08,Tenerife,NL,16097
+2021-08,Tenerife,NORD,1876
+2021-08,Tenerife,OTROS,38760
+2021-09,Fuerteventura,BE,1252
+2021-09,Fuerteventura,DE,44685
+2021-09,Fuerteventura,ES,20177
+2021-09,Fuerteventura,FR,6060
+2021-09,Fuerteventura,GB,19563
+2021-09,Fuerteventura,IE,1651
+2021-09,Fuerteventura,IT,7111
+2021-09,Fuerteventura,NL,3638
+2021-09,Fuerteventura,NORD,1438
+2021-09,Fuerteventura,OTROS,12801
+2021-09,Gran Canaria,BE,8179
+2021-09,Gran Canaria,DE,38616
+2021-09,Gran Canaria,ES,53074
+2021-09,Gran Canaria,FR,6999
+2021-09,Gran Canaria,GB,27656
+2021-09,Gran Canaria,IE,3717
+2021-09,Gran Canaria,IT,5866
+2021-09,Gran Canaria,NL,19603
+2021-09,Gran Canaria,NORD,10531
+2021-09,Gran Canaria,OTROS,20793
+2021-09,Lanzarote,BE,2660
+2021-09,Lanzarote,DE,13165
+2021-09,Lanzarote,ES,47544
+2021-09,Lanzarote,FR,8631
+2021-09,Lanzarote,GB,48206
+2021-09,Lanzarote,IE,13257
+2021-09,Lanzarote,IT,5100
+2021-09,Lanzarote,NL,4839
+2021-09,Lanzarote,NORD,2029
+2021-09,Lanzarote,OTROS,6553
+2021-09,Tenerife,BE,16111
+2021-09,Tenerife,DE,39381
+2021-09,Tenerife,ES,84830
+2021-09,Tenerife,FR,15998
+2021-09,Tenerife,GB,84470
+2021-09,Tenerife,IE,8220
+2021-09,Tenerife,IT,15340
+2021-09,Tenerife,NL,16346
+2021-09,Tenerife,NORD,2010
+2021-09,Tenerife,OTROS,41056
+2021-10,Fuerteventura,BE,1731
+2021-10,Fuerteventura,DE,68558
+2021-10,Fuerteventura,ES,15293
+2021-10,Fuerteventura,FR,11299
+2021-10,Fuerteventura,GB,33414
+2021-10,Fuerteventura,IE,2506
+2021-10,Fuerteventura,IT,9748
+2021-10,Fuerteventura,NL,5935
+2021-10,Fuerteventura,NORD,6985
+2021-10,Fuerteventura,OTROS,14348
+2021-10,Gran Canaria,BE,8269
+2021-10,Gran Canaria,DE,65072
+2021-10,Gran Canaria,ES,48060
+2021-10,Gran Canaria,FR,9105
+2021-10,Gran Canaria,GB,48269
+2021-10,Gran Canaria,IE,5510
+2021-10,Gran Canaria,IT,5482
+2021-10,Gran Canaria,NL,27822
+2021-10,Gran Canaria,NORD,49710
+2021-10,Gran Canaria,OTROS,25669
+2021-10,Lanzarote,BE,3438
+2021-10,Lanzarote,DE,26009
+2021-10,Lanzarote,ES,31829
+2021-10,Lanzarote,FR,14643
+2021-10,Lanzarote,GB,89640
+2021-10,Lanzarote,IE,18790
+2021-10,Lanzarote,IT,5250
+2021-10,Lanzarote,NL,9256
+2021-10,Lanzarote,NORD,7516
+2021-10,Lanzarote,OTROS,9276
+2021-10,Tenerife,BE,24297
+2021-10,Tenerife,DE,56587
+2021-10,Tenerife,ES,60378
+2021-10,Tenerife,FR,25293
+2021-10,Tenerife,GB,165280
+2021-10,Tenerife,IE,13485
+2021-10,Tenerife,IT,18106
+2021-10,Tenerife,NL,24676
+2021-10,Tenerife,NORD,17477
+2021-10,Tenerife,OTROS,52248
+2021-11,Fuerteventura,BE,1667
+2021-11,Fuerteventura,DE,68198
+2021-11,Fuerteventura,ES,9725
+2021-11,Fuerteventura,FR,11771
+2021-11,Fuerteventura,GB,30378
+2021-11,Fuerteventura,IE,2002
+2021-11,Fuerteventura,IT,8872
+2021-11,Fuerteventura,NL,4753
+2021-11,Fuerteventura,NORD,8248
+2021-11,Fuerteventura,OTROS,13050
+2021-11,Gran Canaria,BE,8841
+2021-11,Gran Canaria,DE,74613
+2021-11,Gran Canaria,ES,36285
+2021-11,Gran Canaria,FR,7962
+2021-11,Gran Canaria,GB,40501
+2021-11,Gran Canaria,IE,4619
+2021-11,Gran Canaria,IT,6129
+2021-11,Gran Canaria,NL,17720
+2021-11,Gran Canaria,NORD,83618
+2021-11,Gran Canaria,OTROS,24314
+2021-11,Lanzarote,BE,5315
+2021-11,Lanzarote,DE,34169
+2021-11,Lanzarote,ES,20480
+2021-11,Lanzarote,FR,18857
+2021-11,Lanzarote,GB,78745
+2021-11,Lanzarote,IE,12989
+2021-11,Lanzarote,IT,6424
+2021-11,Lanzarote,NL,8656
+2021-11,Lanzarote,NORD,9338
+2021-11,Lanzarote,OTROS,10037
+2021-11,Tenerife,BE,28259
+2021-11,Tenerife,DE,74599
+2021-11,Tenerife,ES,45726
+2021-11,Tenerife,FR,26752
+2021-11,Tenerife,GB,156715
+2021-11,Tenerife,IE,12158
+2021-11,Tenerife,IT,20845
+2021-11,Tenerife,NL,20794
+2021-11,Tenerife,NORD,38250
+2021-11,Tenerife,OTROS,52584
+2021-12,Fuerteventura,BE,1495
+2021-12,Fuerteventura,DE,58307
+2021-12,Fuerteventura,ES,11258
+2021-12,Fuerteventura,FR,12535
+2021-12,Fuerteventura,GB,22839
+2021-12,Fuerteventura,IE,2369
+2021-12,Fuerteventura,IT,8502
+2021-12,Fuerteventura,NL,4440
+2021-12,Fuerteventura,NORD,7155
+2021-12,Fuerteventura,OTROS,12690
+2021-12,Gran Canaria,BE,8375
+2021-12,Gran Canaria,DE,74094
+2021-12,Gran Canaria,ES,36317
+2021-12,Gran Canaria,FR,8488
+2021-12,Gran Canaria,GB,32457
+2021-12,Gran Canaria,IE,3953
+2021-12,Gran Canaria,IT,9038
+2021-12,Gran Canaria,NL,19276
+2021-12,Gran Canaria,NORD,95576
+2021-12,Gran Canaria,OTROS,28954
+2021-12,Lanzarote,BE,4657
+2021-12,Lanzarote,DE,29537
+2021-12,Lanzarote,ES,21409
+2021-12,Lanzarote,FR,15709
+2021-12,Lanzarote,GB,54354
+2021-12,Lanzarote,IE,11460
+2021-12,Lanzarote,IT,6761
+2021-12,Lanzarote,NL,7679
+2021-12,Lanzarote,NORD,8690
+2021-12,Lanzarote,OTROS,9568
+2021-12,Tenerife,BE,23591
+2021-12,Tenerife,DE,68414
+2021-12,Tenerife,ES,47830
+2021-12,Tenerife,FR,27178
+2021-12,Tenerife,GB,113796
+2021-12,Tenerife,IE,10641
+2021-12,Tenerife,IT,21010
+2021-12,Tenerife,NL,16706
+2021-12,Tenerife,NORD,34627
+2021-12,Tenerife,OTROS,51848
+2022-01,Fuerteventura,BE,1124
+2022-01,Fuerteventura,DE,34586
+2022-01,Fuerteventura,ES,7798
+2022-01,Fuerteventura,FR,6827
+2022-01,Fuerteventura,GB,19207
+2022-01,Fuerteventura,IE,2266
+2022-01,Fuerteventura,IT,5137
+2022-01,Fuerteventura,NL,4675
+2022-01,Fuerteventura,NORD,5859
+2022-01,Fuerteventura,OTROS,12632
+2022-01,Gran Canaria,BE,6604
+2022-01,Gran Canaria,DE,47997
+2022-01,Gran Canaria,ES,31705
+2022-01,Gran Canaria,FR,5205
+2022-01,Gran Canaria,GB,30773
+2022-01,Gran Canaria,IE,4663
+2022-01,Gran Canaria,IT,7457
+2022-01,Gran Canaria,NL,18569
+2022-01,Gran Canaria,NORD,77946
+2022-01,Gran Canaria,OTROS,25809
+2022-01,Lanzarote,BE,3449
+2022-01,Lanzarote,DE,16691
+2022-01,Lanzarote,ES,17162
+2022-01,Lanzarote,FR,8108
+2022-01,Lanzarote,GB,47077
+2022-01,Lanzarote,IE,14043
+2022-01,Lanzarote,IT,4436
+2022-01,Lanzarote,NL,7567
+2022-01,Lanzarote,NORD,8592
+2022-01,Lanzarote,OTROS,8517
+2022-01,Tenerife,BE,17765
+2022-01,Tenerife,DE,51945
+2022-01,Tenerife,ES,43307
+2022-01,Tenerife,FR,19956
+2022-01,Tenerife,GB,103859
+2022-01,Tenerife,IE,14518
+2022-01,Tenerife,IT,18991
+2022-01,Tenerife,NL,20168
+2022-01,Tenerife,NORD,35914
+2022-01,Tenerife,OTROS,54462
+2022-02,Fuerteventura,BE,1766
+2022-02,Fuerteventura,DE,52048
+2022-02,Fuerteventura,ES,8238
+2022-02,Fuerteventura,FR,15678
+2022-02,Fuerteventura,GB,39208
+2022-02,Fuerteventura,IE,2910
+2022-02,Fuerteventura,IT,5916
+2022-02,Fuerteventura,NL,5783
+2022-02,Fuerteventura,NORD,8277
+2022-02,Fuerteventura,OTROS,15945
+2022-02,Gran Canaria,BE,6607
+2022-02,Gran Canaria,DE,57292
+2022-02,Gran Canaria,ES,31579
+2022-02,Gran Canaria,FR,9091
+2022-02,Gran Canaria,GB,48339
+2022-02,Gran Canaria,IE,5652
+2022-02,Gran Canaria,IT,7575
+2022-02,Gran Canaria,NL,17851
+2022-02,Gran Canaria,NORD,82436
+2022-02,Gran Canaria,OTROS,28010
+2022-02,Lanzarote,BE,3494
+2022-02,Lanzarote,DE,27569
+2022-02,Lanzarote,ES,18661
+2022-02,Lanzarote,FR,15843
+2022-02,Lanzarote,GB,88549
+2022-02,Lanzarote,IE,14806
+2022-02,Lanzarote,IT,4883
+2022-02,Lanzarote,NL,8690
+2022-02,Lanzarote,NORD,9962
+2022-02,Lanzarote,OTROS,11324
+2022-02,Tenerife,BE,18453
+2022-02,Tenerife,DE,60227
+2022-02,Tenerife,ES,47073
+2022-02,Tenerife,FR,33272
+2022-02,Tenerife,GB,164086
+2022-02,Tenerife,IE,14194
+2022-02,Tenerife,IT,20325
+2022-02,Tenerife,NL,17151
+2022-02,Tenerife,NORD,35147
+2022-02,Tenerife,OTROS,62710
+2022-03,Fuerteventura,BE,1282
+2022-03,Fuerteventura,DE,66620
+2022-03,Fuerteventura,ES,9011
+2022-03,Fuerteventura,FR,13076
+2022-03,Fuerteventura,GB,46058
+2022-03,Fuerteventura,IE,2524
+2022-03,Fuerteventura,IT,8073
+2022-03,Fuerteventura,NL,6274
+2022-03,Fuerteventura,NORD,5988
+2022-03,Fuerteventura,OTROS,13631
+2022-03,Gran Canaria,BE,7171
+2022-03,Gran Canaria,DE,71279
+2022-03,Gran Canaria,ES,32527
+2022-03,Gran Canaria,FR,9305
+2022-03,Gran Canaria,GB,59669
+2022-03,Gran Canaria,IE,7078
+2022-03,Gran Canaria,IT,8245
+2022-03,Gran Canaria,NL,21079
+2022-03,Gran Canaria,NORD,79078
+2022-03,Gran Canaria,OTROS,29857
+2022-03,Lanzarote,BE,3414
+2022-03,Lanzarote,DE,32637
+2022-03,Lanzarote,ES,20995
+2022-03,Lanzarote,FR,15573
+2022-03,Lanzarote,GB,108708
+2022-03,Lanzarote,IE,18084
+2022-03,Lanzarote,IT,5890
+2022-03,Lanzarote,NL,10361
+2022-03,Lanzarote,NORD,8253
+2022-03,Lanzarote,OTROS,10571
+2022-03,Tenerife,BE,20121
+2022-03,Tenerife,DE,78859
+2022-03,Tenerife,ES,54323
+2022-03,Tenerife,FR,30044
+2022-03,Tenerife,GB,208490
+2022-03,Tenerife,IE,15780
+2022-03,Tenerife,IT,28148
+2022-03,Tenerife,NL,18259
+2022-03,Tenerife,NORD,35515
+2022-03,Tenerife,OTROS,60160
+2022-04,Fuerteventura,BE,1156
+2022-04,Fuerteventura,DE,64270
+2022-04,Fuerteventura,ES,12565
+2022-04,Fuerteventura,FR,12231
+2022-04,Fuerteventura,GB,50753
+2022-04,Fuerteventura,IE,2268
+2022-04,Fuerteventura,IT,8932
+2022-04,Fuerteventura,NL,5476
+2022-04,Fuerteventura,NORD,9691
+2022-04,Fuerteventura,OTROS,14325
+2022-04,Gran Canaria,BE,8482
+2022-04,Gran Canaria,DE,75348
+2022-04,Gran Canaria,ES,48011
+2022-04,Gran Canaria,FR,10564
+2022-04,Gran Canaria,GB,69519
+2022-04,Gran Canaria,IE,5788
+2022-04,Gran Canaria,IT,8397
+2022-04,Gran Canaria,NL,22774
+2022-04,Gran Canaria,NORD,76972
+2022-04,Gran Canaria,OTROS,30554
+2022-04,Lanzarote,BE,3244
+2022-04,Lanzarote,DE,23335
+2022-04,Lanzarote,ES,25911
+2022-04,Lanzarote,FR,18578
+2022-04,Lanzarote,GB,113846
+2022-04,Lanzarote,IE,18549
+2022-04,Lanzarote,IT,6856
+2022-04,Lanzarote,NL,8987
+2022-04,Lanzarote,NORD,9541
+2022-04,Lanzarote,OTROS,11504
+2022-04,Tenerife,BE,16750
+2022-04,Tenerife,DE,62780
+2022-04,Tenerife,ES,66966
+2022-04,Tenerife,FR,24199
+2022-04,Tenerife,GB,204182
+2022-04,Tenerife,IE,13732
+2022-04,Tenerife,IT,21384
+2022-04,Tenerife,NL,19185
+2022-04,Tenerife,NORD,35239
+2022-04,Tenerife,OTROS,58265
+2022-05,Fuerteventura,BE,1027
+2022-05,Fuerteventura,DE,48344
+2022-05,Fuerteventura,ES,14180
+2022-05,Fuerteventura,FR,10132
+2022-05,Fuerteventura,GB,46341
+2022-05,Fuerteventura,IE,3347
+2022-05,Fuerteventura,IT,12421
+2022-05,Fuerteventura,NL,4381
+2022-05,Fuerteventura,NORD,1840
+2022-05,Fuerteventura,OTROS,13201
+2022-05,Gran Canaria,BE,7711
+2022-05,Gran Canaria,DE,44536
+2022-05,Gran Canaria,ES,45785
+2022-05,Gran Canaria,FR,12095
+2022-05,Gran Canaria,GB,67949
+2022-05,Gran Canaria,IE,6618
+2022-05,Gran Canaria,IT,11274
+2022-05,Gran Canaria,NL,25301
+2022-05,Gran Canaria,NORD,12397
+2022-05,Gran Canaria,OTROS,26269
+2022-05,Lanzarote,BE,2974
+2022-05,Lanzarote,DE,15746
+2022-05,Lanzarote,ES,24247
+2022-05,Lanzarote,FR,15079
+2022-05,Lanzarote,GB,113721
+2022-05,Lanzarote,IE,23253
+2022-05,Lanzarote,IT,7485
+2022-05,Lanzarote,NL,6971
+2022-05,Lanzarote,NORD,2534
+2022-05,Lanzarote,OTROS,9244
+2022-05,Tenerife,BE,16131
+2022-05,Tenerife,DE,38082
+2022-05,Tenerife,ES,70441
+2022-05,Tenerife,FR,25698
+2022-05,Tenerife,GB,181143
+2022-05,Tenerife,IE,14844
+2022-05,Tenerife,IT,24030
+2022-05,Tenerife,NL,15985
+2022-05,Tenerife,NORD,2246
+2022-05,Tenerife,OTROS,42874
+2022-06,Fuerteventura,BE,1192
+2022-06,Fuerteventura,DE,55679
+2022-06,Fuerteventura,ES,16524
+2022-06,Fuerteventura,FR,8759
+2022-06,Fuerteventura,GB,50791
+2022-06,Fuerteventura,IE,3251
+2022-06,Fuerteventura,IT,12815
+2022-06,Fuerteventura,NL,4098
+2022-06,Fuerteventura,NORD,2459
+2022-06,Fuerteventura,OTROS,13154
+2022-06,Gran Canaria,BE,7394
+2022-06,Gran Canaria,DE,46973
+2022-06,Gran Canaria,ES,51671
+2022-06,Gran Canaria,FR,8645
+2022-06,Gran Canaria,GB,73727
+2022-06,Gran Canaria,IE,7077
+2022-06,Gran Canaria,IT,8020
+2022-06,Gran Canaria,NL,21730
+2022-06,Gran Canaria,NORD,16875
+2022-06,Gran Canaria,OTROS,23676
+2022-06,Lanzarote,BE,3904
+2022-06,Lanzarote,DE,15972
+2022-06,Lanzarote,ES,34452
+2022-06,Lanzarote,FR,12878
+2022-06,Lanzarote,GB,111946
+2022-06,Lanzarote,IE,27286
+2022-06,Lanzarote,IT,7843
+2022-06,Lanzarote,NL,5508
+2022-06,Lanzarote,NORD,2735
+2022-06,Lanzarote,OTROS,8078
+2022-06,Tenerife,BE,15426
+2022-06,Tenerife,DE,35541
+2022-06,Tenerife,ES,80820
+2022-06,Tenerife,FR,20601
+2022-06,Tenerife,GB,187751
+2022-06,Tenerife,IE,14305
+2022-06,Tenerife,IT,23297
+2022-06,Tenerife,NL,15433
+2022-06,Tenerife,NORD,3030
+2022-06,Tenerife,OTROS,42354
+2022-07,Fuerteventura,BE,1679
+2022-07,Fuerteventura,DE,62919
+2022-07,Fuerteventura,ES,20646
+2022-07,Fuerteventura,FR,13788
+2022-07,Fuerteventura,GB,57953
+2022-07,Fuerteventura,IE,3657
+2022-07,Fuerteventura,IT,13095
+2022-07,Fuerteventura,NL,5395
+2022-07,Fuerteventura,NORD,2225
+2022-07,Fuerteventura,OTROS,21567
+2022-07,Gran Canaria,BE,15527
+2022-07,Gran Canaria,DE,50689
+2022-07,Gran Canaria,ES,59853
+2022-07,Gran Canaria,FR,14588
+2022-07,Gran Canaria,GB,74895
+2022-07,Gran Canaria,IE,7665
+2022-07,Gran Canaria,IT,9380
+2022-07,Gran Canaria,NL,22084
+2022-07,Gran Canaria,NORD,25857
+2022-07,Gran Canaria,OTROS,35306
+2022-07,Lanzarote,BE,6856
+2022-07,Lanzarote,DE,17320
+2022-07,Lanzarote,ES,43639
+2022-07,Lanzarote,FR,16372
+2022-07,Lanzarote,GB,121039
+2022-07,Lanzarote,IE,31599
+2022-07,Lanzarote,IT,8290
+2022-07,Lanzarote,NL,6566
+2022-07,Lanzarote,NORD,4532
+2022-07,Lanzarote,OTROS,9789
+2022-07,Tenerife,BE,25965
+2022-07,Tenerife,DE,38667
+2022-07,Tenerife,ES,91680
+2022-07,Tenerife,FR,23309
+2022-07,Tenerife,GB,207344
+2022-07,Tenerife,IE,16916
+2022-07,Tenerife,IT,22882
+2022-07,Tenerife,NL,15577
+2022-07,Tenerife,NORD,4556
+2022-07,Tenerife,OTROS,52715
+2022-08,Fuerteventura,BE,362
+2022-08,Fuerteventura,DE,60937
+2022-08,Fuerteventura,ES,25384
+2022-08,Fuerteventura,FR,15183
+2022-08,Fuerteventura,GB,58487
+2022-08,Fuerteventura,IE,3488
+2022-08,Fuerteventura,IT,14195
+2022-08,Fuerteventura,NL,7109
+2022-08,Fuerteventura,NORD,1888
+2022-08,Fuerteventura,OTROS,20137
+2022-08,Gran Canaria,BE,11484
+2022-08,Gran Canaria,DE,49821
+2022-08,Gran Canaria,ES,70874
+2022-08,Gran Canaria,FR,17637
+2022-08,Gran Canaria,GB,82190
+2022-08,Gran Canaria,IE,7107
+2022-08,Gran Canaria,IT,12335
+2022-08,Gran Canaria,NL,28658
+2022-08,Gran Canaria,NORD,22151
+2022-08,Gran Canaria,OTROS,29883
+2022-08,Lanzarote,BE,5945
+2022-08,Lanzarote,DE,17117
+2022-08,Lanzarote,ES,53159
+2022-08,Lanzarote,FR,18038
+2022-08,Lanzarote,GB,124117
+2022-08,Lanzarote,IE,29097
+2022-08,Lanzarote,IT,9518
+2022-08,Lanzarote,NL,8343
+2022-08,Lanzarote,NORD,3816
+2022-08,Lanzarote,OTROS,9051
+2022-08,Tenerife,BE,20944
+2022-08,Tenerife,DE,40238
+2022-08,Tenerife,ES,103226
+2022-08,Tenerife,FR,30189
+2022-08,Tenerife,GB,210392
+2022-08,Tenerife,IE,14739
+2022-08,Tenerife,IT,22135
+2022-08,Tenerife,NL,20530
+2022-08,Tenerife,NORD,4030
+2022-08,Tenerife,OTROS,48996
+2022-09,Fuerteventura,BE,1627
+2022-09,Fuerteventura,DE,57889
+2022-09,Fuerteventura,ES,17336
+2022-09,Fuerteventura,FR,10747
+2022-09,Fuerteventura,GB,51806
+2022-09,Fuerteventura,IE,3387
+2022-09,Fuerteventura,IT,13418
+2022-09,Fuerteventura,NL,4798
+2022-09,Fuerteventura,NORD,3131
+2022-09,Fuerteventura,OTROS,15422
+2022-09,Gran Canaria,BE,8147
+2022-09,Gran Canaria,DE,49765
+2022-09,Gran Canaria,ES,52529
+2022-09,Gran Canaria,FR,11007
+2022-09,Gran Canaria,GB,73525
+2022-09,Gran Canaria,IE,5692
+2022-09,Gran Canaria,IT,9663
+2022-09,Gran Canaria,NL,23962
+2022-09,Gran Canaria,NORD,15115
+2022-09,Gran Canaria,OTROS,26135
+2022-09,Lanzarote,BE,3483
+2022-09,Lanzarote,DE,14558
+2022-09,Lanzarote,ES,36340
+2022-09,Lanzarote,FR,12537
+2022-09,Lanzarote,GB,113170
+2022-09,Lanzarote,IE,25603
+2022-09,Lanzarote,IT,8901
+2022-09,Lanzarote,NL,5680
+2022-09,Lanzarote,NORD,3175
+2022-09,Lanzarote,OTROS,8536
+2022-09,Tenerife,BE,16677
+2022-09,Tenerife,DE,40672
+2022-09,Tenerife,ES,83282
+2022-09,Tenerife,FR,20533
+2022-09,Tenerife,GB,188854
+2022-09,Tenerife,IE,16419
+2022-09,Tenerife,IT,22534
+2022-09,Tenerife,NL,16471
+2022-09,Tenerife,NORD,3114
+2022-09,Tenerife,OTROS,44797
+2022-10,Fuerteventura,BE,1194
+2022-10,Fuerteventura,DE,72022
+2022-10,Fuerteventura,ES,14770
+2022-10,Fuerteventura,FR,14918
+2022-10,Fuerteventura,GB,61777
+2022-10,Fuerteventura,IE,3168
+2022-10,Fuerteventura,IT,13644
+2022-10,Fuerteventura,NL,5468
+2022-10,Fuerteventura,NORD,5903
+2022-10,Fuerteventura,OTROS,16338
+2022-10,Gran Canaria,BE,8313
+2022-10,Gran Canaria,DE,63490
+2022-10,Gran Canaria,ES,50491
+2022-10,Gran Canaria,FR,12411
+2022-10,Gran Canaria,GB,78199
+2022-10,Gran Canaria,IE,6669
+2022-10,Gran Canaria,IT,10001
+2022-10,Gran Canaria,NL,30341
+2022-10,Gran Canaria,NORD,82365
+2022-10,Gran Canaria,OTROS,33335
+2022-10,Lanzarote,BE,4064
+2022-10,Lanzarote,DE,21531
+2022-10,Lanzarote,ES,32071
+2022-10,Lanzarote,FR,18690
+2022-10,Lanzarote,GB,133343
+2022-10,Lanzarote,IE,24128
+2022-10,Lanzarote,IT,9968
+2022-10,Lanzarote,NL,7860
+2022-10,Lanzarote,NORD,8465
+2022-10,Lanzarote,OTROS,11974
+2022-10,Tenerife,BE,17412
+2022-10,Tenerife,DE,50209
+2022-10,Tenerife,ES,70522
+2022-10,Tenerife,FR,28637
+2022-10,Tenerife,GB,212926
+2022-10,Tenerife,IE,15143
+2022-10,Tenerife,IT,21459
+2022-10,Tenerife,NL,21595
+2022-10,Tenerife,NORD,31816
+2022-10,Tenerife,OTROS,57520
+2022-11,Fuerteventura,BE,2377
+2022-11,Fuerteventura,DE,69491
+2022-11,Fuerteventura,ES,10550
+2022-11,Fuerteventura,FR,10589
+2022-11,Fuerteventura,GB,58025
+2022-11,Fuerteventura,IE,4497
+2022-11,Fuerteventura,IT,9488
+2022-11,Fuerteventura,NL,6272
+2022-11,Fuerteventura,NORD,8094
+2022-11,Fuerteventura,OTROS,15346
+2022-11,Gran Canaria,BE,8792
+2022-11,Gran Canaria,DE,79743
+2022-11,Gran Canaria,ES,37848
+2022-11,Gran Canaria,FR,11105
+2022-11,Gran Canaria,GB,59694
+2022-11,Gran Canaria,IE,8225
+2022-11,Gran Canaria,IT,10691
+2022-11,Gran Canaria,NL,20536
+2022-11,Gran Canaria,NORD,121005
+2022-11,Gran Canaria,OTROS,31214
+2022-11,Lanzarote,BE,4193
+2022-11,Lanzarote,DE,31083
+2022-11,Lanzarote,ES,20525
+2022-11,Lanzarote,FR,13899
+2022-11,Lanzarote,GB,110776
+2022-11,Lanzarote,IE,22321
+2022-11,Lanzarote,IT,7152
+2022-11,Lanzarote,NL,8390
+2022-11,Lanzarote,NORD,10508
+2022-11,Lanzarote,OTROS,9231
+2022-11,Tenerife,BE,21901
+2022-11,Tenerife,DE,86667
+2022-11,Tenerife,ES,65263
+2022-11,Tenerife,FR,27763
+2022-11,Tenerife,GB,189577
+2022-11,Tenerife,IE,16899
+2022-11,Tenerife,IT,28551
+2022-11,Tenerife,NL,20266
+2022-11,Tenerife,NORD,56136
+2022-11,Tenerife,OTROS,62081
+2022-12,Fuerteventura,BE,3297
+2022-12,Fuerteventura,DE,70976
+2022-12,Fuerteventura,ES,12193
+2022-12,Fuerteventura,FR,14066
+2022-12,Fuerteventura,GB,64520
+2022-12,Fuerteventura,IE,4561
+2022-12,Fuerteventura,IT,10761
+2022-12,Fuerteventura,NL,6011
+2022-12,Fuerteventura,NORD,8113
+2022-12,Fuerteventura,OTROS,15653
+2022-12,Gran Canaria,BE,9740
+2022-12,Gran Canaria,DE,84026
+2022-12,Gran Canaria,ES,38336
+2022-12,Gran Canaria,FR,14716
+2022-12,Gran Canaria,GB,74009
+2022-12,Gran Canaria,IE,8891
+2022-12,Gran Canaria,IT,11215
+2022-12,Gran Canaria,NL,22387
+2022-12,Gran Canaria,NORD,124066
+2022-12,Gran Canaria,OTROS,34099
+2022-12,Lanzarote,BE,5361
+2022-12,Lanzarote,DE,30356
+2022-12,Lanzarote,ES,23032
+2022-12,Lanzarote,FR,19651
+2022-12,Lanzarote,GB,125215
+2022-12,Lanzarote,IE,21145
+2022-12,Lanzarote,IT,8532
+2022-12,Lanzarote,NL,9157
+2022-12,Lanzarote,NORD,9481
+2022-12,Lanzarote,OTROS,11829
+2022-12,Tenerife,BE,23029
+2022-12,Tenerife,DE,82431
+2022-12,Tenerife,ES,58303
+2022-12,Tenerife,FR,34366
+2022-12,Tenerife,GB,216747
+2022-12,Tenerife,IE,15120
+2022-12,Tenerife,IT,27845
+2022-12,Tenerife,NL,16789
+2022-12,Tenerife,NORD,47856
+2022-12,Tenerife,OTROS,62312
+2023-01,Fuerteventura,BE,2339
+2023-01,Fuerteventura,DE,57899
+2023-01,Fuerteventura,ES,10721
+2023-01,Fuerteventura,FR,10368
+2023-01,Fuerteventura,GB,49724
+2023-01,Fuerteventura,IE,3684
+2023-01,Fuerteventura,IT,11236
+2023-01,Fuerteventura,NL,5365
+2023-01,Fuerteventura,NORD,9037
+2023-01,Fuerteventura,OTROS,19154
+2023-01,Gran Canaria,BE,8166
+2023-01,Gran Canaria,DE,82622
+2023-01,Gran Canaria,ES,41643
+2023-01,Gran Canaria,FR,11423
+2023-01,Gran Canaria,GB,61128
+2023-01,Gran Canaria,IE,10809
+2023-01,Gran Canaria,IT,13386
+2023-01,Gran Canaria,NL,22662
+2023-01,Gran Canaria,NORD,120536
+2023-01,Gran Canaria,OTROS,36768
+2023-01,Lanzarote,BE,4429
+2023-01,Lanzarote,DE,28749
+2023-01,Lanzarote,ES,23947
+2023-01,Lanzarote,FR,14267
+2023-01,Lanzarote,GB,104731
+2023-01,Lanzarote,IE,25949
+2023-01,Lanzarote,IT,8746
+2023-01,Lanzarote,NL,9119
+2023-01,Lanzarote,NORD,10168
+2023-01,Lanzarote,OTROS,12251
+2023-01,Tenerife,BE,18621
+2023-01,Tenerife,DE,72180
+2023-01,Tenerife,ES,72452
+2023-01,Tenerife,FR,25830
+2023-01,Tenerife,GB,183141
+2023-01,Tenerife,IE,16833
+2023-01,Tenerife,IT,28916
+2023-01,Tenerife,NL,15700
+2023-01,Tenerife,NORD,58453
+2023-01,Tenerife,OTROS,70412
+2023-02,Fuerteventura,BE,2375
+2023-02,Fuerteventura,DE,64945
+2023-02,Fuerteventura,ES,10544
+2023-02,Fuerteventura,FR,14068
+2023-02,Fuerteventura,GB,63024
+2023-02,Fuerteventura,IE,4212
+2023-02,Fuerteventura,IT,6228
+2023-02,Fuerteventura,NL,5475
+2023-02,Fuerteventura,NORD,8770
+2023-02,Fuerteventura,OTROS,22946
+2023-02,Gran Canaria,BE,7005
+2023-02,Gran Canaria,DE,81919
+2023-02,Gran Canaria,ES,31124
+2023-02,Gran Canaria,FR,17476
+2023-02,Gran Canaria,GB,67064
+2023-02,Gran Canaria,IE,9246
+2023-02,Gran Canaria,IT,9987
+2023-02,Gran Canaria,NL,19990
+2023-02,Gran Canaria,NORD,113084
+2023-02,Gran Canaria,OTROS,40382
+2023-02,Lanzarote,BE,4929
+2023-02,Lanzarote,DE,37071
+2023-02,Lanzarote,ES,17049
+2023-02,Lanzarote,FR,22724
+2023-02,Lanzarote,GB,115484
+2023-02,Lanzarote,IE,26348
+2023-02,Lanzarote,IT,7766
+2023-02,Lanzarote,NL,7656
+2023-02,Lanzarote,NORD,9503
+2023-02,Lanzarote,OTROS,13695
+2023-02,Tenerife,BE,19984
+2023-02,Tenerife,DE,80300
+2023-02,Tenerife,ES,56963
+2023-02,Tenerife,FR,34332
+2023-02,Tenerife,GB,187510
+2023-02,Tenerife,IE,13218
+2023-02,Tenerife,IT,23846
+2023-02,Tenerife,NL,15197
+2023-02,Tenerife,NORD,54306
+2023-02,Tenerife,OTROS,77372
+2023-03,Fuerteventura,BE,2372
+2023-03,Fuerteventura,DE,73139
+2023-03,Fuerteventura,ES,12947
+2023-03,Fuerteventura,FR,12707
+2023-03,Fuerteventura,GB,67344
+2023-03,Fuerteventura,IE,5445
+2023-03,Fuerteventura,IT,10129
+2023-03,Fuerteventura,NL,5573
+2023-03,Fuerteventura,NORD,8621
+2023-03,Fuerteventura,OTROS,17295
+2023-03,Gran Canaria,BE,7479
+2023-03,Gran Canaria,DE,83025
+2023-03,Gran Canaria,ES,42342
+2023-03,Gran Canaria,FR,11664
+2023-03,Gran Canaria,GB,75268
+2023-03,Gran Canaria,IE,9604
+2023-03,Gran Canaria,IT,10858
+2023-03,Gran Canaria,NL,21092
+2023-03,Gran Canaria,NORD,104368
+2023-03,Gran Canaria,OTROS,37312
+2023-03,Lanzarote,BE,3820
+2023-03,Lanzarote,DE,34370
+2023-03,Lanzarote,ES,21602
+2023-03,Lanzarote,FR,18184
+2023-03,Lanzarote,GB,135428
+2023-03,Lanzarote,IE,26248
+2023-03,Lanzarote,IT,7805
+2023-03,Lanzarote,NL,8901
+2023-03,Lanzarote,NORD,9478
+2023-03,Lanzarote,OTROS,9914
+2023-03,Tenerife,BE,19539
+2023-03,Tenerife,DE,88466
+2023-03,Tenerife,ES,63907
+2023-03,Tenerife,FR,30281
+2023-03,Tenerife,GB,216636
+2023-03,Tenerife,IE,16198
+2023-03,Tenerife,IT,26386
+2023-03,Tenerife,NL,18805
+2023-03,Tenerife,NORD,44794
+2023-03,Tenerife,OTROS,68969
+2023-04,Fuerteventura,BE,1596
+2023-04,Fuerteventura,DE,75117
+2023-04,Fuerteventura,ES,13999
+2023-04,Fuerteventura,FR,13005
+2023-04,Fuerteventura,GB,58238
+2023-04,Fuerteventura,IE,5776
+2023-04,Fuerteventura,IT,9828
+2023-04,Fuerteventura,NL,6119
+2023-04,Fuerteventura,NORD,3698
+2023-04,Fuerteventura,OTROS,17591
+2023-04,Gran Canaria,BE,12553
+2023-04,Gran Canaria,DE,78670
+2023-04,Gran Canaria,ES,47516
+2023-04,Gran Canaria,FR,13626
+2023-04,Gran Canaria,GB,77088
+2023-04,Gran Canaria,IE,8122
+2023-04,Gran Canaria,IT,9224
+2023-04,Gran Canaria,NL,19882
+2023-04,Gran Canaria,NORD,52091
+2023-04,Gran Canaria,OTROS,35360
+2023-04,Lanzarote,BE,7003
+2023-04,Lanzarote,DE,31448
+2023-04,Lanzarote,ES,25419
+2023-04,Lanzarote,FR,21178
+2023-04,Lanzarote,GB,126707
+2023-04,Lanzarote,IE,28853
+2023-04,Lanzarote,IT,8189
+2023-04,Lanzarote,NL,5565
+2023-04,Lanzarote,NORD,4011
+2023-04,Lanzarote,OTROS,8548
+2023-04,Tenerife,BE,21074
+2023-04,Tenerife,DE,72893
+2023-04,Tenerife,ES,76545
+2023-04,Tenerife,FR,31454
+2023-04,Tenerife,GB,200761
+2023-04,Tenerife,IE,17768
+2023-04,Tenerife,IT,23079
+2023-04,Tenerife,NL,19249
+2023-04,Tenerife,NORD,21474
+2023-04,Tenerife,OTROS,70938
+2023-05,Fuerteventura,BE,2115
+2023-05,Fuerteventura,DE,52590
+2023-05,Fuerteventura,ES,13917
+2023-05,Fuerteventura,FR,8573
+2023-05,Fuerteventura,GB,55044
+2023-05,Fuerteventura,IE,5166
+2023-05,Fuerteventura,IT,9668
+2023-05,Fuerteventura,NL,3802
+2023-05,Fuerteventura,NORD,3118
+2023-05,Fuerteventura,OTROS,13557
+2023-05,Gran Canaria,BE,9330
+2023-05,Gran Canaria,DE,46613
+2023-05,Gran Canaria,ES,42036
+2023-05,Gran Canaria,FR,12643
+2023-05,Gran Canaria,GB,75019
+2023-05,Gran Canaria,IE,8316
+2023-05,Gran Canaria,IT,9877
+2023-05,Gran Canaria,NL,20538
+2023-05,Gran Canaria,NORD,16833
+2023-05,Gran Canaria,OTROS,30417
+2023-05,Lanzarote,BE,5138
+2023-05,Lanzarote,DE,14999
+2023-05,Lanzarote,ES,24588
+2023-05,Lanzarote,FR,16587
+2023-05,Lanzarote,GB,123913
+2023-05,Lanzarote,IE,29348
+2023-05,Lanzarote,IT,7734
+2023-05,Lanzarote,NL,6248
+2023-05,Lanzarote,NORD,1705
+2023-05,Lanzarote,OTROS,8107
+2023-05,Tenerife,BE,19394
+2023-05,Tenerife,DE,42597
+2023-05,Tenerife,ES,68854
+2023-05,Tenerife,FR,25285
+2023-05,Tenerife,GB,199772
+2023-05,Tenerife,IE,14723
+2023-05,Tenerife,IT,24487
+2023-05,Tenerife,NL,16498
+2023-05,Tenerife,NORD,2761
+2023-05,Tenerife,OTROS,50396
+2023-06,Fuerteventura,BE,1506
+2023-06,Fuerteventura,DE,52959
+2023-06,Fuerteventura,ES,15536
+2023-06,Fuerteventura,FR,7681
+2023-06,Fuerteventura,GB,53755
+2023-06,Fuerteventura,IE,5805
+2023-06,Fuerteventura,IT,9640
+2023-06,Fuerteventura,NL,3905
+2023-06,Fuerteventura,NORD,2293
+2023-06,Fuerteventura,OTROS,20679
+2023-06,Gran Canaria,BE,6809
+2023-06,Gran Canaria,DE,44581
+2023-06,Gran Canaria,ES,45708
+2023-06,Gran Canaria,FR,10117
+2023-06,Gran Canaria,GB,80776
+2023-06,Gran Canaria,IE,8611
+2023-06,Gran Canaria,IT,8843
+2023-06,Gran Canaria,NL,17288
+2023-06,Gran Canaria,NORD,16852
+2023-06,Gran Canaria,OTROS,30684
+2023-06,Lanzarote,BE,4048
+2023-06,Lanzarote,DE,15775
+2023-06,Lanzarote,ES,29385
+2023-06,Lanzarote,FR,14600
+2023-06,Lanzarote,GB,125808
+2023-06,Lanzarote,IE,31304
+2023-06,Lanzarote,IT,7272
+2023-06,Lanzarote,NL,4550
+2023-06,Lanzarote,NORD,2082
+2023-06,Lanzarote,OTROS,6535
+2023-06,Tenerife,BE,15271
+2023-06,Tenerife,DE,42507
+2023-06,Tenerife,ES,82727
+2023-06,Tenerife,FR,20249
+2023-06,Tenerife,GB,202804
+2023-06,Tenerife,IE,16089
+2023-06,Tenerife,IT,21763
+2023-06,Tenerife,NL,16687
+2023-06,Tenerife,NORD,3330
+2023-06,Tenerife,OTROS,51324
+2023-07,Fuerteventura,BE,2276
+2023-07,Fuerteventura,DE,55142
+2023-07,Fuerteventura,ES,21240
+2023-07,Fuerteventura,FR,14453
+2023-07,Fuerteventura,GB,59383
+2023-07,Fuerteventura,IE,5944
+2023-07,Fuerteventura,IT,9902
+2023-07,Fuerteventura,NL,3988
+2023-07,Fuerteventura,NORD,3546
+2023-07,Fuerteventura,OTROS,21798
+2023-07,Gran Canaria,BE,12458
+2023-07,Gran Canaria,DE,47470
+2023-07,Gran Canaria,ES,53133
+2023-07,Gran Canaria,FR,14076
+2023-07,Gran Canaria,GB,84826
+2023-07,Gran Canaria,IE,9646
+2023-07,Gran Canaria,IT,9055
+2023-07,Gran Canaria,NL,24329
+2023-07,Gran Canaria,NORD,32413
+2023-07,Gran Canaria,OTROS,39617
+2023-07,Lanzarote,BE,6317
+2023-07,Lanzarote,DE,15011
+2023-07,Lanzarote,ES,40105
+2023-07,Lanzarote,FR,19883
+2023-07,Lanzarote,GB,131972
+2023-07,Lanzarote,IE,36343
+2023-07,Lanzarote,IT,8209
+2023-07,Lanzarote,NL,5447
+2023-07,Lanzarote,NORD,1892
+2023-07,Lanzarote,OTROS,10294
+2023-07,Tenerife,BE,21312
+2023-07,Tenerife,DE,41429
+2023-07,Tenerife,ES,91719
+2023-07,Tenerife,FR,26830
+2023-07,Tenerife,GB,215412
+2023-07,Tenerife,IE,18546
+2023-07,Tenerife,IT,21403
+2023-07,Tenerife,NL,19695
+2023-07,Tenerife,NORD,6744
+2023-07,Tenerife,OTROS,59670
+2023-08,Fuerteventura,BE,957
+2023-08,Fuerteventura,DE,52100
+2023-08,Fuerteventura,ES,23362
+2023-08,Fuerteventura,FR,13260
+2023-08,Fuerteventura,GB,59913
+2023-08,Fuerteventura,IE,5674
+2023-08,Fuerteventura,IT,11837
+2023-08,Fuerteventura,NL,5976
+2023-08,Fuerteventura,NORD,2610
+2023-08,Fuerteventura,OTROS,21905
+2023-08,Gran Canaria,BE,8173
+2023-08,Gran Canaria,DE,50259
+2023-08,Gran Canaria,ES,60040
+2023-08,Gran Canaria,FR,16157
+2023-08,Gran Canaria,GB,84480
+2023-08,Gran Canaria,IE,10255
+2023-08,Gran Canaria,IT,10852
+2023-08,Gran Canaria,NL,26382
+2023-08,Gran Canaria,NORD,23093
+2023-08,Gran Canaria,OTROS,36420
+2023-08,Lanzarote,BE,4741
+2023-08,Lanzarote,DE,13890
+2023-08,Lanzarote,ES,42726
+2023-08,Lanzarote,FR,20064
+2023-08,Lanzarote,GB,134425
+2023-08,Lanzarote,IE,30586
+2023-08,Lanzarote,IT,9796
+2023-08,Lanzarote,NL,8027
+2023-08,Lanzarote,NORD,2059
+2023-08,Lanzarote,OTROS,8939
+2023-08,Tenerife,BE,17052
+2023-08,Tenerife,DE,43432
+2023-08,Tenerife,ES,107871
+2023-08,Tenerife,FR,28003
+2023-08,Tenerife,GB,211373
+2023-08,Tenerife,IE,14518
+2023-08,Tenerife,IT,27982
+2023-08,Tenerife,NL,26710
+2023-08,Tenerife,NORD,5289
+2023-08,Tenerife,OTROS,53594
+2023-09,Fuerteventura,BE,1245
+2023-09,Fuerteventura,DE,60236
+2023-09,Fuerteventura,ES,17846
+2023-09,Fuerteventura,FR,9526
+2023-09,Fuerteventura,GB,56583
+2023-09,Fuerteventura,IE,5288
+2023-09,Fuerteventura,IT,10430
+2023-09,Fuerteventura,NL,4674
+2023-09,Fuerteventura,NORD,1532
+2023-09,Fuerteventura,OTROS,18860
+2023-09,Gran Canaria,BE,9080
+2023-09,Gran Canaria,DE,53758
+2023-09,Gran Canaria,ES,51293
+2023-09,Gran Canaria,FR,11915
+2023-09,Gran Canaria,GB,78536
+2023-09,Gran Canaria,IE,8453
+2023-09,Gran Canaria,IT,8541
+2023-09,Gran Canaria,NL,23687
+2023-09,Gran Canaria,NORD,22536
+2023-09,Gran Canaria,OTROS,31688
+2023-09,Lanzarote,BE,4188
+2023-09,Lanzarote,DE,16656
+2023-09,Lanzarote,ES,34560
+2023-09,Lanzarote,FR,16489
+2023-09,Lanzarote,GB,121068
+2023-09,Lanzarote,IE,29036
+2023-09,Lanzarote,IT,8253
+2023-09,Lanzarote,NL,4542
+2023-09,Lanzarote,NORD,2121
+2023-09,Lanzarote,OTROS,8078
+2023-09,Tenerife,BE,17170
+2023-09,Tenerife,DE,45915
+2023-09,Tenerife,ES,84648
+2023-09,Tenerife,FR,23136
+2023-09,Tenerife,GB,204282
+2023-09,Tenerife,IE,16860
+2023-09,Tenerife,IT,21847
+2023-09,Tenerife,NL,19760
+2023-09,Tenerife,NORD,5668
+2023-09,Tenerife,OTROS,51536
+2023-10,Fuerteventura,BE,1414
+2023-10,Fuerteventura,DE,68662
+2023-10,Fuerteventura,ES,12959
+2023-10,Fuerteventura,FR,13346
+2023-10,Fuerteventura,GB,63911
+2023-10,Fuerteventura,IE,6100
+2023-10,Fuerteventura,IT,9735
+2023-10,Fuerteventura,NL,6505
+2023-10,Fuerteventura,NORD,5766
+2023-10,Fuerteventura,OTROS,19671
+2023-10,Gran Canaria,BE,7939
+2023-10,Gran Canaria,DE,75406
+2023-10,Gran Canaria,ES,41168
+2023-10,Gran Canaria,FR,14987
+2023-10,Gran Canaria,GB,85410
+2023-10,Gran Canaria,IE,8725
+2023-10,Gran Canaria,IT,9393
+2023-10,Gran Canaria,NL,33098
+2023-10,Gran Canaria,NORD,80064
+2023-10,Gran Canaria,OTROS,36337
+2023-10,Lanzarote,BE,4749
+2023-10,Lanzarote,DE,24145
+2023-10,Lanzarote,ES,27001
+2023-10,Lanzarote,FR,20968
+2023-10,Lanzarote,GB,139692
+2023-10,Lanzarote,IE,27700
+2023-10,Lanzarote,IT,9882
+2023-10,Lanzarote,NL,6636
+2023-10,Lanzarote,NORD,5252
+2023-10,Lanzarote,OTROS,11712
+2023-10,Tenerife,BE,19261
+2023-10,Tenerife,DE,56734
+2023-10,Tenerife,ES,74242
+2023-10,Tenerife,FR,29055
+2023-10,Tenerife,GB,226208
+2023-10,Tenerife,IE,19488
+2023-10,Tenerife,IT,29154
+2023-10,Tenerife,NL,24716
+2023-10,Tenerife,NORD,31991
+2023-10,Tenerife,OTROS,59148
+2023-11,Fuerteventura,BE,2894
+2023-11,Fuerteventura,DE,71870
+2023-11,Fuerteventura,ES,11827
+2023-11,Fuerteventura,FR,8895
+2023-11,Fuerteventura,GB,70756
+2023-11,Fuerteventura,IE,5948
+2023-11,Fuerteventura,IT,11297
+2023-11,Fuerteventura,NL,5733
+2023-11,Fuerteventura,NORD,8694
+2023-11,Fuerteventura,OTROS,18263
+2023-11,Gran Canaria,BE,9316
+2023-11,Gran Canaria,DE,78934
+2023-11,Gran Canaria,ES,38808
+2023-11,Gran Canaria,FR,12000
+2023-11,Gran Canaria,GB,81873
+2023-11,Gran Canaria,IE,9547
+2023-11,Gran Canaria,IT,13668
+2023-11,Gran Canaria,NL,21309
+2023-11,Gran Canaria,NORD,123080
+2023-11,Gran Canaria,OTROS,36437
+2023-11,Lanzarote,BE,5284
+2023-11,Lanzarote,DE,39019
+2023-11,Lanzarote,ES,18209
+2023-11,Lanzarote,FR,16765
+2023-11,Lanzarote,GB,129717
+2023-11,Lanzarote,IE,33582
+2023-11,Lanzarote,IT,7684
+2023-11,Lanzarote,NL,5884
+2023-11,Lanzarote,NORD,8907
+2023-11,Lanzarote,OTROS,12810
+2023-11,Tenerife,BE,24153
+2023-11,Tenerife,DE,92291
+2023-11,Tenerife,ES,56527
+2023-11,Tenerife,FR,28531
+2023-11,Tenerife,GB,216801
+2023-11,Tenerife,IE,22883
+2023-11,Tenerife,IT,32291
+2023-11,Tenerife,NL,22558
+2023-11,Tenerife,NORD,49277
+2023-11,Tenerife,OTROS,59753
+2023-12,Fuerteventura,BE,3728
+2023-12,Fuerteventura,DE,75198
+2023-12,Fuerteventura,ES,12577
+2023-12,Fuerteventura,FR,10771
+2023-12,Fuerteventura,GB,79984
+2023-12,Fuerteventura,IE,5552
+2023-12,Fuerteventura,IT,10693
+2023-12,Fuerteventura,NL,6220
+2023-12,Fuerteventura,NORD,8832
+2023-12,Fuerteventura,OTROS,17339
+2023-12,Gran Canaria,BE,10664
+2023-12,Gran Canaria,DE,96403
+2023-12,Gran Canaria,ES,34390
+2023-12,Gran Canaria,FR,12661
+2023-12,Gran Canaria,GB,95981
+2023-12,Gran Canaria,IE,9432
+2023-12,Gran Canaria,IT,13150
+2023-12,Gran Canaria,NL,23070
+2023-12,Gran Canaria,NORD,131889
+2023-12,Gran Canaria,OTROS,37460
+2023-12,Lanzarote,BE,5075
+2023-12,Lanzarote,DE,34075
+2023-12,Lanzarote,ES,21262
+2023-12,Lanzarote,FR,21417
+2023-12,Lanzarote,GB,149841
+2023-12,Lanzarote,IE,25428
+2023-12,Lanzarote,IT,9642
+2023-12,Lanzarote,NL,8622
+2023-12,Lanzarote,NORD,10174
+2023-12,Lanzarote,OTROS,15217
+2023-12,Tenerife,BE,25432
+2023-12,Tenerife,DE,94800
+2023-12,Tenerife,ES,57962
+2023-12,Tenerife,FR,32911
+2023-12,Tenerife,GB,235730
+2023-12,Tenerife,IE,18830
+2023-12,Tenerife,IT,33234
+2023-12,Tenerife,NL,22500
+2023-12,Tenerife,NORD,52490
+2023-12,Tenerife,OTROS,62173
+2024-01,Fuerteventura,BE,3462
+2024-01,Fuerteventura,DE,66659
+2024-01,Fuerteventura,ES,10866
+2024-01,Fuerteventura,FR,8907
+2024-01,Fuerteventura,GB,65177
+2024-01,Fuerteventura,IE,6440
+2024-01,Fuerteventura,IT,12199
+2024-01,Fuerteventura,NL,7218
+2024-01,Fuerteventura,NORD,11494
+2024-01,Fuerteventura,OTROS,25017
+2024-01,Gran Canaria,BE,8027
+2024-01,Gran Canaria,DE,85438
+2024-01,Gran Canaria,ES,44182
+2024-01,Gran Canaria,FR,11241
+2024-01,Gran Canaria,GB,79607
+2024-01,Gran Canaria,IE,11684
+2024-01,Gran Canaria,IT,15480
+2024-01,Gran Canaria,NL,26080
+2024-01,Gran Canaria,NORD,125146
+2024-01,Gran Canaria,OTROS,41493
+2024-01,Lanzarote,BE,5088
+2024-01,Lanzarote,DE,35893
+2024-01,Lanzarote,ES,19383
+2024-01,Lanzarote,FR,15978
+2024-01,Lanzarote,GB,124952
+2024-01,Lanzarote,IE,29757
+2024-01,Lanzarote,IT,7732
+2024-01,Lanzarote,NL,9286
+2024-01,Lanzarote,NORD,8834
+2024-01,Lanzarote,OTROS,15029
+2024-01,Tenerife,BE,22472
+2024-01,Tenerife,DE,93805
+2024-01,Tenerife,ES,70265
+2024-01,Tenerife,FR,29091
+2024-01,Tenerife,GB,203833
+2024-01,Tenerife,IE,22098
+2024-01,Tenerife,IT,36861
+2024-01,Tenerife,NL,19477
+2024-01,Tenerife,NORD,56044
+2024-01,Tenerife,OTROS,77229
+2024-02,Fuerteventura,BE,3969
+2024-02,Fuerteventura,DE,79714
+2024-02,Fuerteventura,ES,10620
+2024-02,Fuerteventura,FR,12596
+2024-02,Fuerteventura,GB,71170
+2024-02,Fuerteventura,IE,6405
+2024-02,Fuerteventura,IT,9932
+2024-02,Fuerteventura,NL,10971
+2024-02,Fuerteventura,NORD,9740
+2024-02,Fuerteventura,OTROS,24853
+2024-02,Gran Canaria,BE,9568
+2024-02,Gran Canaria,DE,84456
+2024-02,Gran Canaria,ES,39895
+2024-02,Gran Canaria,FR,15331
+2024-02,Gran Canaria,GB,78841
+2024-02,Gran Canaria,IE,10898
+2024-02,Gran Canaria,IT,13170
+2024-02,Gran Canaria,NL,28992
+2024-02,Gran Canaria,NORD,125542
+2024-02,Gran Canaria,OTROS,50614
+2024-02,Lanzarote,BE,7635
+2024-02,Lanzarote,DE,44215
+2024-02,Lanzarote,ES,17909
+2024-02,Lanzarote,FR,21293
+2024-02,Lanzarote,GB,142783
+2024-02,Lanzarote,IE,29107
+2024-02,Lanzarote,IT,7632
+2024-02,Lanzarote,NL,11494
+2024-02,Lanzarote,NORD,8999
+2024-02,Lanzarote,OTROS,12572
+2024-02,Tenerife,BE,21798
+2024-02,Tenerife,DE,96344
+2024-02,Tenerife,ES,63689
+2024-02,Tenerife,FR,34600
+2024-02,Tenerife,GB,223622
+2024-02,Tenerife,IE,19999
+2024-02,Tenerife,IT,33843
+2024-02,Tenerife,NL,22490
+2024-02,Tenerife,NORD,56820
+2024-02,Tenerife,OTROS,83720
+2024-03,Fuerteventura,BE,2917
+2024-03,Fuerteventura,DE,93130
+2024-03,Fuerteventura,ES,13815
+2024-03,Fuerteventura,FR,13540
+2024-03,Fuerteventura,GB,78399
+2024-03,Fuerteventura,IE,6859
+2024-03,Fuerteventura,IT,10730
+2024-03,Fuerteventura,NL,5712
+2024-03,Fuerteventura,NORD,7617
+2024-03,Fuerteventura,OTROS,20739
+2024-03,Gran Canaria,BE,11622
+2024-03,Gran Canaria,DE,113085
+2024-03,Gran Canaria,ES,44953
+2024-03,Gran Canaria,FR,14856
+2024-03,Gran Canaria,GB,90828
+2024-03,Gran Canaria,IE,11435
+2024-03,Gran Canaria,IT,12927
+2024-03,Gran Canaria,NL,22933
+2024-03,Gran Canaria,NORD,128483
+2024-03,Gran Canaria,OTROS,43027
+2024-03,Lanzarote,BE,6517
+2024-03,Lanzarote,DE,45401
+2024-03,Lanzarote,ES,20107
+2024-03,Lanzarote,FR,22389
+2024-03,Lanzarote,GB,157865
+2024-03,Lanzarote,IE,31003
+2024-03,Lanzarote,IT,8597
+2024-03,Lanzarote,NL,8309
+2024-03,Lanzarote,NORD,8447
+2024-03,Lanzarote,OTROS,13818
+2024-03,Tenerife,BE,21324
+2024-03,Tenerife,DE,102331
+2024-03,Tenerife,ES,62564
+2024-03,Tenerife,FR,39298
+2024-03,Tenerife,GB,245384
+2024-03,Tenerife,IE,28174
+2024-03,Tenerife,IT,34470
+2024-03,Tenerife,NL,19036
+2024-03,Tenerife,NORD,54180
+2024-03,Tenerife,OTROS,82182
+2024-04,Fuerteventura,BE,2128
+2024-04,Fuerteventura,DE,76199
+2024-04,Fuerteventura,ES,13260
+2024-04,Fuerteventura,FR,12396
+2024-04,Fuerteventura,GB,60905
+2024-04,Fuerteventura,IE,5889
+2024-04,Fuerteventura,IT,10590
+2024-04,Fuerteventura,NL,4633
+2024-04,Fuerteventura,NORD,3704
+2024-04,Fuerteventura,OTROS,19802
+2024-04,Gran Canaria,BE,8915
+2024-04,Gran Canaria,DE,85806
+2024-04,Gran Canaria,ES,49169
+2024-04,Gran Canaria,FR,13741
+2024-04,Gran Canaria,GB,89512
+2024-04,Gran Canaria,IE,9972
+2024-04,Gran Canaria,IT,12155
+2024-04,Gran Canaria,NL,21225
+2024-04,Gran Canaria,NORD,39183
+2024-04,Gran Canaria,OTROS,33873
+2024-04,Lanzarote,BE,4904
+2024-04,Lanzarote,DE,34680
+2024-04,Lanzarote,ES,22845
+2024-04,Lanzarote,FR,21736
+2024-04,Lanzarote,GB,134781
+2024-04,Lanzarote,IE,28091
+2024-04,Lanzarote,IT,6546
+2024-04,Lanzarote,NL,6976
+2024-04,Lanzarote,NORD,3058
+2024-04,Lanzarote,OTROS,11181
+2024-04,Tenerife,BE,19856
+2024-04,Tenerife,DE,86586
+2024-04,Tenerife,ES,81524
+2024-04,Tenerife,FR,31408
+2024-04,Tenerife,GB,218755
+2024-04,Tenerife,IE,18672
+2024-04,Tenerife,IT,29829
+2024-04,Tenerife,NL,21522
+2024-04,Tenerife,NORD,17337
+2024-04,Tenerife,OTROS,68825
+2024-05,Fuerteventura,BE,2113
+2024-05,Fuerteventura,DE,50127
+2024-05,Fuerteventura,ES,16283
+2024-05,Fuerteventura,FR,10523
+2024-05,Fuerteventura,GB,61772
+2024-05,Fuerteventura,IE,4819
+2024-05,Fuerteventura,IT,10821
+2024-05,Fuerteventura,NL,6364
+2024-05,Fuerteventura,NORD,2117
+2024-05,Fuerteventura,OTROS,16411
+2024-05,Gran Canaria,BE,9425
+2024-05,Gran Canaria,DE,44328
+2024-05,Gran Canaria,ES,46787
+2024-05,Gran Canaria,FR,14748
+2024-05,Gran Canaria,GB,87553
+2024-05,Gran Canaria,IE,11258
+2024-05,Gran Canaria,IT,7447
+2024-05,Gran Canaria,NL,29029
+2024-05,Gran Canaria,NORD,17755
+2024-05,Gran Canaria,OTROS,31088
+2024-05,Lanzarote,BE,5421
+2024-05,Lanzarote,DE,14787
+2024-05,Lanzarote,ES,22924
+2024-05,Lanzarote,FR,20668
+2024-05,Lanzarote,GB,131521
+2024-05,Lanzarote,IE,28179
+2024-05,Lanzarote,IT,5697
+2024-05,Lanzarote,NL,6406
+2024-05,Lanzarote,NORD,1885
+2024-05,Lanzarote,OTROS,8428
+2024-05,Tenerife,BE,20043
+2024-05,Tenerife,DE,47120
+2024-05,Tenerife,ES,77199
+2024-05,Tenerife,FR,32343
+2024-05,Tenerife,GB,219132
+2024-05,Tenerife,IE,18622
+2024-05,Tenerife,IT,26192
+2024-05,Tenerife,NL,21504
+2024-05,Tenerife,NORD,4250
+2024-05,Tenerife,OTROS,67226
+2024-06,Fuerteventura,BE,916
+2024-06,Fuerteventura,DE,53590
+2024-06,Fuerteventura,ES,19086
+2024-06,Fuerteventura,FR,9457
+2024-06,Fuerteventura,GB,64584
+2024-06,Fuerteventura,IE,5602
+2024-06,Fuerteventura,IT,12493
+2024-06,Fuerteventura,NL,5118
+2024-06,Fuerteventura,NORD,2410
+2024-06,Fuerteventura,OTROS,19645
+2024-06,Gran Canaria,BE,8893
+2024-06,Gran Canaria,DE,43518
+2024-06,Gran Canaria,ES,49674
+2024-06,Gran Canaria,FR,12730
+2024-06,Gran Canaria,GB,91538
+2024-06,Gran Canaria,IE,9524
+2024-06,Gran Canaria,IT,8577
+2024-06,Gran Canaria,NL,21712
+2024-06,Gran Canaria,NORD,19091
+2024-06,Gran Canaria,OTROS,31969
+2024-06,Lanzarote,BE,4348
+2024-06,Lanzarote,DE,13263
+2024-06,Lanzarote,ES,25652
+2024-06,Lanzarote,FR,15881
+2024-06,Lanzarote,GB,139045
+2024-06,Lanzarote,IE,31516
+2024-06,Lanzarote,IT,5631
+2024-06,Lanzarote,NL,6117
+2024-06,Lanzarote,NORD,1565
+2024-06,Lanzarote,OTROS,8549
+2024-06,Tenerife,BE,16789
+2024-06,Tenerife,DE,40943
+2024-06,Tenerife,ES,81198
+2024-06,Tenerife,FR,25433
+2024-06,Tenerife,GB,223105
+2024-06,Tenerife,IE,19716
+2024-06,Tenerife,IT,32431
+2024-06,Tenerife,NL,20556
+2024-06,Tenerife,NORD,3814
+2024-06,Tenerife,OTROS,62310
+2024-07,Fuerteventura,BE,2841
+2024-07,Fuerteventura,DE,56391
+2024-07,Fuerteventura,ES,22544
+2024-07,Fuerteventura,FR,11264
+2024-07,Fuerteventura,GB,69005
+2024-07,Fuerteventura,IE,5904
+2024-07,Fuerteventura,IT,11682
+2024-07,Fuerteventura,NL,4160
+2024-07,Fuerteventura,NORD,3614
+2024-07,Fuerteventura,OTROS,25596
+2024-07,Gran Canaria,BE,13442
+2024-07,Gran Canaria,DE,46309
+2024-07,Gran Canaria,ES,47691
+2024-07,Gran Canaria,FR,14115
+2024-07,Gran Canaria,GB,92082
+2024-07,Gran Canaria,IE,10558
+2024-07,Gran Canaria,IT,8827
+2024-07,Gran Canaria,NL,25891
+2024-07,Gran Canaria,NORD,33415
+2024-07,Gran Canaria,OTROS,39065
+2024-07,Lanzarote,BE,7422
+2024-07,Lanzarote,DE,13283
+2024-07,Lanzarote,ES,29903
+2024-07,Lanzarote,FR,19218
+2024-07,Lanzarote,GB,146819
+2024-07,Lanzarote,IE,33610
+2024-07,Lanzarote,IT,5513
+2024-07,Lanzarote,NL,6240
+2024-07,Lanzarote,NORD,1634
+2024-07,Lanzarote,OTROS,11721
+2024-07,Tenerife,BE,27201
+2024-07,Tenerife,DE,43746
+2024-07,Tenerife,ES,93224
+2024-07,Tenerife,FR,32058
+2024-07,Tenerife,GB,234478
+2024-07,Tenerife,IE,21269
+2024-07,Tenerife,IT,32134
+2024-07,Tenerife,NL,20576
+2024-07,Tenerife,NORD,6332
+2024-07,Tenerife,OTROS,74519
+2024-08,Fuerteventura,BE,1365
+2024-08,Fuerteventura,DE,62052
+2024-08,Fuerteventura,ES,23587
+2024-08,Fuerteventura,FR,13132
+2024-08,Fuerteventura,GB,66232
+2024-08,Fuerteventura,IE,5693
+2024-08,Fuerteventura,IT,13644
+2024-08,Fuerteventura,NL,4792
+2024-08,Fuerteventura,NORD,2285
+2024-08,Fuerteventura,OTROS,22478
+2024-08,Gran Canaria,BE,11229
+2024-08,Gran Canaria,DE,47051
+2024-08,Gran Canaria,ES,61167
+2024-08,Gran Canaria,FR,18808
+2024-08,Gran Canaria,GB,94641
+2024-08,Gran Canaria,IE,10077
+2024-08,Gran Canaria,IT,11001
+2024-08,Gran Canaria,NL,30103
+2024-08,Gran Canaria,NORD,16873
+2024-08,Gran Canaria,OTROS,38031
+2024-08,Lanzarote,BE,5553
+2024-08,Lanzarote,DE,13856
+2024-08,Lanzarote,ES,35108
+2024-08,Lanzarote,FR,23912
+2024-08,Lanzarote,GB,151775
+2024-08,Lanzarote,IE,31439
+2024-08,Lanzarote,IT,6412
+2024-08,Lanzarote,NL,7169
+2024-08,Lanzarote,NORD,1804
+2024-08,Lanzarote,OTROS,10264
+2024-08,Tenerife,BE,19777
+2024-08,Tenerife,DE,47690
+2024-08,Tenerife,ES,118018
+2024-08,Tenerife,FR,38696
+2024-08,Tenerife,GB,233313
+2024-08,Tenerife,IE,20617
+2024-08,Tenerife,IT,35209
+2024-08,Tenerife,NL,22031
+2024-08,Tenerife,NORD,4711
+2024-08,Tenerife,OTROS,68555
+2024-09,Fuerteventura,BE,1076
+2024-09,Fuerteventura,DE,61212
+2024-09,Fuerteventura,ES,16178
+2024-09,Fuerteventura,FR,8719
+2024-09,Fuerteventura,GB,59589
+2024-09,Fuerteventura,IE,5586
+2024-09,Fuerteventura,IT,12520
+2024-09,Fuerteventura,NL,4938
+2024-09,Fuerteventura,NORD,2110
+2024-09,Fuerteventura,OTROS,21791
+2024-09,Gran Canaria,BE,9085
+2024-09,Gran Canaria,DE,53577
+2024-09,Gran Canaria,ES,52473
+2024-09,Gran Canaria,FR,11444
+2024-09,Gran Canaria,GB,87014
+2024-09,Gran Canaria,IE,9043
+2024-09,Gran Canaria,IT,11003
+2024-09,Gran Canaria,NL,25317
+2024-09,Gran Canaria,NORD,18717
+2024-09,Gran Canaria,OTROS,36751
+2024-09,Lanzarote,BE,4606
+2024-09,Lanzarote,DE,15631
+2024-09,Lanzarote,ES,28089
+2024-09,Lanzarote,FR,15807
+2024-09,Lanzarote,GB,137005
+2024-09,Lanzarote,IE,30667
+2024-09,Lanzarote,IT,5534
+2024-09,Lanzarote,NL,6667
+2024-09,Lanzarote,NORD,1720
+2024-09,Lanzarote,OTROS,8626
+2024-09,Tenerife,BE,19074
+2024-09,Tenerife,DE,48198
+2024-09,Tenerife,ES,96918
+2024-09,Tenerife,FR,28117
+2024-09,Tenerife,GB,220952
+2024-09,Tenerife,IE,18003
+2024-09,Tenerife,IT,37093
+2024-09,Tenerife,NL,17679
+2024-09,Tenerife,NORD,4739
+2024-09,Tenerife,OTROS,66238
+2024-10,Fuerteventura,BE,1693
+2024-10,Fuerteventura,DE,73332
+2024-10,Fuerteventura,ES,12435
+2024-10,Fuerteventura,FR,12798
+2024-10,Fuerteventura,GB,71600
+2024-10,Fuerteventura,IE,5736
+2024-10,Fuerteventura,IT,12925
+2024-10,Fuerteventura,NL,6072
+2024-10,Fuerteventura,NORD,6215
+2024-10,Fuerteventura,OTROS,19279
+2024-10,Gran Canaria,BE,10456
+2024-10,Gran Canaria,DE,73393
+2024-10,Gran Canaria,ES,43793
+2024-10,Gran Canaria,FR,14382
+2024-10,Gran Canaria,GB,91355
+2024-10,Gran Canaria,IE,9665
+2024-10,Gran Canaria,IT,10032
+2024-10,Gran Canaria,NL,32883
+2024-10,Gran Canaria,NORD,86927
+2024-10,Gran Canaria,OTROS,40568
+2024-10,Lanzarote,BE,5057
+2024-10,Lanzarote,DE,24661
+2024-10,Lanzarote,ES,26261
+2024-10,Lanzarote,FR,20281
+2024-10,Lanzarote,GB,154980
+2024-10,Lanzarote,IE,30860
+2024-10,Lanzarote,IT,6644
+2024-10,Lanzarote,NL,8368
+2024-10,Lanzarote,NORD,4645
+2024-10,Lanzarote,OTROS,11511
+2024-10,Tenerife,BE,22017
+2024-10,Tenerife,DE,65935
+2024-10,Tenerife,ES,73471
+2024-10,Tenerife,FR,32603
+2024-10,Tenerife,GB,248054
+2024-10,Tenerife,IE,21174
+2024-10,Tenerife,IT,39064
+2024-10,Tenerife,NL,24619
+2024-10,Tenerife,NORD,26020
+2024-10,Tenerife,OTROS,73664
+2024-11,Fuerteventura,BE,2516
+2024-11,Fuerteventura,DE,86405
+2024-11,Fuerteventura,ES,12333
+2024-11,Fuerteventura,FR,10782
+2024-11,Fuerteventura,GB,77169
+2024-11,Fuerteventura,IE,5883
+2024-11,Fuerteventura,IT,12794
+2024-11,Fuerteventura,NL,6493
+2024-11,Fuerteventura,NORD,9372
+2024-11,Fuerteventura,OTROS,22407
+2024-11,Gran Canaria,BE,10169
+2024-11,Gran Canaria,DE,106974
+2024-11,Gran Canaria,ES,36753
+2024-11,Gran Canaria,FR,13098
+2024-11,Gran Canaria,GB,77327
+2024-11,Gran Canaria,IE,10088
+2024-11,Gran Canaria,IT,11921
+2024-11,Gran Canaria,NL,23546
+2024-11,Gran Canaria,NORD,123259
+2024-11,Gran Canaria,OTROS,45826
+2024-11,Lanzarote,BE,4843
+2024-11,Lanzarote,DE,41164
+2024-11,Lanzarote,ES,23739
+2024-11,Lanzarote,FR,19802
+2024-11,Lanzarote,GB,143421
+2024-11,Lanzarote,IE,28331
+2024-11,Lanzarote,IT,7738
+2024-11,Lanzarote,NL,8356
+2024-11,Lanzarote,NORD,10034
+2024-11,Lanzarote,OTROS,12075
+2024-11,Tenerife,BE,25458
+2024-11,Tenerife,DE,107408
+2024-11,Tenerife,ES,64175
+2024-11,Tenerife,FR,32958
+2024-11,Tenerife,GB,233427
+2024-11,Tenerife,IE,21405
+2024-11,Tenerife,IT,40166
+2024-11,Tenerife,NL,19777
+2024-11,Tenerife,NORD,48099
+2024-11,Tenerife,OTROS,77173
+2024-12,Fuerteventura,BE,3720
+2024-12,Fuerteventura,DE,101225
+2024-12,Fuerteventura,ES,12301
+2024-12,Fuerteventura,FR,11507
+2024-12,Fuerteventura,GB,82607
+2024-12,Fuerteventura,IE,5065
+2024-12,Fuerteventura,IT,15311
+2024-12,Fuerteventura,NL,6973
+2024-12,Fuerteventura,NORD,10763
+2024-12,Fuerteventura,OTROS,25959
+2024-12,Gran Canaria,BE,11402
+2024-12,Gran Canaria,DE,119088
+2024-12,Gran Canaria,ES,33829
+2024-12,Gran Canaria,FR,10236
+2024-12,Gran Canaria,GB,96409
+2024-12,Gran Canaria,IE,10291
+2024-12,Gran Canaria,IT,16165
+2024-12,Gran Canaria,NL,23901
+2024-12,Gran Canaria,NORD,127610
+2024-12,Gran Canaria,OTROS,50035
+2024-12,Lanzarote,BE,4350
+2024-12,Lanzarote,DE,52616
+2024-12,Lanzarote,ES,21972
+2024-12,Lanzarote,FR,18918
+2024-12,Lanzarote,GB,159513
+2024-12,Lanzarote,IE,26134
+2024-12,Lanzarote,IT,8628
+2024-12,Lanzarote,NL,9004
+2024-12,Lanzarote,NORD,10204
+2024-12,Lanzarote,OTROS,15488
+2024-12,Tenerife,BE,27714
+2024-12,Tenerife,DE,121339
+2024-12,Tenerife,ES,61173
+2024-12,Tenerife,FR,35138
+2024-12,Tenerife,GB,237921
+2024-12,Tenerife,IE,26435
+2024-12,Tenerife,IT,42204
+2024-12,Tenerife,NL,20493
+2024-12,Tenerife,NORD,50448
+2024-12,Tenerife,OTROS,82736
+2025-01,Fuerteventura,BE,3182
+2025-01,Fuerteventura,DE,69957
+2025-01,Fuerteventura,ES,12229
+2025-01,Fuerteventura,FR,10016
+2025-01,Fuerteventura,GB,68256
+2025-01,Fuerteventura,IE,6507
+2025-01,Fuerteventura,IT,13983
+2025-01,Fuerteventura,NL,7388
+2025-01,Fuerteventura,NORD,10359
+2025-01,Fuerteventura,OTROS,25331
+2025-01,Gran Canaria,BE,9235
+2025-01,Gran Canaria,DE,93724
+2025-01,Gran Canaria,ES,39789
+2025-01,Gran Canaria,FR,13155
+2025-01,Gran Canaria,GB,73434
+2025-01,Gran Canaria,IE,11051
+2025-01,Gran Canaria,IT,16982
+2025-01,Gran Canaria,NL,23427
+2025-01,Gran Canaria,NORD,129370
+2025-01,Gran Canaria,OTROS,50138
+2025-01,Lanzarote,BE,4230
+2025-01,Lanzarote,DE,28778
+2025-01,Lanzarote,ES,21564
+2025-01,Lanzarote,FR,17946
+2025-01,Lanzarote,GB,129769
+2025-01,Lanzarote,IE,31690
+2025-01,Lanzarote,IT,8254
+2025-01,Lanzarote,NL,8568
+2025-01,Lanzarote,NORD,9319
+2025-01,Lanzarote,OTROS,15114
+2025-01,Tenerife,BE,23112
+2025-01,Tenerife,DE,95173
+2025-01,Tenerife,ES,62258
+2025-01,Tenerife,FR,29225
+2025-01,Tenerife,GB,219422
+2025-01,Tenerife,IE,23229
+2025-01,Tenerife,IT,43148
+2025-01,Tenerife,NL,21426
+2025-01,Tenerife,NORD,47739
+2025-01,Tenerife,OTROS,93569
+2025-02,Fuerteventura,BE,3577
+2025-02,Fuerteventura,DE,80145
+2025-02,Fuerteventura,ES,11144
+2025-02,Fuerteventura,FR,15527
+2025-02,Fuerteventura,GB,87045
+2025-02,Fuerteventura,IE,6274
+2025-02,Fuerteventura,IT,12727
+2025-02,Fuerteventura,NL,12424
+2025-02,Fuerteventura,NORD,9396
+2025-02,Fuerteventura,OTROS,28031
+2025-02,Gran Canaria,BE,9045
+2025-02,Gran Canaria,DE,100034
+2025-02,Gran Canaria,ES,41386
+2025-02,Gran Canaria,FR,14213
+2025-02,Gran Canaria,GB,83835
+2025-02,Gran Canaria,IE,12922
+2025-02,Gran Canaria,IT,15315
+2025-02,Gran Canaria,NL,26944
+2025-02,Gran Canaria,NORD,120062
+2025-02,Gran Canaria,OTROS,58596
+2025-02,Lanzarote,BE,4987
+2025-02,Lanzarote,DE,36438
+2025-02,Lanzarote,ES,17061
+2025-02,Lanzarote,FR,24909
+2025-02,Lanzarote,GB,154427
+2025-02,Lanzarote,IE,30336
+2025-02,Lanzarote,IT,7094
+2025-02,Lanzarote,NL,9931
+2025-02,Lanzarote,NORD,11245
+2025-02,Lanzarote,OTROS,17955
+2025-02,Tenerife,BE,22366
+2025-02,Tenerife,DE,95560
+2025-02,Tenerife,ES,55794
+2025-02,Tenerife,FR,39317
+2025-02,Tenerife,GB,227482
+2025-02,Tenerife,IE,22376
+2025-02,Tenerife,IT,34424
+2025-02,Tenerife,NL,20604
+2025-02,Tenerife,NORD,49608
+2025-02,Tenerife,OTROS,101410
+2025-03,Fuerteventura,BE,2801
+2025-03,Fuerteventura,DE,86294
+2025-03,Fuerteventura,ES,13454
+2025-03,Fuerteventura,FR,14935
+2025-03,Fuerteventura,GB,87879
+2025-03,Fuerteventura,IE,8544
+2025-03,Fuerteventura,IT,14231
+2025-03,Fuerteventura,NL,7639
+2025-03,Fuerteventura,NORD,8930
+2025-03,Fuerteventura,OTROS,27841
+2025-03,Gran Canaria,BE,10002
+2025-03,Gran Canaria,DE,110872
+2025-03,Gran Canaria,ES,40375
+2025-03,Gran Canaria,FR,12631
+2025-03,Gran Canaria,GB,97431
+2025-03,Gran Canaria,IE,11471
+2025-03,Gran Canaria,IT,18212
+2025-03,Gran Canaria,NL,27426
+2025-03,Gran Canaria,NORD,118957
+2025-03,Gran Canaria,OTROS,49521
+2025-03,Lanzarote,BE,5523
+2025-03,Lanzarote,DE,32805
+2025-03,Lanzarote,ES,20901
+2025-03,Lanzarote,FR,23878
+2025-03,Lanzarote,GB,166597
+2025-03,Lanzarote,IE,32841
+2025-03,Lanzarote,IT,8280
+2025-03,Lanzarote,NL,8211
+2025-03,Lanzarote,NORD,8307
+2025-03,Lanzarote,OTROS,18387
+2025-03,Tenerife,BE,27280
+2025-03,Tenerife,DE,88438
+2025-03,Tenerife,ES,59133
+2025-03,Tenerife,FR,37364
+2025-03,Tenerife,GB,240233
+2025-03,Tenerife,IE,25058
+2025-03,Tenerife,IT,44554
+2025-03,Tenerife,NL,26468
+2025-03,Tenerife,NORD,45200
+2025-03,Tenerife,OTROS,97789
+2025-04,Fuerteventura,BE,3065
+2025-04,Fuerteventura,DE,79219
+2025-04,Fuerteventura,ES,13786
+2025-04,Fuerteventura,FR,14299
+2025-04,Fuerteventura,GB,77201
+2025-04,Fuerteventura,IE,6790
+2025-04,Fuerteventura,IT,11953
+2025-04,Fuerteventura,NL,7165
+2025-04,Fuerteventura,NORD,4085
+2025-04,Fuerteventura,OTROS,24148
+2025-04,Gran Canaria,BE,11592
+2025-04,Gran Canaria,DE,82009
+2025-04,Gran Canaria,ES,43352
+2025-04,Gran Canaria,FR,13103
+2025-04,Gran Canaria,GB,86114
+2025-04,Gran Canaria,IE,8878
+2025-04,Gran Canaria,IT,13173
+2025-04,Gran Canaria,NL,27194
+2025-04,Gran Canaria,NORD,57662
+2025-04,Gran Canaria,OTROS,48334
+2025-04,Lanzarote,BE,5472
+2025-04,Lanzarote,DE,34748
+2025-04,Lanzarote,ES,23530
+2025-04,Lanzarote,FR,19334
+2025-04,Lanzarote,GB,145795
+2025-04,Lanzarote,IE,31443
+2025-04,Lanzarote,IT,7728
+2025-04,Lanzarote,NL,7242
+2025-04,Lanzarote,NORD,2935
+2025-04,Lanzarote,OTROS,11685
+2025-04,Tenerife,BE,23820
+2025-04,Tenerife,DE,81629
+2025-04,Tenerife,ES,69685
+2025-04,Tenerife,FR,37113
+2025-04,Tenerife,GB,230190
+2025-04,Tenerife,IE,26206
+2025-04,Tenerife,IT,27845
+2025-04,Tenerife,NL,20030
+2025-04,Tenerife,NORD,22503
+2025-04,Tenerife,OTROS,89351
+2025-05,Fuerteventura,BE,2569
+2025-05,Fuerteventura,DE,49161
+2025-05,Fuerteventura,ES,21091
+2025-05,Fuerteventura,FR,12112
+2025-05,Fuerteventura,GB,68626
+2025-05,Fuerteventura,IE,6928
+2025-05,Fuerteventura,IT,12661
+2025-05,Fuerteventura,NL,5390
+2025-05,Fuerteventura,NORD,1977
+2025-05,Fuerteventura,OTROS,21730
+2025-05,Gran Canaria,BE,8253
+2025-05,Gran Canaria,DE,47551
+2025-05,Gran Canaria,ES,52157
+2025-05,Gran Canaria,FR,12962
+2025-05,Gran Canaria,GB,95700
+2025-05,Gran Canaria,IE,8763
+2025-05,Gran Canaria,IT,12237
+2025-05,Gran Canaria,NL,23569
+2025-05,Gran Canaria,NORD,17403
+2025-05,Gran Canaria,OTROS,35487
+2025-05,Lanzarote,BE,3602
+2025-05,Lanzarote,DE,13310
+2025-05,Lanzarote,ES,29137
+2025-05,Lanzarote,FR,18317
+2025-05,Lanzarote,GB,141799
+2025-05,Lanzarote,IE,31304
+2025-05,Lanzarote,IT,5270
+2025-05,Lanzarote,NL,5382
+2025-05,Lanzarote,NORD,1932
+2025-05,Lanzarote,OTROS,9618
+2025-05,Tenerife,BE,19399
+2025-05,Tenerife,DE,45240
+2025-05,Tenerife,ES,82823
+2025-05,Tenerife,FR,30492
+2025-05,Tenerife,GB,225746
+2025-05,Tenerife,IE,20924
+2025-05,Tenerife,IT,28724
+2025-05,Tenerife,NL,16721
+2025-05,Tenerife,NORD,3266
+2025-05,Tenerife,OTROS,70744
+2025-06,Fuerteventura,BE,2484
+2025-06,Fuerteventura,DE,52627
+2025-06,Fuerteventura,ES,18951
+2025-06,Fuerteventura,FR,8461
+2025-06,Fuerteventura,GB,68572
+2025-06,Fuerteventura,IE,6177
+2025-06,Fuerteventura,IT,13760
+2025-06,Fuerteventura,NL,5583
+2025-06,Fuerteventura,NORD,2428
+2025-06,Fuerteventura,OTROS,27171
+2025-06,Gran Canaria,BE,8183
+2025-06,Gran Canaria,DE,51640
+2025-06,Gran Canaria,ES,50879
+2025-06,Gran Canaria,FR,11822
+2025-06,Gran Canaria,GB,92176
+2025-06,Gran Canaria,IE,9072
+2025-06,Gran Canaria,IT,11666
+2025-06,Gran Canaria,NL,24151
+2025-06,Gran Canaria,NORD,19969
+2025-06,Gran Canaria,OTROS,35180
+2025-06,Lanzarote,BE,2890
+2025-06,Lanzarote,DE,14282
+2025-06,Lanzarote,ES,28173
+2025-06,Lanzarote,FR,15125
+2025-06,Lanzarote,GB,140005
+2025-06,Lanzarote,IE,34051
+2025-06,Lanzarote,IT,6243
+2025-06,Lanzarote,NL,5033
+2025-06,Lanzarote,NORD,1570
+2025-06,Lanzarote,OTROS,9849
+2025-06,Tenerife,BE,16362
+2025-06,Tenerife,DE,46044
+2025-06,Tenerife,ES,89959
+2025-06,Tenerife,FR,27702
+2025-06,Tenerife,GB,221779
+2025-06,Tenerife,IE,22947
+2025-06,Tenerife,IT,28777
+2025-06,Tenerife,NL,17229
+2025-06,Tenerife,NORD,3032
+2025-06,Tenerife,OTROS,73308
+2025-07,Fuerteventura,BE,3549
+2025-07,Fuerteventura,DE,59665
+2025-07,Fuerteventura,ES,26227
+2025-07,Fuerteventura,FR,12891
+2025-07,Fuerteventura,GB,75908
+2025-07,Fuerteventura,IE,6494
+2025-07,Fuerteventura,IT,13124
+2025-07,Fuerteventura,NL,6871
+2025-07,Fuerteventura,NORD,3382
+2025-07,Fuerteventura,OTROS,33336
+2025-07,Gran Canaria,BE,13975
+2025-07,Gran Canaria,DE,47355
+2025-07,Gran Canaria,ES,57210
+2025-07,Gran Canaria,FR,13870
+2025-07,Gran Canaria,GB,95688
+2025-07,Gran Canaria,IE,9815
+2025-07,Gran Canaria,IT,10654
+2025-07,Gran Canaria,NL,28774
+2025-07,Gran Canaria,NORD,34073
+2025-07,Gran Canaria,OTROS,48822
+2025-07,Lanzarote,BE,6176
+2025-07,Lanzarote,DE,16170
+2025-07,Lanzarote,ES,34889
+2025-07,Lanzarote,FR,20755
+2025-07,Lanzarote,GB,154187
+2025-07,Lanzarote,IE,34994
+2025-07,Lanzarote,IT,7016
+2025-07,Lanzarote,NL,6608
+2025-07,Lanzarote,NORD,2541
+2025-07,Lanzarote,OTROS,14310
+2025-07,Tenerife,BE,24927
+2025-07,Tenerife,DE,48447
+2025-07,Tenerife,ES,103306
+2025-07,Tenerife,FR,39592
+2025-07,Tenerife,GB,238125
+2025-07,Tenerife,IE,23767
+2025-07,Tenerife,IT,25934
+2025-07,Tenerife,NL,22679
+2025-07,Tenerife,NORD,5207
+2025-07,Tenerife,OTROS,84293
+2025-08,Fuerteventura,BE,2159
+2025-08,Fuerteventura,DE,61396
+2025-08,Fuerteventura,ES,31226
+2025-08,Fuerteventura,FR,13955
+2025-08,Fuerteventura,GB,72718
+2025-08,Fuerteventura,IE,6086
+2025-08,Fuerteventura,IT,16161
+2025-08,Fuerteventura,NL,6464
+2025-08,Fuerteventura,NORD,2750
+2025-08,Fuerteventura,OTROS,30377
+2025-08,Gran Canaria,BE,10549
+2025-08,Gran Canaria,DE,56394
+2025-08,Gran Canaria,ES,62348
+2025-08,Gran Canaria,FR,18906
+2025-08,Gran Canaria,GB,97578
+2025-08,Gran Canaria,IE,8565
+2025-08,Gran Canaria,IT,12852
+2025-08,Gran Canaria,NL,33105
+2025-08,Gran Canaria,NORD,18422
+2025-08,Gran Canaria,OTROS,44906
+2025-08,Lanzarote,BE,4654
+2025-08,Lanzarote,DE,16641
+2025-08,Lanzarote,ES,42967
+2025-08,Lanzarote,FR,21742
+2025-08,Lanzarote,GB,152006
+2025-08,Lanzarote,IE,31162
+2025-08,Lanzarote,IT,8884
+2025-08,Lanzarote,NL,6056
+2025-08,Lanzarote,NORD,3332
+2025-08,Lanzarote,OTROS,11078
+2025-08,Tenerife,BE,20576
+2025-08,Tenerife,DE,49487
+2025-08,Tenerife,ES,115322
+2025-08,Tenerife,FR,42385
+2025-08,Tenerife,GB,234496
+2025-08,Tenerife,IE,26750
+2025-08,Tenerife,IT,39183
+2025-08,Tenerife,NL,23824
+2025-08,Tenerife,NORD,3446
+2025-08,Tenerife,OTROS,70450
+2025-09,Fuerteventura,BE,2758
+2025-09,Fuerteventura,DE,60295
+2025-09,Fuerteventura,ES,23745
+2025-09,Fuerteventura,FR,10287
+2025-09,Fuerteventura,GB,63588
+2025-09,Fuerteventura,IE,5883
+2025-09,Fuerteventura,IT,13873
+2025-09,Fuerteventura,NL,4866
+2025-09,Fuerteventura,NORD,2851
+2025-09,Fuerteventura,OTROS,27809
+2025-09,Gran Canaria,BE,9668
+2025-09,Gran Canaria,DE,56201
+2025-09,Gran Canaria,ES,59084
+2025-09,Gran Canaria,FR,11582
+2025-09,Gran Canaria,GB,89971
+2025-09,Gran Canaria,IE,8899
+2025-09,Gran Canaria,IT,11785
+2025-09,Gran Canaria,NL,26183
+2025-09,Gran Canaria,NORD,20727
+2025-09,Gran Canaria,OTROS,38661
+2025-09,Lanzarote,BE,3931
+2025-09,Lanzarote,DE,14915
+2025-09,Lanzarote,ES,28245
+2025-09,Lanzarote,FR,14872
+2025-09,Lanzarote,GB,134748
+2025-09,Lanzarote,IE,32188
+2025-09,Lanzarote,IT,6060
+2025-09,Lanzarote,NL,5697
+2025-09,Lanzarote,NORD,2021
+2025-09,Lanzarote,OTROS,10169
+2025-09,Tenerife,BE,19377
+2025-09,Tenerife,DE,48479
+2025-09,Tenerife,ES,101080
+2025-09,Tenerife,FR,29844
+2025-09,Tenerife,GB,213079
+2025-09,Tenerife,IE,22248
+2025-09,Tenerife,IT,32468
+2025-09,Tenerife,NL,19493
+2025-09,Tenerife,NORD,5062
+2025-09,Tenerife,OTROS,74238
+2025-10,Fuerteventura,BE,2127
+2025-10,Fuerteventura,DE,74556
+2025-10,Fuerteventura,ES,19704
+2025-10,Fuerteventura,FR,12036
+2025-10,Fuerteventura,GB,82751
+2025-10,Fuerteventura,IE,6217
+2025-10,Fuerteventura,IT,15765
+2025-10,Fuerteventura,NL,6204
+2025-10,Fuerteventura,NORD,7367
+2025-10,Fuerteventura,OTROS,24920
+2025-10,Gran Canaria,BE,9284
+2025-10,Gran Canaria,DE,69727
+2025-10,Gran Canaria,ES,51683
+2025-10,Gran Canaria,FR,15192
+2025-10,Gran Canaria,GB,96697
+2025-10,Gran Canaria,IE,10072
+2025-10,Gran Canaria,IT,12624
+2025-10,Gran Canaria,NL,35250
+2025-10,Gran Canaria,NORD,73076
+2025-10,Gran Canaria,OTROS,43832
+2025-10,Lanzarote,BE,4388
+2025-10,Lanzarote,DE,23299
+2025-10,Lanzarote,ES,23360
+2025-10,Lanzarote,FR,19223
+2025-10,Lanzarote,GB,170196
+2025-10,Lanzarote,IE,33337
+2025-10,Lanzarote,IT,6165
+2025-10,Lanzarote,NL,8436
+2025-10,Lanzarote,NORD,5626
+2025-10,Lanzarote,OTROS,13936
+2025-10,Tenerife,BE,23609
+2025-10,Tenerife,DE,65884
+2025-10,Tenerife,ES,74947
+2025-10,Tenerife,FR,32894
+2025-10,Tenerife,GB,251528
+2025-10,Tenerife,IE,23303
+2025-10,Tenerife,IT,36093
+2025-10,Tenerife,NL,25015
+2025-10,Tenerife,NORD,24097
+2025-10,Tenerife,OTROS,89315
+2025-11,Fuerteventura,BE,3166
+2025-11,Fuerteventura,DE,76723
+2025-11,Fuerteventura,ES,15474
+2025-11,Fuerteventura,FR,10758
+2025-11,Fuerteventura,GB,73125
+2025-11,Fuerteventura,IE,5523
+2025-11,Fuerteventura,IT,15962
+2025-11,Fuerteventura,NL,5456
+2025-11,Fuerteventura,NORD,9195
+2025-11,Fuerteventura,OTROS,26086
+2025-11,Gran Canaria,BE,9748
+2025-11,Gran Canaria,DE,100183
+2025-11,Gran Canaria,ES,36581
+2025-11,Gran Canaria,FR,13232
+2025-11,Gran Canaria,GB,75266
+2025-11,Gran Canaria,IE,10107
+2025-11,Gran Canaria,IT,13011
+2025-11,Gran Canaria,NL,28683
+2025-11,Gran Canaria,NORD,114973
+2025-11,Gran Canaria,OTROS,52119
+2025-11,Lanzarote,BE,5670
+2025-11,Lanzarote,DE,39836
+2025-11,Lanzarote,ES,22165
+2025-11,Lanzarote,FR,18725
+2025-11,Lanzarote,GB,135595
+2025-11,Lanzarote,IE,30201
+2025-11,Lanzarote,IT,7754
+2025-11,Lanzarote,NL,6416
+2025-11,Lanzarote,NORD,8869
+2025-11,Lanzarote,OTROS,17432
+2025-11,Tenerife,BE,29227
+2025-11,Tenerife,DE,106050
+2025-11,Tenerife,ES,59476
+2025-11,Tenerife,FR,33647
+2025-11,Tenerife,GB,222852
+2025-11,Tenerife,IE,20135
+2025-11,Tenerife,IT,39775
+2025-11,Tenerife,NL,20531
+2025-11,Tenerife,NORD,45874
+2025-11,Tenerife,OTROS,102574
+2025-12,Fuerteventura,BE,3063
+2025-12,Fuerteventura,DE,72630
+2025-12,Fuerteventura,ES,10787
+2025-12,Fuerteventura,FR,11413
+2025-12,Fuerteventura,GB,74468
+2025-12,Fuerteventura,IE,5273
+2025-12,Fuerteventura,IT,18060
+2025-12,Fuerteventura,NL,6134
+2025-12,Fuerteventura,NORD,10197
+2025-12,Fuerteventura,OTROS,25449
+2025-12,Gran Canaria,BE,10218
+2025-12,Gran Canaria,DE,103128
+2025-12,Gran Canaria,ES,30640
+2025-12,Gran Canaria,FR,14680
+2025-12,Gran Canaria,GB,88242
+2025-12,Gran Canaria,IE,10821
+2025-12,Gran Canaria,IT,14225
+2025-12,Gran Canaria,NL,28865
+2025-12,Gran Canaria,NORD,113333
+2025-12,Gran Canaria,OTROS,54589
+2025-12,Lanzarote,BE,5298
+2025-12,Lanzarote,DE,34822
+2025-12,Lanzarote,ES,19322
+2025-12,Lanzarote,FR,17865
+2025-12,Lanzarote,GB,134167
+2025-12,Lanzarote,IE,31862
+2025-12,Lanzarote,IT,8526
+2025-12,Lanzarote,NL,7993
+2025-12,Lanzarote,NORD,9011
+2025-12,Lanzarote,OTROS,14547
+2025-12,Tenerife,BE,27479
+2025-12,Tenerife,DE,92436
+2025-12,Tenerife,ES,53643
+2025-12,Tenerife,FR,34773
+2025-12,Tenerife,GB,243103
+2025-12,Tenerife,IE,21204
+2025-12,Tenerife,IT,40530
+2025-12,Tenerife,NL,23985
+2025-12,Tenerife,NORD,47748
+2025-12,Tenerife,OTROS,104028
+2026-01,Fuerteventura,BE,2241
+2026-01,Fuerteventura,DE,66880
+2026-01,Fuerteventura,ES,13366
+2026-01,Fuerteventura,FR,10382
+2026-01,Fuerteventura,GB,70400
+2026-01,Fuerteventura,IE,6308
+2026-01,Fuerteventura,IT,13552
+2026-01,Fuerteventura,NL,6785
+2026-01,Fuerteventura,NORD,10077
+2026-01,Fuerteventura,OTROS,30013
+2026-01,Gran Canaria,BE,7535
+2026-01,Gran Canaria,DE,103714
+2026-01,Gran Canaria,ES,34270
+2026-01,Gran Canaria,FR,12405
+2026-01,Gran Canaria,GB,96089
+2026-01,Gran Canaria,IE,12511
+2026-01,Gran Canaria,IT,16746
+2026-01,Gran Canaria,NL,25282
+2026-01,Gran Canaria,NORD,123976
+2026-01,Gran Canaria,OTROS,55733
+2026-01,Lanzarote,BE,4571
+2026-01,Lanzarote,DE,44128
+2026-01,Lanzarote,ES,18633
+2026-01,Lanzarote,FR,18251
+2026-01,Lanzarote,GB,144868
+2026-01,Lanzarote,IE,38110
+2026-01,Lanzarote,IT,10421
+2026-01,Lanzarote,NL,7760
+2026-01,Lanzarote,NORD,7870
+2026-01,Lanzarote,OTROS,14987
+2026-01,Tenerife,BE,23733
+2026-01,Tenerife,DE,98438
+2026-01,Tenerife,ES,59222
+2026-01,Tenerife,FR,32056
+2026-01,Tenerife,GB,215286
+2026-01,Tenerife,IE,26444
+2026-01,Tenerife,IT,39949
+2026-01,Tenerife,NL,21639
+2026-01,Tenerife,NORD,48037
+2026-01,Tenerife,OTROS,109219
+2026-02,Fuerteventura,BE,4534
+2026-02,Fuerteventura,DE,68169
+2026-02,Fuerteventura,ES,10622
+2026-02,Fuerteventura,FR,13609
+2026-02,Fuerteventura,GB,79036
+2026-02,Fuerteventura,IE,5620
+2026-02,Fuerteventura,IT,17958
+2026-02,Fuerteventura,NL,7677
+2026-02,Fuerteventura,NORD,9476
+2026-02,Fuerteventura,OTROS,31444
+2026-02,Gran Canaria,BE,11347
+2026-02,Gran Canaria,DE,89046
+2026-02,Gran Canaria,ES,30016
+2026-02,Gran Canaria,FR,16624
+2026-02,Gran Canaria,GB,84120
+2026-02,Gran Canaria,IE,11000
+2026-02,Gran Canaria,IT,15671
+2026-02,Gran Canaria,NL,27057
+2026-02,Gran Canaria,NORD,121787
+2026-02,Gran Canaria,OTROS,52927
+2026-02,Lanzarote,BE,6860
+2026-02,Lanzarote,DE,33494
+2026-02,Lanzarote,ES,16219
+2026-02,Lanzarote,FR,21870
+2026-02,Lanzarote,GB,144955
+2026-02,Lanzarote,IE,31947
+2026-02,Lanzarote,IT,13742
+2026-02,Lanzarote,NL,8469
+2026-02,Lanzarote,NORD,7455
+2026-02,Lanzarote,OTROS,17869
+2026-02,Tenerife,BE,23725
+2026-02,Tenerife,DE,87366
+2026-02,Tenerife,ES,53406
+2026-02,Tenerife,FR,36709
+2026-02,Tenerife,GB,231397
+2026-02,Tenerife,IE,23565
+2026-02,Tenerife,IT,37002
+2026-02,Tenerife,NL,21765
+2026-02,Tenerife,NORD,51005
+2026-02,Tenerife,OTROS,111471
+2026-03,Fuerteventura,BE,7180
+2026-03,Fuerteventura,DE,79849
+2026-03,Fuerteventura,ES,16718
+2026-03,Fuerteventura,FR,13081
+2026-03,Fuerteventura,GB,85679
+2026-03,Fuerteventura,IE,7209
+2026-03,Fuerteventura,IT,15026
+2026-03,Fuerteventura,NL,7966
+2026-03,Fuerteventura,NORD,9946
+2026-03,Fuerteventura,OTROS,27536
+2026-03,Gran Canaria,BE,12938
+2026-03,Gran Canaria,DE,113568
+2026-03,Gran Canaria,ES,32662
+2026-03,Gran Canaria,FR,15076
+2026-03,Gran Canaria,GB,98021
+2026-03,Gran Canaria,IE,12197
+2026-03,Gran Canaria,IT,14688
+2026-03,Gran Canaria,NL,25531
+2026-03,Gran Canaria,NORD,109669
+2026-03,Gran Canaria,OTROS,52937
+2026-03,Lanzarote,BE,8225
+2026-03,Lanzarote,DE,36587
+2026-03,Lanzarote,ES,18237
+2026-03,Lanzarote,FR,19369
+2026-03,Lanzarote,GB,167250
+2026-03,Lanzarote,IE,35140
+2026-03,Lanzarote,IT,9040
+2026-03,Lanzarote,NL,9228
+2026-03,Lanzarote,NORD,6921
+2026-03,Lanzarote,OTROS,15466
+2026-03,Tenerife,BE,21756
+2026-03,Tenerife,DE,104055
+2026-03,Tenerife,ES,57966
+2026-03,Tenerife,FR,38075
+2026-03,Tenerife,GB,238516
+2026-03,Tenerife,IE,28385
+2026-03,Tenerife,IT,37370
+2026-03,Tenerife,NL,21104
+2026-03,Tenerife,NORD,48937
+2026-03,Tenerife,OTROS,94555
+2026-04,Fuerteventura,BE,2998
+2026-04,Fuerteventura,DE,62716
+2026-04,Fuerteventura,ES,16350
+2026-04,Fuerteventura,FR,10233
+2026-04,Fuerteventura,GB,68825
+2026-04,Fuerteventura,IE,6809
+2026-04,Fuerteventura,IT,11875
+2026-04,Fuerteventura,NL,6572
+2026-04,Fuerteventura,NORD,3151
+2026-04,Fuerteventura,OTROS,20753
+2026-04,Gran Canaria,BE,10667
+2026-04,Gran Canaria,DE,76732
+2026-04,Gran Canaria,ES,44501
+2026-04,Gran Canaria,FR,13204
+2026-04,Gran Canaria,GB,90466
+2026-04,Gran Canaria,IE,9500
+2026-04,Gran Canaria,IT,8781
+2026-04,Gran Canaria,NL,34325
+2026-04,Gran Canaria,NORD,44091
+2026-04,Gran Canaria,OTROS,41837
+2026-04,Lanzarote,BE,4763
+2026-04,Lanzarote,DE,22252
+2026-04,Lanzarote,ES,24524
+2026-04,Lanzarote,FR,18884
+2026-04,Lanzarote,GB,138388
+2026-04,Lanzarote,IE,29984
+2026-04,Lanzarote,IT,7227
+2026-04,Lanzarote,NL,7483
+2026-04,Lanzarote,NORD,2593
+2026-04,Lanzarote,OTROS,10922
+2026-04,Tenerife,BE,26114
+2026-04,Tenerife,DE,63916
+2026-04,Tenerife,ES,72929
+2026-04,Tenerife,FR,35448
+2026-04,Tenerife,GB,213442
+2026-04,Tenerife,IE,21670
+2026-04,Tenerife,IT,23252
+2026-04,Tenerife,NL,20880
+2026-04,Tenerife,NORD,15703
+2026-04,Tenerife,OTROS,74373
+2026-05,Fuerteventura,BE,2627
+2026-05,Fuerteventura,DE,50439
+2026-05,Fuerteventura,ES,15688
+2026-05,Fuerteventura,FR,9599
+2026-05,Fuerteventura,GB,63048
+2026-05,Fuerteventura,IE,7388
+2026-05,Fuerteventura,IT,12792
+2026-05,Fuerteventura,NL,9091
+2026-05,Fuerteventura,NORD,2188
+2026-05,Fuerteventura,OTROS,20745
+2026-05,Gran Canaria,BE,9510
+2026-05,Gran Canaria,DE,46201
+2026-05,Gran Canaria,ES,43583
+2026-05,Gran Canaria,FR,13237
+2026-05,Gran Canaria,GB,88769
+2026-05,Gran Canaria,IE,10211
+2026-05,Gran Canaria,IT,9631
+2026-05,Gran Canaria,NL,33490
+2026-05,Gran Canaria,NORD,17020
+2026-05,Gran Canaria,OTROS,35163
+2026-05,Lanzarote,BE,3402
+2026-05,Lanzarote,DE,15869
+2026-05,Lanzarote,ES,27024
+2026-05,Lanzarote,FR,16980
+2026-05,Lanzarote,GB,134172
+2026-05,Lanzarote,IE,31005
+2026-05,Lanzarote,IT,7498
+2026-05,Lanzarote,NL,5655
+2026-05,Lanzarote,NORD,4655
+2026-05,Lanzarote,OTROS,10605
+2026-05,Tenerife,BE,15572
+2026-05,Tenerife,DE,36810
+2026-05,Tenerife,ES,77350
+2026-05,Tenerife,FR,32017
+2026-05,Tenerife,GB,211096
+2026-05,Tenerife,IE,22795
+2026-05,Tenerife,IT,26628
+2026-05,Tenerife,NL,23755
+2026-05,Tenerife,NORD,3597
+2026-05,Tenerife,OTROS,73644
+2026-06,Fuerteventura,BE,2134
+2026-06,Fuerteventura,DE,47735
+2026-06,Fuerteventura,ES,19662
+2026-06,Fuerteventura,FR,6176
+2026-06,Fuerteventura,GB,64317
+2026-06,Fuerteventura,IE,7160
+2026-06,Fuerteventura,IT,15585
+2026-06,Fuerteventura,NL,3759
+2026-06,Fuerteventura,NORD,2691
+2026-06,Fuerteventura,OTROS,28521
+2026-06,Gran Canaria,BE,10837
+2026-06,Gran Canaria,DE,42296
+2026-06,Gran Canaria,ES,52191
+2026-06,Gran Canaria,FR,19972
+2026-06,Gran Canaria,GB,91591
+2026-06,Gran Canaria,IE,9587
+2026-06,Gran Canaria,IT,10627
+2026-06,Gran Canaria,NL,21863
+2026-06,Gran Canaria,NORD,18465
+2026-06,Gran Canaria,OTROS,33294
+2026-06,Lanzarote,BE,2838
+2026-06,Lanzarote,DE,14039
+2026-06,Lanzarote,ES,32329
+2026-06,Lanzarote,FR,15705
+2026-06,Lanzarote,GB,138086
+2026-06,Lanzarote,IE,30271
+2026-06,Lanzarote,IT,7043
+2026-06,Lanzarote,NL,4324
+2026-06,Lanzarote,NORD,1546
+2026-06,Lanzarote,OTROS,9366
+2026-06,Tenerife,BE,18042
+2026-06,Tenerife,DE,39446
+2026-06,Tenerife,ES,86836
+2026-06,Tenerife,FR,28421
+2026-06,Tenerife,GB,218911
+2026-06,Tenerife,IE,23219
+2026-06,Tenerife,IT,27929
+2026-06,Tenerife,NL,16189
+2026-06,Tenerife,NORD,2406
+2026-06,Tenerife,OTROS,63327
+2026-07,Fuerteventura,BE,3789
+2026-07,Fuerteventura,DE,60042
+2026-07,Fuerteventura,ES,30575
+2026-07,Fuerteventura,FR,13069
+2026-07,Fuerteventura,GB,76204
+2026-07,Fuerteventura,IE,6840
+2026-07,Fuerteventura,IT,15451
+2026-07,Fuerteventura,NL,6460
+2026-07,Fuerteventura,NORD,3288
+2026-07,Fuerteventura,OTROS,32189
+2026-07,Gran Canaria,BE,16031
+2026-07,Gran Canaria,DE,48737
+2026-07,Gran Canaria,ES,62022
+2026-07,Gran Canaria,FR,17888
+2026-07,Gran Canaria,GB,105628
+2026-07,Gran Canaria,IE,11301
+2026-07,Gran Canaria,IT,8230
+2026-07,Gran Canaria,NL,31400
+2026-07,Gran Canaria,NORD,31710
+2026-07,Gran Canaria,OTROS,46963
+2026-07,Lanzarote,BE,4603
+2026-07,Lanzarote,DE,16222
+2026-07,Lanzarote,ES,48423
+2026-07,Lanzarote,FR,24242
+2026-07,Lanzarote,GB,155897
+2026-07,Lanzarote,IE,32178
+2026-07,Lanzarote,IT,10271
+2026-07,Lanzarote,NL,7234
+2026-07,Lanzarote,NORD,2938
+2026-07,Lanzarote,OTROS,14828
+2026-07,Tenerife,BE,26083
+2026-07,Tenerife,DE,41837
+2026-07,Tenerife,ES,101005
+2026-07,Tenerife,FR,40415
+2026-07,Tenerife,GB,238970
+2026-07,Tenerife,IE,24321
+2026-07,Tenerife,IT,27976
+2026-07,Tenerife,NL,21602
+2026-07,Tenerife,NORD,4594
+2026-07,Tenerife,OTROS,78639
+2026-08,Fuerteventura,BE,2476
+2026-08,Fuerteventura,DE,58190
+2026-08,Fuerteventura,ES,32039
+2026-08,Fuerteventura,FR,16398
+2026-08,Fuerteventura,GB,77817
+2026-08,Fuerteventura,IE,5684
+2026-08,Fuerteventura,IT,19409
+2026-08,Fuerteventura,NL,5740
+2026-08,Fuerteventura,NORD,2541
+2026-08,Fuerteventura,OTROS,30236
+2026-08,Gran Canaria,BE,9102
+2026-08,Gran Canaria,DE,51912
+2026-08,Gran Canaria,ES,71462
+2026-08,Gran Canaria,FR,22104
+2026-08,Gran Canaria,GB,103434
+2026-08,Gran Canaria,IE,9986
+2026-08,Gran Canaria,IT,13779
+2026-08,Gran Canaria,NL,29346
+2026-08,Gran Canaria,NORD,18980
+2026-08,Gran Canaria,OTROS,45166
+2026-08,Lanzarote,BE,3235
+2026-08,Lanzarote,DE,15301
+2026-08,Lanzarote,ES,54309
+2026-08,Lanzarote,FR,23382
+2026-08,Lanzarote,GB,156598
+2026-08,Lanzarote,IE,26558
+2026-08,Lanzarote,IT,12183
+2026-08,Lanzarote,NL,6471
+2026-08,Lanzarote,NORD,1837
+2026-08,Lanzarote,OTROS,13178
+2026-08,Tenerife,BE,19047
+2026-08,Tenerife,DE,39063
+2026-08,Tenerife,ES,114666
+2026-08,Tenerife,FR,46341
+2026-08,Tenerife,GB,239831
+2026-08,Tenerife,IE,22537
+2026-08,Tenerife,IT,28846
+2026-08,Tenerife,NL,22597
+2026-08,Tenerife,NORD,2534
+2026-08,Tenerife,OTROS,73480

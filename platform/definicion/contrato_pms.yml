@@ -1,0 +1,46 @@
+# Contrato del esquema del PMS de Atlántida Hoteles (pms-db, esquema public).
+# Transcripción exacta de la tabla C3 de la hoja de ruta
+# (docs/superpowers/plans/2026-10-03-00-hoja-de-ruta.md). Todas las tablas
+# llevan created_at y updated_at (timestamptz), base de la carga incremental.
+# El DDL de H3 se valida contra este fichero; atlantida.yml también.
+version: 1
+tablas:
+  hotel: [hotel_id, code, name, island, municipality, hotel_type, stars, opened_on, created_at, updated_at]
+  room_type: [room_type_id, hotel_id, code, name, capacity, base_rate, created_at, updated_at]
+  room: [room_id, hotel_id, room_type_id, room_number, floor, status, created_at, updated_at]
+  room_block: [block_id, room_id, start_date, end_date, reason, created_at, updated_at]
+  channel: [channel_id, code, name, channel_type, created_at, updated_at]
+  channel_commission: [channel_id, valid_from, valid_to, rate, created_at, updated_at]
+  rate_plan: [rate_plan_id, code, name, board, refundable, deposit_pct, discount_pct, created_at, updated_at]
+  guest: [guest_id, first_name, last_name, email, phone, document_id, country_code, birth_date, segment, created_at, updated_at]
+  loyalty_member: [member_id, guest_id, program, enrolled_at, left_at, created_at, updated_at]
+  campaign: [campaign_id, code, name, target_channel_type, start_date, end_date, budget, created_at, updated_at]
+  campaign_hotel: [campaign_id, hotel_id, created_at, updated_at]
+  reservation: [reservation_id, locator, hotel_id, guest_id, channel_id, rate_plan_id, room_type_id, campaign_id, booked_at, arrival_date, departure_date, adults, children, status, total_amount, currency, created_at, updated_at]
+  reservation_guest: [reservation_id, guest_id, role, created_at, updated_at]
+  stay_night: [stay_night_id, reservation_id, room_id, stay_date, room_revenue, created_at, updated_at]
+  cancellation: [cancellation_id, reservation_id, cancelled_at, reason, penalty_amount, created_at, updated_at]
+  payment: [payment_id, reservation_id, paid_at, amount, payment_type, created_at, updated_at]
+  folio_charge: [charge_id, reservation_id, posted_at, service_date, department, amount, created_at, updated_at]
+  cost_entry: [cost_id, hotel_id, cost_date, category, amount, created_at, updated_at]
+  review: [review_id, reservation_id, hotel_id, source, posted_at, score, recommend, language, body, created_at, updated_at]
+  guest_flag: [guest_id, flag, reason, set_at, set_by, created_at, updated_at]
+  rate_restriction: [hotel_id, channel_id, rate_plan_id, from_date, to_date, rule, parametro, set_at, set_by, created_at, updated_at]
+# Valores permitidos de cada enumeración de C3 (tabla.columna -> valores).
+restricciones:
+  hotel.hotel_type: [urban, resort, all_inclusive, rural]
+  channel.channel_type: [direct, ota, tour_operator, agency]
+  rate_plan.board: [RO, BB, HB, FB, AI]
+  guest.segment: [leisure_couple, family, business, senior, group]
+  # Programa de fidelización: solo se registran los miembros reales (no el grupo de control).
+  loyalty_member.program: [atlantida_plus]
+  reservation.status: [confirmed, cancelled, no_show, checked_in, checked_out]
+  reservation_guest.role: [holder, companion]
+  payment.payment_type: [deposit, balance, refund]
+  folio_charge.department: [fnb, spa, minibar, excursion, other]
+  cost_entry.category: [staff, energy, maintenance, fnb_cost, marketing, other]
+  # Vocabulario de reverse ETL: lo que el DWH puede escribir en el PMS.
+  guest_flag.flag: [vip]
+  # deposito_obligatorio: parametro = antelación mínima (días) desde la que se exige el
+  # depósito; estancia_minima: parametro = noches mínimas.
+  rate_restriction.rule: [deposito_obligatorio, estancia_minima]

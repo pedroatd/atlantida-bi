@@ -1,0 +1,29 @@
+[project]
+name = "atlantida-sources"
+version = "0.1.0"
+description = "Fuentes externas de Atlántida Hoteles: ISTAC, AEMET, festivos, BCE y rate shopper"
+readme = "README.md"
+requires-python = "==3.12.*"
+dependencies = [
+  "atlantida-def",
+  "numpy==2.5.3", "pandas==3.0.6", "pyarrow==25.0.1",
+  "httpx==0.28.1", "holidays==0.105",
+  "fastapi==0.142.2", "uvicorn==0.54.0",
+]
+
+[project.scripts]
+atlantida-fuentes = "atlantida_sources.cli:main"
+
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlantida_sources"]
+
+# Las instantáneas viajan dentro de la rueda: el contenedor del simulador las lee sin el repositorio.
+[tool.hatch.build.targets.wheel.force-include]
+"snapshots" = "atlantida_sources/snapshots"
+
+[tool.uv.sources]
+atlantida-def = { workspace = true }

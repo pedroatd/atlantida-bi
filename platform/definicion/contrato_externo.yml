@@ -1,0 +1,29 @@
+# Contrato de las fuentes externas de Atlántida Hoteles (especificación §2.4).
+# Por fuente: columnas clave (definen el grano: una fila por combinación) y columnas de
+# valor. Los descargadores e instantáneas de H3 (atlantida_sources) y el API del rate
+# shopper producen exactamente estas columnas; las medidas raw externas de atlantida.yml
+# deben citar una tabla.columna de este fichero.
+#
+# El informe del conjunto competitivo se separa en dos fuentes con grano distinto:
+# rate_shopper (tarifas publicadas por cada competidor, consultadas cada día) y
+# compset_diario (informe agregado tipo STR del compset de cada hotel propio).
+version: 1
+fuentes:
+  istac_frontur:
+    claves: [periodo_mes, isla, pais_origen]
+    valores: [llegadas]
+  aemet_diario:
+    claves: [fecha, isla, estacion]
+    valores: [precipitacion, temperatura_maxima]
+  festivos:
+    claves: [fecha, ambito, pais]
+    valores: [nombre]
+  bce_tipos:
+    claves: [fecha, divisa]
+    valores: [tipo_cambio]
+  rate_shopper:
+    claves: [competidor, fecha_estancia, fecha_consulta]
+    valores: [tarifa]
+  compset_diario:
+    claves: [hotel_id, fecha]
+    valores: [ocupacion, adr, revpar]

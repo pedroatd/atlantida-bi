@@ -1,0 +1,6 @@
+# Nunca a git: contraseñas, tus datos, el estado de dlt y el entorno de Python.
+.env
+datos/
+datos-ejemplo/
+.dlt-estado/
+.venv/

@@ -1,0 +1,23 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+/platform/dbt/target/
+/platform/dbt/logs/
+/platform/dbt/dbt_packages/
+.DS_Store
+platform/.env
+/platform/sources/snapshots/.parciales/
+/platform/dbt/.user.yml
+/platform/el/airbyte/.bin/
+/platform/catalogo/openmetadata/.om/
+/platform/lakehouse/
+/platform/dbt/estado/
+/platform/ai/.modelos/
+
+# Capturas de los paneles (nunca a git)
+capturas/
+
+# Tu proyecto propio y los datos del kit del L3: no se suben a este repositorio
+/proyecto/
+/laboratorio/l03/kit/datos/

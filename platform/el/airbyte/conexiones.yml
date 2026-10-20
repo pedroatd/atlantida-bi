@@ -1,0 +1,32 @@
+# Configuración de Airbyte como código (perfil full). La aplica `atlantida-el airbyte aplicar`
+# (make airbyte-configurar). Las variables de entorno (forma dólar-llaves) salen del entorno (platform/.env; las direcciones
+# AIRBYTE_*_HOST las calcula make). Destino: raw_pms_airbyte, con las mismas tablas y columnas del
+# PMS que raw_pms; dbt lo lee con MOTOR_EL=airbyte.
+version: 1
+origen:
+  nombre: atlantida-pms
+  configuracion:
+    host: "${AIRBYTE_PMS_HOST}"
+    port: 5432
+    database: "${PMS_DB}"
+    username: "${PMS_USER}"
+    password: "${PMS_PASSWORD}"
+    schemas: [public]
+    ssl_mode: {mode: disable}
+    replication_method:
+      method: CDC
+      replication_slot: airbyte_atlantida
+      publication: airbyte_atlantida
+destino:
+  nombre: atlantida-dwh
+  configuracion:
+    host: "${AIRBYTE_DWH_HOST}"
+    port: 5432
+    database: "${DWH_DB}"
+    schema: raw_pms_airbyte
+    username: loader
+    password: "${LOADER_PASSWORD}"
+    ssl_mode: {mode: disable}
+conexion:
+  nombre: pms-a-dwh
+  espacio_nombres: raw_pms_airbyte

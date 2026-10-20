@@ -1,0 +1,50 @@
+{
+  "aemet_diario": {
+    "atribucion": "© AEMET",
+    "descargado": "2026-10-04",
+    "fichero": "aemet_diario.csv",
+    "filas": 8392,
+    "fuente": "aemet_diario",
+    "licencia": "Condiciones de uso de AEMET OpenData",
+    "nota": "Valores climatológicos diarios; una estación de aeropuerto por isla.",
+    "sha256": "aa699364e938759692b7e03ef17a099ac312b55ca3423ea9fd42a5a272441f29",
+    "sintetico": false,
+    "url": "https://opendata.aemet.es/opendata/api/valores/climatologicos/diarios/datos"
+  },
+  "bce_tipos": {
+    "atribucion": "Fuente: Banco Central Europeo, ECB Data Portal (EXR)",
+    "descargado": "2026-10-04",
+    "fichero": "bce_tipos.csv",
+    "filas": 5896,
+    "fuente": "bce_tipos",
+    "licencia": "Reutilización libre citando la fuente (política de reutilización del BCE)",
+    "nota": "",
+    "sha256": "739e0f8ee91c442c8702a26f9795684c77642fba74cc91640c5f2c407f7c8165",
+    "sintetico": false,
+    "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.GBP+SEK+NOK+DKK.EUR.SP00.A?startPeriod=2021-01-01&endPeriod=2026-10-04&format=csvdata"
+  },
+  "festivos": {
+    "atribucion": "python-holidays",
+    "descargado": "2026-10-04",
+    "fichero": "festivos.csv",
+    "filas": 8345,
+    "fuente": "festivos",
+    "licencia": "MIT (librería holidays)",
+    "nota": "Vacaciones escolares: reglas aproximadas (festivos.vacaciones_escolares). Ámbito insular:<isla> = patronas de Gran Canaria, Lanzarote y Fuerteventura (Tenerife no tiene fiesta insular oficial). El Carnaval de Canarias figura como semana escolar, no como festivo.",
+    "sha256": "055b4e603e59b50c68ad906db96501898b11da0e02128104764dbe08150047ef",
+    "sintetico": false,
+    "url": "https://pypi.org/project/holidays/0.105/"
+  },
+  "istac_frontur": {
+    "atribucion": "Fuente: Instituto Canario de Estadística (ISTAC), FRONTUR-Canarias",
+    "descargado": "2026-10-04",
+    "fichero": "istac_frontur.csv",
+    "filas": 2719,
+    "fuente": "istac_frontur",
+    "licencia": "Condiciones generales de reutilización del ISTAC (Ley 37/2007): uso comercial y no comercial citando la fuente; ver https://www.gobiernodecanarias.org/istac/aviso_legal.html",
+    "nota": "TIPO_VIAJERO=TURISTA, MEDIDAS=TURISTAS; mercados disjuntos sin totales. Laguna de la fuente: sin dato Fuerteventura-IE en 2021-05.",
+    "sha256": "21e1f5d6c285f22b96a863556b5abf6e97909b48acf7f41c59e8be4cdc4488b3",
+    "sintetico": false,
+    "url": "https://datos.canarias.es/api/estadisticas/statistical-resources/v1.0/datasets/ISTAC/E16028B_000011/~latest"
+  }
+}

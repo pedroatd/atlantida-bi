@@ -1,0 +1,119 @@
+name: atlantida
+
+x-postgres: &postgres
+  image: postgres:18.6
+  restart: unless-stopped
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+    interval: 5s
+    timeout: 3s
+    retries: 20
+    start_period: 30s
+  shm_size: 256mb  # /dev/shm de Docker (64 MB) se queda corto para consultas paralelas
+
+
+
+# RS_URL por omisión: sin el simulador (edición del alumnado), solo la de .env (la URL del rate
+# shopper que da el profesor); con él, la del rate shopper local (lo fija el bloque del elt).
+x-rs-externo: &rs-externo
+  RS_URL: ${RS_URL:-}
+
+services:
+  pms-db:
+    <<: *postgres
+    profiles: ["lite", "ai", "full"]
+    # wal_level=logical: CDC de Airbyte en el perfil full; inocuo en los demás.
+    command: ["postgres", "-c", "wal_level=logical"]
+    environment:
+      POSTGRES_DB: ${PMS_DB}
+      POSTGRES_USER: ${PMS_USER}
+      POSTGRES_PASSWORD: ${PMS_PASSWORD}
+    ports: ["127.0.0.1:${PMS_PORT:-5433}:5432"]
+    volumes:
+      - pms-data:/var/lib/postgresql
+      - ./db/pms:/docker-entrypoint-initdb.d:ro
+
+  dwh:
+    <<: *postgres
+    profiles: ["lite", "ai", "full"]
+    environment:
+      POSTGRES_DB: ${DWH_DB}
+      POSTGRES_USER: ${DWH_USER}
+      POSTGRES_PASSWORD: ${DWH_PASSWORD}
+      LOADER_PASSWORD: ${LOADER_PASSWORD}
+      TRANSFORMER_PASSWORD: ${TRANSFORMER_PASSWORD}
+      ML_WRITER_PASSWORD: ${ML_WRITER_PASSWORD}
+      BI_READER_PASSWORD: ${BI_READER_PASSWORD}
+    ports: ["127.0.0.1:${DWH_PORT:-5434}:5432"]
+    command: ["postgres", "-c", "shared_buffers=512MB", "-c", "work_mem=64MB"]
+    # dbt construye con 4 hilos y cada consulta paralela reserva memoria compartida (hash joins):
+    # a escala 1 los 256 MB del ancla se agotan («could not resize shared memory segment»).
+    shm_size: 1gb
+    volumes:
+      - dwh-data:/var/lib/postgresql
+      - ./db/dwh:/docker-entrypoint-initdb.d:ro
+
+
+  # Rol de solo lectura con el que las cargas y Dagster leen el PMS (idempotente; ver
+  # db/pms-el/rol_el.sh). Lo ejecutan make up, make seed y make reseed.
+  pms-el-rol:
+    image: postgres:18.6
+    profiles: ["roles"]
+    user: postgres
+    entrypoint: ["/bin/sh", "/rol/rol_el.sh"]
+    environment:
+      PGHOST: pms-db
+      PGDATABASE: ${PMS_DB}
+      PGUSER: ${PMS_USER}
+      PGPASSWORD: ${PMS_PASSWORD}
+      PMS_EL_USER: ${PMS_EL_USER:-}
+      PMS_EL_PASSWORD: ${PMS_EL_PASSWORD:-}
+    volumes: ["./db/pms-el:/rol:ro"]
+    restart: "no"
+    depends_on: { pms-db: { condition: service_healthy } }
+
+
+
+  # Cargas (dlt) y almacén (dbt, MetricFlow): orden única (make el, make dbt, make pipeline,
+  # make historico, make semantica). Sin puertos: habla con pms-db, dwh y rate-shopper por la red
+  # interna y, con ORIGEN_PMS=api, con la API del profesor (SIM_API_URL).
+  elt:
+    build:
+      context: ..
+      dockerfile: platform/el/Dockerfile
+      args: { REV: "${ATLANTIDA_REV:-desconocida}" }
+    image: ${IMAGEN_ELT:-atlantida-elt:0.4.0}
+    profiles: ["elt"]
+    restart: "no"
+    environment:
+      <<: *rs-externo
+      PMS_HOST: pms-db
+      PMS_PORT_INTERNO: "5432"
+      PMS_DB: ${PMS_DB}
+      PMS_USER: ${PMS_USER}
+      PMS_PASSWORD: ${PMS_PASSWORD}
+      PMS_EL_USER: ${PMS_EL_USER:-}
+      PMS_EL_PASSWORD: ${PMS_EL_PASSWORD:-}
+      DWH_HOST: dwh
+      DWH_PORT_INTERNO: "5432"
+      DWH_DB: ${DWH_DB}
+      LOADER_PASSWORD: ${LOADER_PASSWORD}
+      ORIGEN_PMS: ${ORIGEN_PMS:-pms}
+      SIM_API_URL: ${SIM_API_URL:-}
+      SIM_API_TOKEN: ${SIM_API_TOKEN:-}
+      RS_TOKEN: ${RS_TOKEN:-}
+      RS_REINTENTOS: ${RS_REINTENTOS:-4}
+      RS_TARIFAS_DESDE: ${RS_TARIFAS_DESDE:-}
+      MOTOR_EL: ${MOTOR_EL:-dlt}
+    depends_on:
+      pms-db: { condition: service_healthy }
+      dwh: { condition: service_healthy }
+
+
+
+
+
+
+volumes:
+  pms-data:
+  dwh-data:

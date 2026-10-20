@@ -1,0 +1,19 @@
+# Contrato de carga de tu proyecto: qué tablas deja carga.py en proyecto.raw.
+# Sustituye las dos tablas de ejemplo por las tuyas y valídalo con `make contrato`.
+version: 1                         # versión del formato del contrato (siempre 1)
+tablas:                            # una entrada por tabla de raw
+  mi_fichero:                      # nombre de la tabla en raw (minúsculas, dígitos y _)
+    columnas: [id, nombre, alta]   # columnas que debe tener, tal como las deja dlt (make columnas)
+                                   #   sin las de linaje (_loaded_at, _origen, _fila) ni las _dlt_*
+    clave: [id]                    # columnas que identifican cada fila
+    disposicion: replace           # merge, replace o append: tu decisión, justificada en la nota
+    fichero: mi_fichero.csv        # CSV dentro de datos/ (o una lista, o un patrón: ventas_*.csv)
+    personales: [nombre]           # opcional: columnas con datos personales
+    # separador: ";"               # opcional: «,», «;», "\t" (tabulador) o «|», si no se detecta
+    # codificacion: cp1252         # opcional: si el CSV no está en UTF-8
+  mi_tabla:                        # sin «fichero»: sale de proyecto_origen
+    columnas: [id, importe, actualizado]
+    clave: [id]
+    disposicion: merge
+    incremental: actualizado       # opcional: última modificación, para la carga incremental
+    # esquema_origen: public       # opcional: esquema de la tabla en proyecto_origen

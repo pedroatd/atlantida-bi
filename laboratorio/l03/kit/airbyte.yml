@@ -1,0 +1,45 @@
+# Airbyte como código para tu proyecto (parte opcional del L3): captura de cambios (CDC) de la base
+# proyecto_origen del kit a la base proyecto, en el esquema raw_airbyte (al lado de raw, para que
+# compares lo que ve cada carga). La aplica la orden de Airbyte de la plataforma, desde platform/:
+# make airbyte-proyecto (con Airbyte instalado y la base del kit levantada con make base).
+# Las variables (forma dólar-llaves) salen del entorno: PROYECTO_* del .env del kit y las
+# direcciones AIRBYTE_ORIGEN_HOST y AIRBYTE_DESTINO_HOST, que calcula make (la base del kit en su
+# red de Docker, la que ve Airbyte). Para preparar el origen (publicación y ranura de replicación)
+# la orden se conecta desde tu equipo: origen.preparar.
+version: 1
+origen:
+  nombre: proyecto-origen
+  preparar:
+    host: 127.0.0.1
+    port: "${PROYECTO_PUERTO}"
+  configuracion:
+    host: "${AIRBYTE_ORIGEN_HOST}"
+    port: 5432
+    database: proyecto_origen
+    username: "${PROYECTO_USUARIO}"
+    password: "${PROYECTO_CLAVE}"
+    schemas: [public]
+    ssl_mode: {mode: disable}
+    replication_method:
+      method: CDC
+      replication_slot: airbyte_proyecto
+      publication: airbyte_proyecto
+destino:
+  nombre: proyecto
+  configuracion:
+    host: "${AIRBYTE_DESTINO_HOST}"
+    port: 5432
+    database: proyecto
+    schema: raw_airbyte
+    username: "${PROYECTO_USUARIO}"
+    password: "${PROYECTO_CLAVE}"
+    ssl_mode: {mode: disable}
+conexion:
+  nombre: proyecto-cdc
+  espacio_nombres: raw_airbyte
+  # Las tablas de tu contrato que vienen de proyecto_origen, con su clave (sin clave, Airbyte las
+  # relee enteras). Con clave, la tabla entra en la publicación; sin clave primaria en el origen,
+  # PostgreSQL rechazaría sus UPDATE y DELETE: no la pongas aquí con clave si allí no la tiene.
+  # Si cambias esta lista, repite make airbyte-proyecto: deja la publicación con las de ahora.
+  tablas:
+    - {tabla: mi_tabla, clave: [id]}   # la del contrato de la plantilla: cámbiala por las tuyas

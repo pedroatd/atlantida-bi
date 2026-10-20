@@ -1,0 +1,21 @@
+[project]
+name = "atlantida-def"
+version = "0.1.0"
+description = "Definición del sistema de BI de Atlántida Hoteles: contrato del PMS, objetivos, KPI, acciones e índice de logro"
+readme = "README.md"
+requires-python = "==3.12.*"
+dependencies = ["pydantic==2.13.5", "pyyaml==6.0.3"]
+
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlantida_def"]
+
+# Los YAML viajan dentro de la rueda para que una instalación no editable
+# (p. ej. en un contenedor) los encuentre junto al paquete.
+[tool.hatch.build.targets.wheel.force-include]
+"atlantida.yml" = "atlantida_def/atlantida.yml"
+"contrato_pms.yml" = "atlantida_def/contrato_pms.yml"
+"contrato_externo.yml" = "atlantida_def/contrato_externo.yml"

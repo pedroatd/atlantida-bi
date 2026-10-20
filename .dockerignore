@@ -1,0 +1,27 @@
+# Contexto de las imágenes que se construyen desde la raíz del repositorio: solo el workspace uv.
+.git
+.venv
+**/.venv
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.ruff_cache
+book/
+!book/assets/paleta.json
+docs/
+.superpowers/
+.playwright-mcp/
+.quarto/
+platform/.env
+platform/sources/snapshots/.parciales/
+platform/*/tests/
+platform/viz/*/tests/
+tests/
+.github/
+**/node_modules
+platform/dbt/target
+platform/dbt/logs
+platform/el/airbyte/.bin
+platform/catalogo
+platform/lakehouse
+platform/dbt/estado

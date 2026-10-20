@@ -1,0 +1,25 @@
+# Base de datos nueva para tu proyecto (laboratorio L3). Un PostgreSQL con dos bases:
+#   proyecto_origen: tu «sistema operacional» (restauras ahí tus datos SQL);
+#   proyecto: el destino de la carga en crudo (esquemas raw y meta).
+# wal_level=logical permite la captura de cambios (CDC) de la parte opcional.
+name: l03-proyecto
+services:
+  base:
+    image: postgres:18.6
+    command: ["postgres", "-c", "wal_level=logical"]
+    environment:
+      POSTGRES_USER: ${PROYECTO_USUARIO:-proyecto}
+      POSTGRES_PASSWORD: ${PROYECTO_CLAVE:?ejecuta make base, que la genera}
+      POSTGRES_DB: proyecto
+    ports: ["127.0.0.1:${PROYECTO_PUERTO:-5440}:5432"]
+    volumes:
+      - datos-base:/var/lib/postgresql
+      - ./init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d proyecto"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+volumes:
+  datos-base:

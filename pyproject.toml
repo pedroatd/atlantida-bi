@@ -1,0 +1,68 @@
+[project]
+name = "apuntes-bi-dev"
+version = "0.1.0"
+requires-python = "==3.12.*"
+
+[dependency-groups]
+dev = [
+  "pytest==9.1.1",
+  "ruff==0.16.10",
+  "pyyaml==6.0.3",
+  "atlantida-def",
+  "atlantida-sources",
+  "atlantida-el",
+]
+libro = ["atlantida-def", "jupyter==1.1.1", "ipykernel==7.4.0", "pandas==3.0.6", "plotly==7.1.0", "pyyaml==6.0.3", "cairosvg==2.9.1",
+         "duckdb==1.5.6", "matplotlib==3.11.2"]
+
+[tool.uv.workspace]
+members = [
+  "platform/definicion",
+  "platform/sources",
+  "platform/el",
+]
+
+[tool.uv.sources]
+atlantida-def = { workspace = true }
+atlantida-sources = { workspace = true }
+atlantida-el = { workspace = true }
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# Pruebas con líneas largas (tablas y literales copiados tal cual).
+"platform/definicion/tests/test_logro.py" = ["E501"]
+"platform/sources/tests/test_fuentes_descargas.py" = ["E501"]
+"platform/sources/tests/test_fuentes_rate_shopper.py" = ["E501"]
+"platform/el/tests/*.py" = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = [
+  "tests",
+  "platform/definicion/tests",
+  "platform/sources/tests",
+  "platform/el/tests",
+]
+pythonpath = ["."]
+addopts = "-m 'not red and not lento and not ollama and not superset and not navegador and not libro_render and not exportacion'"
+markers = [
+  "pg: necesita PostgreSQL (variable PMS_TEST_DSN)",
+  "red: necesita Internet (fuentes externas reales)",
+  "lento: prueba larga (escala completa o varias semillas)",
+  "ollama: necesita un servidor Ollama (OLLAMA_URL) con un modelo pequeño (flujo lento, opcional)",
+  "superset: necesita Docker y la imagen atlantida-superset (arranca un Superset desechable)",
+  "navegador: necesita Chromium de Playwright (uv run playwright install chromium)",
+  "libro_render: necesita book/_book renderizado (flujo Libro)",
+  "exportacion: exporta una etapa de la edición del alumnado y la resuelve con uv (red o caché de uv)",
+]
+
+[tool.uv]
+# statsforecast 2.1.1 (y fugue 0.9.7) declaran pandas<3; su soporte de pandas 3 está fusionado
+# pero sin publicar. Se fuerza la pandas del workspace; test_statsforecast_con_pandas_3_sin_avisos
+# comprueba lo que usa atlantida_ia. Quitar cuando statsforecast lo admita oficialmente.
+override-dependencies = ["pandas==3.0.6"]

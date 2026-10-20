@@ -1,0 +1,30 @@
+[project]
+name = "atlantida-el"
+version = "0.1.0"
+description = "Cargas (EL) de Atlántida Hoteles con dlt: PMS local o API de cambios y fuentes externas"
+readme = "README.md"
+requires-python = "==3.12.*"
+dependencies = [
+  "atlantida-def", "atlantida-sources",
+  "dlt[postgres,sql-database,parquet]==1.30.0",
+  "httpx==0.28.1", "psycopg[binary]==3.3.6", "pyarrow==25.0.1", "pandas==3.0.6",
+  "pyyaml==6.0.3",
+]
+
+[project.scripts]
+atlantida-el = "atlantida_el.cli:main"
+
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlantida_el"]
+
+# La configuración de Airbyte viaja dentro de la rueda (la lee `atlantida-el airbyte`).
+[tool.hatch.build.targets.wheel.force-include]
+"airbyte/conexiones.yml" = "atlantida_el/airbyte/conexiones.yml"
+
+[tool.uv.sources]
+atlantida-def = { workspace = true }
+atlantida-sources = { workspace = true }
