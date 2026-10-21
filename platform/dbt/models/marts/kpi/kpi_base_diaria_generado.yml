@@ -1,0 +1,73 @@
+# Generado por `atlantida-dbt generar` a partir de platform/definicion/atlantida.yml: no editar a mano.
+version: 2
+models:
+- name: kpi_base_diaria
+  description: 'Métricas base aditivas de atlantida.yml por día y hotel, en los días con ocupación registrada
+    (sin días futuros), con las reservas netas leídas en el corte de madurez de su año (como el scorecard:
+    un año agregado coincide con marts_kpi.kpi_periodo): la tabla sobre la que Superset calcula los KPI
+    con las métricas generadas (platform/viz/superset/generado/semantica.yml).'
+  data_tests:
+  - unique:
+      arguments:
+        column_name: hotel || '-' || fecha
+  columns:
+  - name: fecha
+    description: Día (calendario).
+  - name: hotel
+    description: Código del hotel; '-1' para hechos sin hotel en la dimensión (no es un hotel).
+  - name: isla
+    description: Isla del hotel.
+  - name: tipo_hotel
+    description: Tipología del hotel.
+  - name: con_costes
+    description: Verdadero si el mes del día tiene cierre contable en ese hotel (GOPPAR y CAC solo entonces).
+  - name: habitaciones_disponibles
+    description: Habitaciones disponibles (habitaciones-noche); suma del día.
+  - name: habitaciones_disponibles_str
+    description: Habitaciones disponibles (base STR) (habitaciones-noche); suma del día.
+  - name: noches_vendidas
+    description: Noches vendidas (noches); suma del día.
+  - name: noches_vendidas_directo
+    description: Noches vendidas por canal directo (noches); suma del día.
+  - name: ingreso_habitaciones
+    description: Ingreso de habitaciones (EUR); suma del día.
+  - name: ingreso_otros
+    description: Otros ingresos (EUR); suma del día.
+  - name: comisiones
+    description: Comisiones de intermediación (EUR); suma del día.
+  - name: coste_marketing_atribuido
+    description: Coste de marketing atribuido (EUR); suma del día.
+  - name: reservas_creadas
+    description: Reservas creadas (reservas); suma del día.
+  - name: reservas_netas
+    description: Reservas netas (reservas); suma del día.
+  - name: reservas_llegada
+    description: Reservas con llegada en el periodo (reservas); suma del día.
+  - name: reservas_canceladas_llegada
+    description: Reservas canceladas con llegada en el periodo (reservas); suma del día.
+  - name: reservas_llegada_ota
+    description: Reservas OTA con llegada en el periodo (reservas); suma del día.
+  - name: reservas_canceladas_llegada_ota
+    description: Reservas OTA canceladas con llegada en el periodo (reservas); suma del día.
+  - name: ingreso_reservado
+    description: Ingreso reservado (EUR); suma del día.
+  - name: ingreso_cancelado
+    description: Ingreso cancelado (EUR); suma del día.
+  - name: penalizaciones_retenidas
+    description: Penalizaciones retenidas (EUR); suma del día.
+  - name: ingreso_reventa
+    description: Ingreso de reventa (EUR); suma del día.
+  - name: promotores
+    description: Promotores (reseñas); suma del día.
+  - name: detractores
+    description: Detractores (reseñas); suma del día.
+  - name: respuestas_recomendacion
+    description: Respuestas de recomendación (reseñas); suma del día.
+  - name: lead_time
+    description: Antelación acumulada (días); suma del día.
+  - name: noches_por_reserva
+    description: Noches reservadas (noches); suma del día.
+  - name: noches_reservadas_directo
+    description: Noches reservadas por canal directo (noches); suma del día.
+  - name: costes_operativos
+    description: Costes operativos (EUR); suma del día.

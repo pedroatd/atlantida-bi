@@ -1,0 +1,54 @@
+version: 2
+seeds:
+  - name: def_kpi
+    description: KPI del documento de definición con su fórmula compilada a SQL (generado).
+    config:
+      column_types: {kpi: text, nombre: text, unidad: text, sentido: text, propietario: text,
+                     latencia: text, formula: text, formula_sql: text, en_capa_semantica: boolean}
+    columns:
+      - name: kpi
+        data_tests: [unique, not_null]
+  - name: def_objetivo
+    description: Objetivos del documento de definición (generado).
+    config:
+      column_types: {objetivo_id: text, verbo: text, enunciado: text, responsable: text}
+    columns:
+      - name: objetivo_id
+        data_tests: [unique, not_null]
+  - name: def_criterio
+    description: Criterios de cada objetivo (principales con peso y guardarraíles) (generado).
+    config:
+      column_types: {objetivo_id: text, orden: integer, kpi: text, papel: text,
+                     peso: double precision, tipo: text, sentido: text, meta: double precision}
+    data_tests:
+      - unique:
+          column_name: "objetivo_id || '-' || orden"
+      - unique:
+          column_name: "objetivo_id || '-' || kpi"
+    columns:
+      - name: objetivo_id
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('def_objetivo'), field: objetivo_id}}
+      - name: orden
+        data_tests: [not_null]
+      - name: kpi
+        data_tests:
+          - not_null
+          - relationships: {arguments: {to: ref('def_kpi'), field: kpi}}
+  - name: def_parametro
+    description: >-
+      Parámetros del documento (periodos, semáforo, tolerancia, madurez) (generado). valor es
+      texto: los numéricos (semaforo_*, tolerancia, madurez_dias…) se leen con valor::double precision.
+    config:
+      column_types: {clave: text, valor: text}
+    columns:
+      - name: clave
+        data_tests: [unique, not_null]
+  - name: paises
+    description: País (ISO 3166-1 alfa-2), nombre y mercado emisor del caso (el del simulador; Austria con Alemania, supuesto S16).
+    config:
+      column_types: {pais_codigo: text, pais: text, mercado_istac: text}
+    columns:
+      - name: pais_codigo
+        data_tests: [unique, not_null]

@@ -18,16 +18,22 @@ COPY pyproject.toml uv.lock ./
 COPY platform/definicion/pyproject.toml platform/definicion/README.md platform/definicion/
 COPY platform/sources/pyproject.toml platform/sources/README.md platform/sources/
 COPY platform/el/pyproject.toml platform/el/README.md platform/el/
+COPY platform/dbt/pyproject.toml platform/dbt/README.md platform/dbt/
 # Paquete que se instala con sus dependencias: el de Dagster, que arrastra todos los demás, o, en
-# una copia sin orquestación (la edición del alumnado llega por etapas), el de las cargas. El ARG
-# del bloque, después, sustituye al primero.
+# una copia sin orquestación (la edición del alumnado llega por etapas), el más alto de los que
+# tiene: el de dbt (que arrastra el de las cargas) o, sin dbt, el de las cargas. Cada ARG de un
+# bloque, después, sustituye al anterior.
 ARG PAQUETE=atlantida-el
+ARG PAQUETE=atlantida-dbt
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --package "$PAQUETE" --no-editable --no-install-workspace
 # 2) Paquetes del proyecto (instalación no editable).
 COPY platform/definicion platform/definicion
 COPY platform/sources platform/sources
 COPY platform/el platform/el
+# Solo el código del paquete: los modelos, macros, semillas… van a la imagen final (abajo), así que
+# editar un modelo no invalida esta capa ni la instalación de los paquetes.
+COPY platform/dbt/src platform/dbt/src
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-dev --package "$PAQUETE" --no-editable
 
@@ -42,7 +48,20 @@ RUN useradd --uid 10001 --create-home atlantida \
        /opt/atlantida/dbt /opt/atlantida/manifest /opt/dagster/home /opt/dagster/datos \
     && chown -R atlantida /datos /opt/atlantida /opt/dagster
 COPY --from=construccion /opt/venv /opt/venv
+# El proyecto dbt (modelos, macros, semillas, snapshots y pruebas) con permiso de escritura para
+# target/ y logs/.
+COPY --chown=atlantida platform/dbt/dbt_project.yml platform/dbt/profiles.yml /opt/atlantida/dbt/
+COPY --chown=atlantida platform/dbt/models /opt/atlantida/dbt/models
+COPY --chown=atlantida platform/dbt/macros /opt/atlantida/dbt/macros
+COPY --chown=atlantida platform/dbt/seeds /opt/atlantida/dbt/seeds
+COPY --chown=atlantida platform/dbt/snapshots /opt/atlantida/dbt/snapshots
+COPY --chown=atlantida platform/dbt/pruebas /opt/atlantida/dbt/pruebas
+COPY --chown=atlantida platform/dbt/perfiles /opt/atlantida/dbt/perfiles
 USER atlantida
 WORKDIR /opt/atlantida/dbt
+# Manifest del código (dbt parse, sin base de datos ni secretos): lo leen Dagster (assets, checks y
+# linaje) y el diccionario. El estado de prod para dev (--defer) es otro: lo deja cada construcción
+# en prod en el volumen dbt-estado (/datos/estado/prod).
+RUN atlantida-dbt manifest
 ARG REV=desconocida
 LABEL org.opencontainers.image.revision=$REV

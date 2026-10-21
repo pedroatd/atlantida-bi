@@ -1,0 +1,124 @@
+version: 2
+models:
+  - name: stg_pms__hoteles
+    columns:
+      - {name: hotel_id, data_tests: [unique, not_null]}
+      - {name: codigo, data_tests: [unique, not_null]}
+      - name: tipo_hotel
+        data_tests:
+          - accepted_values: {arguments: {values: [urbano, vacacional, todo_incluido, rural]}}
+  - name: stg_pms__tipos_habitacion
+    columns:
+      - {name: tipo_habitacion_id, data_tests: [unique, not_null]}
+      - name: hotel_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_pms__hoteles'), field: hotel_id}}
+  - name: stg_pms__habitaciones
+    columns:
+      - {name: habitacion_id, data_tests: [unique, not_null]}
+      - name: estado
+        data_tests:
+          - accepted_values: {arguments: {values: [activa]}}
+      - name: tipo_habitacion_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_pms__tipos_habitacion'), field: tipo_habitacion_id}}
+  - name: stg_pms__bloqueos
+    columns:
+      - {name: bloqueo_id, data_tests: [unique, not_null]}
+  - name: stg_pms__canales
+    columns:
+      - {name: canal_id, data_tests: [unique, not_null]}
+      - name: tipo_canal
+        data_tests:
+          - accepted_values: {arguments: {values: [directo, ota, turoperador, agencia]}}
+  - name: stg_pms__planes_tarifa
+    columns:
+      - {name: plan_tarifa_id, data_tests: [unique, not_null]}
+      - name: regimen
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [solo_alojamiento, alojamiento_desayuno, media_pension, pension_completa, todo_incluido]
+  - name: stg_pms__huespedes
+    columns:
+      - {name: huesped_id, data_tests: [unique, not_null]}
+      - name: segmento
+        data_tests:
+          - accepted_values: {arguments: {values: [pareja_ocio, familia, negocios, senior, grupo]}}
+      # Sin nulos: es la marca de tiempo del snapshot y el desempate de la supervivencia del golden.
+      - {name: actualizado_en, data_tests: [not_null]}
+      - name: seudonimo_nacimiento
+        data_tests:
+          - not_null:
+              description: Avisa si falta la fecha de nacimiento de algún huésped.
+              config: {severity: warn, tags: [defectos_origen]}
+      # Otras pruebas de los datos de origen son de la edición completa.
+  - name: stg_pms__reservas
+    columns:
+      - {name: reserva_id, data_tests: [unique, not_null]}
+      - {name: localizador, data_tests: [unique, not_null]}
+      - name: estado
+        data_tests:
+          - accepted_values: {arguments: {values: [confirmada, cancelada, no_presentada, en_casa, finalizada]}}
+      - name: hotel_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_pms__hoteles'), field: hotel_id}}
+      - name: canal_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_pms__canales'), field: canal_id}}
+      - name: huesped_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_pms__huespedes'), field: huesped_id}}
+  - name: stg_pms__reservas_huespedes
+    data_tests:
+      - unique: {arguments: {column_name: "reserva_id || '-' || huesped_id"}}
+    columns:
+      - name: rol
+        data_tests:
+          - accepted_values: {arguments: {values: [titular, acompanante]}}
+      - {name: es_titular, data_tests: [not_null]}
+  - name: stg_pms__noches
+    columns:
+      - {name: noche_id, data_tests: [unique, not_null]}
+      - name: reserva_id
+        data_tests:
+          - relationships: {arguments: {to: ref('stg_pms__reservas'), field: reserva_id}}
+  - name: stg_pms__cancelaciones
+    columns:
+      - {name: cancelacion_id, data_tests: [unique, not_null]}
+      - {name: reserva_id, data_tests: [unique]}
+      - {name: es_reubicacion, data_tests: [not_null]}
+  - name: stg_pms__campanas
+    columns:
+      - {name: campana_id, data_tests: [unique, not_null]}
+      - name: tipo_canal_objetivo
+        data_tests:
+          - accepted_values: {arguments: {values: [directo, ota, turoperador, agencia]}}
+  - name: stg_pms__pagos
+    columns:
+      - {name: pago_id, data_tests: [unique, not_null]}
+      - name: tipo_pago
+        data_tests:
+          - accepted_values: {arguments: {values: [deposito, saldo, devolucion]}}
+  - name: stg_pms__cargos_folio
+    columns:
+      - {name: cargo_id, data_tests: [unique, not_null]}
+      - name: departamento
+        data_tests:
+          - accepted_values: {arguments: {values: [restauracion, spa, minibar, excursiones, otros]}}
+  - name: stg_pms__costes
+    columns:
+      - {name: coste_id, data_tests: [unique, not_null]}
+      - name: categoria
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [personal, energia, mantenimiento, coste_restauracion, marketing, otros]
+  - name: stg_pms__resenas
+    columns:
+      - {name: resena_id, data_tests: [unique, not_null]}
+      - name: recomendacion
+        data_tests:
+          - not_null:
+              description: Avisa si falta en alguna reseña la respuesta a la pregunta de recomendación.
+              config: {severity: warn, tags: [defectos_origen]}

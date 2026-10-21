@@ -1,0 +1,176 @@
+# Pruebas unitarias del laboratorio L4 (parte guiada): las tres piezas del modelo dimensional que se
+# construyen en el laboratorio (tabla puente, dimensión de tipo 2 con su miembro desconocido y hecho
+# incremental con hechos que llegan tarde). Filas inventadas, sin depender de los datos cargados ni
+# de que haya historia. dbt las ejecuta en el almacén: los modelos padre deben existir (los crea
+# make -C platform l4-comprobar o make -C platform pipeline). Fechas inventadas en 2030.
+version: 2
+unit_tests:
+  # Tabla puente: tres huéspedes en una reserva reciben 1/3 cada uno y solo uno es el titular; cada
+  # huésped apunta a la versión de dim_huesped vigente cuando se hizo la reserva.
+  - name: puente_reparte_el_peso
+    model: brg_reserva_huesped
+    given:
+      - input: ref('stg_pms__reservas_huespedes')
+        rows:
+          - {reserva_id: 10, huesped_id: 1, es_titular: true}
+          - {reserva_id: 10, huesped_id: 2, es_titular: false}
+          - {reserva_id: 10, huesped_id: 3, es_titular: false}
+      - input: ref('stg_pms__reservas')
+        rows:
+          - {reserva_id: 10, reservada_en: "2030-03-01 10:00:00+00"}
+      - input: ref('int_huespedes_grupos')
+        rows:
+          - {huesped_id: 1, huesped_golden_id: 1}
+          - {huesped_id: 2, huesped_golden_id: 2}
+          - {huesped_id: 3, huesped_golden_id: 2}
+      - input: ref('dim_huesped')
+        rows:
+          - {huesped_sk: 101, huesped_golden_id: 1, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "2030-02-01 00:00:00+00"}
+          - {huesped_sk: 111, huesped_golden_id: 1, valido_desde: "2030-02-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00"}
+          - {huesped_sk: 102, huesped_golden_id: 2, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00"}
+          - {huesped_sk: -1, huesped_golden_id: -1, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00"}
+    expect:
+      format: sql
+      rows: |
+        select 10 as reserva_id, 1 as huesped_id, 1 as huesped_golden_id, 111 as huesped_sk,
+               true as es_titular, 1.0 / 3 as factor_ponderacion
+        union all
+        select 10, 2, 2, 102, false, 1.0 / 3
+        union all
+        select 10, 3, 2, 102, false, 1.0 / 3
+
+  # Miembro desconocido en el puente: el acompañante sin ficha no se pierde; va a −1 y cuenta en el
+  # reparto del peso (0,5 cada uno). Una fila cuya reserva aún no está en stg_pms__reservas tampoco
+  # se pierde: sin instante de reserva no hay versión vigente, así que va a −1.
+  - name: acompanante_sin_ficha_al_desconocido
+    model: brg_reserva_huesped
+    given:
+      - input: ref('stg_pms__reservas_huespedes')
+        rows:
+          - {reserva_id: 20, huesped_id: 4, es_titular: true}
+          - {reserva_id: 20, huesped_id: 5, es_titular: false}
+          - {reserva_id: 21, huesped_id: 4, es_titular: true}
+      - input: ref('stg_pms__reservas')
+        rows:
+          - {reserva_id: 20, reservada_en: "2030-05-10 08:00:00+00"}
+      - input: ref('int_huespedes_grupos')
+        rows:
+          - {huesped_id: 4, huesped_golden_id: 4}
+      - input: ref('dim_huesped')
+        rows:
+          - {huesped_sk: 104, huesped_golden_id: 4, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00"}
+          - {huesped_sk: -1, huesped_golden_id: -1, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00"}
+    expect:
+      format: sql
+      rows: |
+        select 20 as reserva_id, 4 as huesped_id, 4 as huesped_golden_id, 104 as huesped_sk,
+               true as es_titular, 1.0 / 2 as factor_ponderacion
+        union all
+        select 20, 5, -1, -1, false, 1.0 / 2
+        union all
+        select 21, 4, 4, -1, true, 1.0 / 1
+
+  # SCD de tipo 2: dos versiones contiguas (la primera vale desde 1900-01-01; el fin de una es el
+  # inicio de la siguiente), una sola vigente, y la fila del miembro desconocido. La clave
+  # sustituta de cada versión es estable: solo depende de la versión, no del orden ni de las demás
+  # filas (calculada con la sesión en UTC, como el almacén). Un row_number() no la da.
+  - name: dim_huesped_versiones_contiguas
+    model: dim_huesped
+    given:
+      - input: ref('int_huesped_versiones')
+        rows:
+          - {huesped_golden_id: 7, segmento: familia, valido_desde: "2030-01-05 09:00:00+00", valido_hasta: "2030-06-01 00:00:00+00"}
+          - {huesped_golden_id: 7, segmento: negocios, valido_desde: "2030-06-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00"}
+      - input: ref('int_huesped_golden')
+        rows:
+          - {huesped_golden_id: 7, num_fichas: 2, pais_codigo: ES, anio_nacimiento: 1980, tiene_documento: true, es_contactable: false}
+    expect:
+      rows:
+        - {huesped_sk: 553043544496838321, huesped_golden_id: 7, segmento: familia, pais_codigo: ES, anio_nacimiento: 1980, num_fichas: 2, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "2030-06-01 00:00:00+00", es_actual: false}
+        - {huesped_sk: 926213761071667049, huesped_golden_id: 7, segmento: negocios, pais_codigo: ES, anio_nacimiento: 1980, num_fichas: 2, valido_desde: "2030-06-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00", es_actual: true}
+        - {huesped_sk: -1, huesped_golden_id: -1, segmento: desconocido, pais_codigo: null, anio_nacimiento: null, num_fichas: 0, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00", es_actual: true}
+
+  # Sin historia (raw_pms cargado una sola vez): una versión por huésped, vigente y desde 1900.
+  - name: una_version_por_huesped_sin_historia
+    model: dim_huesped
+    given:
+      - input: ref('int_huesped_versiones')
+        rows:
+          - {huesped_golden_id: 8, segmento: senior, valido_desde: "2030-02-11 10:30:00+00", valido_hasta: "9999-12-31 00:00:00+00"}
+          - {huesped_golden_id: 9, segmento: grupo, valido_desde: "2030-03-20 16:00:00+00", valido_hasta: "9999-12-31 00:00:00+00"}
+      - input: ref('int_huesped_golden')
+        rows:
+          - {huesped_golden_id: 8, num_fichas: 1, pais_codigo: DE, anio_nacimiento: 1950, tiene_documento: true, es_contactable: true}
+          - {huesped_golden_id: 9, num_fichas: 1, pais_codigo: GB, anio_nacimiento: 1990, tiene_documento: false, es_contactable: true}
+    expect:
+      rows:
+        - {huesped_golden_id: 8, segmento: senior, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00", es_actual: true}
+        - {huesped_golden_id: 9, segmento: grupo, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00", es_actual: true}
+        - {huesped_golden_id: -1, segmento: desconocido, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00", es_actual: true}
+
+  # Miembro desconocido: la fila −1 está aunque no haya ningún huésped.
+  - name: dim_huesped_tiene_el_desconocido
+    model: dim_huesped
+    given:
+      - input: ref('int_huesped_versiones')
+        rows: []
+      - input: ref('int_huesped_golden')
+        rows: []
+    expect:
+      rows:
+        - {huesped_sk: -1, huesped_golden_id: -1, segmento: desconocido, pais_codigo: null, anio_nacimiento: null, num_fichas: 0, tiene_documento: false, es_contactable: false, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00", es_actual: true}
+
+  # Hecho que llega tarde, en una ejecución incremental: lo ya cargado llega hasta el 10 de marzo
+  # (this); un cargo del 27 de febrero anotado diez días después entra en su fecha de servicio, con
+  # la versión del hotel vigente ese día (no la de la carga). La ventana de reproceso (var
+  # ventana_reproceso_dias, 30 días antes del último cargado_en de this: desde el 8 de febrero a las
+  # 12:00) se vuelve a procesar entera: entra un cargo cargado el 5 de marzo, antes del último de
+  # this; uno cargado una hora antes de que empiece la ventana, o mucho antes, no. Un cargo de un
+  # hotel sin versión en dim_hotel va al miembro desconocido (−1).
+  - name: cargo_tardio_en_su_fecha_de_servicio
+    model: fct_cargo_folio
+    overrides:
+      macros: {is_incremental: true}
+    given:
+      - input: this
+        format: sql
+        rows: |
+          select 1 as cargo_id, 30 as reserva_id, 12 as hotel_sk, 1 as hotel_id,
+                 date '2030-03-09' as fecha_servicio, timestamptz '2030-03-10 12:00:00+00' as cargado_en
+      - input: ref('int_cargos_folio')
+        rows:
+          - {cargo_id: 2, reserva_id: 31, hotel_id: 1, fecha_servicio: 2030-02-27, fecha_registro: 2030-03-09, departamento: spa, importe: 80.00, dias_retraso: 10, es_tardio: true, es_repeticion: false, cargado_en: "2030-03-10 13:00:00+00"}
+          - {cargo_id: 3, reserva_id: 32, hotel_id: 1, fecha_servicio: 2030-01-14, fecha_registro: 2030-01-14, departamento: restauracion, importe: 25.50, dias_retraso: 0, es_tardio: false, es_repeticion: false, cargado_en: "2030-01-15 06:00:00+00"}
+          - {cargo_id: 5, reserva_id: 33, hotel_id: 2, fecha_servicio: 2030-03-04, fecha_registro: 2030-03-04, departamento: excursiones, importe: 40.00, dias_retraso: 0, es_tardio: false, es_repeticion: false, cargado_en: "2030-03-05 07:00:00+00"}
+          - {cargo_id: 6, reserva_id: 34, hotel_id: 1, fecha_servicio: 2030-02-07, fecha_registro: 2030-02-07, departamento: minibar, importe: 9.00, dias_retraso: 0, es_tardio: false, es_repeticion: false, cargado_en: "2030-02-08 11:00:00+00"}
+      - input: ref('dim_hotel')
+        rows:
+          - {hotel_sk: 11, hotel_id: 1, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "2030-03-01 00:00:00+00"}
+          - {hotel_sk: 12, hotel_id: 1, valido_desde: "2030-03-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00"}
+    expect:
+      rows:
+        - {cargo_id: 2, reserva_id: 31, hotel_sk: 11, hotel_id: 1, fecha_servicio: 2030-02-27, fecha_registro: 2030-03-09, departamento: spa, importe: 80.00, dias_retraso: 10, es_tardio: true, cargado_en: "2030-03-10 13:00:00+00"}
+        - {cargo_id: 5, reserva_id: 33, hotel_sk: -1, hotel_id: 2, fecha_servicio: 2030-03-04, fecha_registro: 2030-03-04, departamento: excursiones, importe: 40.00, dias_retraso: 0, es_tardio: false, cargado_en: "2030-03-05 07:00:00+00"}
+
+  # Repetir la ventana no duplica: un cargo que ya estaba (dentro de la ventana) sale una sola vez,
+  # para sustituir al anterior por su clave, y la repetición exacta de una carga duplicada no sale.
+  - name: incremental_no_duplica_en_la_ventana
+    model: fct_cargo_folio
+    overrides:
+      macros: {is_incremental: true}
+    given:
+      - input: this
+        format: sql
+        rows: |
+          select 1 as cargo_id, 30 as reserva_id, 12 as hotel_sk, 1 as hotel_id,
+                 date '2030-03-09' as fecha_servicio, timestamptz '2030-03-10 12:00:00+00' as cargado_en
+      - input: ref('int_cargos_folio')
+        rows:
+          - {cargo_id: 1, reserva_id: 30, hotel_id: 1, fecha_servicio: 2030-03-09, fecha_registro: 2030-03-09, departamento: minibar, importe: 12.00, dias_retraso: 0, es_tardio: false, es_repeticion: false, cargado_en: "2030-03-10 12:00:00+00"}
+          - {cargo_id: 4, reserva_id: 30, hotel_id: 1, fecha_servicio: 2030-03-09, fecha_registro: 2030-03-09, departamento: minibar, importe: 12.00, dias_retraso: 0, es_tardio: false, es_repeticion: true, cargado_en: "2030-03-10 12:00:00+00"}
+      - input: ref('dim_hotel')
+        rows:
+          - {hotel_sk: 12, hotel_id: 1, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00"}
+    expect:
+      rows:
+        - {cargo_id: 1, reserva_id: 30, hotel_sk: 12, hotel_id: 1, fecha_servicio: 2030-03-09, departamento: minibar, importe: 12.00, es_tardio: false}

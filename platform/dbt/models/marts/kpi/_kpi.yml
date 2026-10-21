@@ -1,0 +1,166 @@
+version: 2
+
+models:
+  - name: kpi_periodo
+    description: >
+      KPI de atlantida.yml por periodo (año, mes, acumulado del año) y ámbito (cada hotel, la
+      cadena y, si hay hechos sin hotel, '-1'). completo: el periodo ha madurado.
+    config:
+      contract: {enforced: true}
+    data_tests:
+      - unique: {arguments: {column_name: "periodo_id || '-' || ambito || '-' || kpi"}}
+    columns:
+      - {name: periodo_id, data_type: text, constraints: [{type: not_null}], description: "Identificador del periodo (año, mes o acumulado del año)."}
+      - {name: tipo_periodo, data_type: text, description: "Tipo de periodo: anio, mes o ytd (acumulado del año hasta el mes)."}
+      - {name: anio, data_type: integer, description: "Año del periodo."}
+      - {name: mes, data_type: integer, description: "Mes del periodo; nulo en los periodos anuales."}
+      - {name: desde, data_type: date, description: "Primer día del periodo."}
+      - {name: hasta, data_type: date, description: "Último día del periodo."}
+      - {name: completo, data_type: boolean, description: "Falso mientras el periodo no ha madurado y sus cifras pueden cambiar."}
+      - {name: ambito, data_type: text, constraints: [{type: not_null}], description: "Código del hotel, CADENA (total de la cadena) o '-1' (hechos sin hotel en la dimensión; no es un hotel)."}
+      - {name: kpi, data_type: text, constraints: [{type: not_null}], description: "Identificador del KPI en atlantida.yml."}
+      - {name: valor, data_type: double precision, description: "Valor del KPI en el periodo y ámbito, en la unidad del KPI (kpi_definicion.unidad: ratio en tanto por uno, eur, puntos, dias o conteo); nulo sin dato."}
+
+  - name: kpi_aportaciones
+    description: >
+      Aportación diaria de cada hecho a cada métrica base aditiva de atlantida.yml, por hotel
+      (código). Permite medir un KPI en cualquier ventana con la madurez de las reservas netas:
+      una aportación con valida_hasta solo cuenta en los periodos cuyo corte es anterior a esa
+      fecha. La leen los estimadores del impacto de las acciones.
+    columns:
+      - {name: fecha, description: "Día que sitúa la aportación (estancia, servicio, coste, creación de la reserva, llegada o publicación)."}
+      - {name: hotel, description: "Código del hotel; '-1' para hechos sin hotel en la dimensión (no es un hotel)."}
+      - {name: metrica, description: "Identificador de la métrica base aditiva en atlantida.yml."}
+      - {name: valida_hasta, description: "Fecha de cancelación de la reserva en las métricas netas; nulo si la aportación no caduca."}
+      - {name: valor, description: "Suma de las aportaciones del día, en la unidad de la métrica."}
+
+  - name: kpi_diario
+    description: KPI diarios (latencia D-1) por hotel y cadena en los días del hecho de ocupación.
+    config:
+      contract: {enforced: true}
+    data_tests:
+      - unique: {arguments: {column_name: "fecha || '-' || ambito || '-' || kpi"}}
+    columns:
+      - {name: fecha, data_type: date, constraints: [{type: not_null}], description: "Día del KPI."}
+      - {name: ambito, data_type: text, constraints: [{type: not_null}], description: "Código del hotel, CADENA (total de la cadena) o '-1' (hechos sin hotel en la dimensión; no es un hotel)."}
+      - name: kpi
+        description: "Identificador del KPI en atlantida.yml."
+        data_type: text
+        constraints: [{type: not_null}]
+        data_tests:
+          - accepted_values: {arguments: {values: [ocupacion, adr, revpar, trevpar, cuota_directa]}}
+      - {name: valor, data_type: double precision, description: "Valor del KPI ese día en el ámbito."}
+
+  - name: objetivo_criterio
+    description: >
+      Cada criterio de cada objetivo, anual y en el seguimiento mensual del acumulado del año
+      (mes nulo en la anual), para la cadena y cada hotel: valor base y actual, magnitud,
+      cumplimiento y progreso (nulos sin dato). base_cero: variación relativa sobre una base 0
+      (no definida). completo: los periodos base y evaluado han madurado.
+    config:
+      contract: {enforced: true}
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "objetivo_id || '-' || orden || '-' || evaluacion || '-' || coalesce(mes, 0) || '-' || ambito"
+    columns:
+      - {name: objetivo_id, data_type: text, constraints: [{type: not_null}], description: "Identificador del objetivo."}
+      - {name: orden, data_type: integer, constraints: [{type: not_null}], description: "Posición del criterio dentro del objetivo."}
+      - {name: kpi, data_type: text, description: "Identificador del KPI en atlantida.yml."}
+      - {name: papel, data_type: text, description: "Papel del criterio: principal o guardarrail."}
+      - {name: peso, data_type: double precision, description: "Peso del criterio en el índice del objetivo."}
+      - {name: tipo, data_type: text, description: "Tipo de comparación: variacion_relativa, variacion_absoluta o umbral (nivel del KPI)."}
+      - {name: sentido, data_type: text, description: "Sentido de la comparación con la meta: al_menos (la magnitud debe llegar a la meta) o como_maximo (no debe superarla)."}
+      - {name: meta, data_type: double precision, description: "Meta en la escala de la magnitud: variación en tanto por uno (relativa), en la unidad del KPI (absoluta) o nivel del KPI (umbral)."}
+      - {name: evaluacion, data_type: text, description: "Tipo de evaluación: anual o ytd (acumulado del año)."}
+      - {name: mes, data_type: integer, description: "Mes del acumulado del año; nulo en la evaluación anual."}
+      - {name: ambito, data_type: text, description: "Hotel (código) o CADENA para el total de la cadena."}
+      - {name: base, data_type: double precision, description: "Valor del KPI en el periodo base."}
+      - {name: actual, data_type: double precision, description: "Valor del KPI en el periodo evaluado."}
+      - {name: magnitud, data_type: double precision, description: "Variación o nivel medido según el tipo de meta."}
+      - {name: cumple, data_type: boolean, description: "Verdadero si el criterio cumple la meta; nulo sin dato."}
+      - {name: progreso, data_type: double precision, description: "Avance hacia la meta (1 = meta alcanzada); nulo sin dato."}
+      - {name: base_cero, data_type: boolean, description: "Verdadero si la base es 0 y la variación relativa no está definida."}
+      - {name: completo, data_type: boolean, description: "Falso mientras el periodo no ha madurado y sus cifras pueden cambiar."}
+
+  - name: objetivo_logro
+    description: >
+      Índice de logro y semáforo de cada objetivo (idéntico a atlantida_def.logro). Con algún
+      criterio sin dato (kpis_sin_dato), cada resultado solo se da si no depende de ese dato; si
+      no, es nulo y el semáforo, sin_datos. datos_completos: todos los criterios tienen dato y sus
+      periodos han madurado.
+    config:
+      contract: {enforced: true}
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "objetivo_id || '-' || evaluacion || '-' || coalesce(mes, 0) || '-' || ambito"
+    columns:
+      - {name: objetivo_id, data_type: text, constraints: [{type: not_null}], description: "Identificador del objetivo."}
+      - {name: enunciado, data_type: text, description: "Enunciado del objetivo."}
+      - {name: evaluacion, data_type: text, description: "Tipo de evaluación: anual o ytd (acumulado del año)."}
+      - {name: mes, data_type: integer, description: "Mes del acumulado del año; nulo en la evaluación anual."}
+      - {name: ambito, data_type: text, description: "Hotel (código) o CADENA para el total de la cadena."}
+      - {name: indice, data_type: double precision, description: "Índice de logro del objetivo; nulo si faltan datos."}
+      - {name: guardarrailes_ok, data_type: boolean, description: "Verdadero si se cumplen los guardarraíles del objetivo."}
+      - {name: datos_completos, data_type: boolean, description: "Verdadero si todos los criterios tienen dato y sus periodos han madurado."}
+      - {name: kpis_sin_dato, data_type: text, description: "KPI sin dato que impiden el resultado."}
+      - name: semaforo
+        description: "Color del semáforo: verde, ambar, rojo o sin_datos."
+        data_type: text
+        data_tests:
+          - accepted_values: {arguments: {values: [verde, ambar, rojo, sin_datos]}}
+      - {name: logrado, data_type: boolean, description: "Verdadero si el índice es 1 y se cumplen todos los guardarraíles."}
+
+  - name: kpi_definicion
+    columns:
+      - {name: kpi, description: "Identificador del KPI."}
+      - {name: nombre, description: "Nombre del KPI."}
+      - {name: unidad, description: "Unidad del KPI."}
+      - {name: sentido, description: "Sentido de mejora: subir, bajar o neutro."}
+      - {name: propietario, description: "Actor que responde de la definición y el resultado del KPI."}
+      - {name: latencia, description: "Latencia de disponibilidad del KPI."}
+      - {name: formula, description: "Fórmula del KPI en términos de métricas base."}
+      - {name: en_capa_semantica, description: "Verdadero si el KPI está expuesto en la capa semántica."}
+    description: Nombre, unidad, sentido, propietario, latencia y fórmula de cada KPI (de atlantida.yml).
+
+unit_tests:
+  - name: kpi_diario_hotel_desconocido
+    description: >
+      Un hecho de un hotel ausente de la dimensión cae en el ámbito '-1' y suma en la cadena; una
+      métrica sin hechos ese día vale 0 (cuota directa 0, no nula).
+    model: kpi_diario
+    given:
+      - input: ref('fct_ocupacion_diaria')
+        rows:
+          - {fecha: "2030-01-01"}
+      - input: ref('dim_hotel_actual')
+        rows:
+          - {hotel_id: 1, codigo: AAA}
+      - input: ref('int_kpi_aportaciones_diarias')
+        rows:
+          - {hotel_id: 1, fecha: "2030-01-01", metrica: habitaciones_disponibles, valor: 10}
+          - {hotel_id: 1, fecha: "2030-01-01", metrica: noches_vendidas, valor: 5}
+          - {hotel_id: 1, fecha: "2030-01-01", metrica: noches_vendidas_directo, valor: 3}
+          - {hotel_id: 1, fecha: "2030-01-01", metrica: ingreso_habitaciones, valor: 500}
+          - {hotel_id: 1, fecha: "2030-01-01", metrica: ingreso_otros, valor: 100}
+          - {hotel_id: 99, fecha: "2030-01-01", metrica: habitaciones_disponibles, valor: 10}
+          - {hotel_id: 99, fecha: "2030-01-01", metrica: noches_vendidas, valor: 10}
+          - {hotel_id: 99, fecha: "2030-01-01", metrica: ingreso_habitaciones, valor: 1000}
+    expect:
+      rows:
+        - {fecha: "2030-01-01", ambito: AAA, kpi: ocupacion, valor: 0.5}
+        - {fecha: "2030-01-01", ambito: AAA, kpi: adr, valor: 100}
+        - {fecha: "2030-01-01", ambito: AAA, kpi: revpar, valor: 50}
+        - {fecha: "2030-01-01", ambito: AAA, kpi: trevpar, valor: 60}
+        - {fecha: "2030-01-01", ambito: AAA, kpi: cuota_directa, valor: 0.6}
+        - {fecha: "2030-01-01", ambito: "-1", kpi: ocupacion, valor: 1}
+        - {fecha: "2030-01-01", ambito: "-1", kpi: adr, valor: 100}
+        - {fecha: "2030-01-01", ambito: "-1", kpi: revpar, valor: 100}
+        - {fecha: "2030-01-01", ambito: "-1", kpi: trevpar, valor: 100}
+        - {fecha: "2030-01-01", ambito: "-1", kpi: cuota_directa, valor: 0}
+        - {fecha: "2030-01-01", ambito: CADENA, kpi: ocupacion, valor: 0.75}
+        - {fecha: "2030-01-01", ambito: CADENA, kpi: adr, valor: 100}
+        - {fecha: "2030-01-01", ambito: CADENA, kpi: revpar, valor: 75}
+        - {fecha: "2030-01-01", ambito: CADENA, kpi: trevpar, valor: 80}
+        - {fecha: "2030-01-01", ambito: CADENA, kpi: cuota_directa, valor: 0.2}

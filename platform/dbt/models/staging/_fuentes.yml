@@ -1,0 +1,59 @@
+version: 2
+sources:
+  - name: raw_pms
+    description: >-
+      Copia fiel del PMS (ODS) cargada por dlt desde la base local o la API de cambios; con
+      MOTOR_EL=airbyte, la que escribe Airbyte en raw_pms_airbyte. Datos personales en claro:
+      solo staging los lee, y los seudonimiza.
+    schema: "{{ 'raw_pms_airbyte' if var('motor_el', env_var('MOTOR_EL', 'dlt')) == 'airbyte' else 'raw_pms' }}"
+    tables:
+      - name: hotel
+      - name: room_type
+      - name: room
+      - name: room_block
+      - name: channel
+      - name: channel_commission
+      - name: rate_plan
+      - name: guest
+      - name: loyalty_member
+      - name: campaign
+      - name: campaign_hotel
+      - name: reservation
+      - name: reservation_guest
+      - name: stay_night
+      - name: cancellation
+      - name: payment
+      - name: folio_charge
+      - name: cost_entry
+      - name: review
+      - name: guest_flag
+      - name: rate_restriction
+  - name: raw_ext
+    description: Fuentes externas (instantáneas versionadas y rate shopper, valores como texto).
+    schema: raw_ext
+    tables:
+      - name: istac_frontur
+      - name: aemet_diario
+      - name: festivos
+      - name: bce_tipos
+      - name: compset_diario
+      - name: rate_shopper
+  - name: meta
+    description: Metadatos del almacén que escriben otros procesos.
+    schema: meta
+    tables:
+      - name: carga
+        description: Registro de cargas (una fila por tabla y ejecución).
+      - name: modelo_ia
+        description: >
+          Fichas de los modelos de IA (una por modelo y tarea); la ficha oficial vigente de cada
+          tarea dice qué modelo alimenta los indicadores.
+  - name: ml
+    description: Salidas del módulo de IA (contrato; vacío hasta que se ejecuta).
+    schema: ml
+    tables:
+      - name: resena_aspecto
+      - name: anomalia_kpi
+        description: Días anómalos de los KPI diarios (atlantida-ia); vacío hasta que se ejecuta la IA.
+      - name: prevision_ocupacion
+        description: Ocupación prevista por hotel y noche desde cada fecha de origen (atlantida-ia).

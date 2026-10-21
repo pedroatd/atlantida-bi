@@ -1,0 +1,71 @@
+version: 2
+models:
+  - name: fct_ocupacion_diaria
+    description: >-
+      Snapshot periódico, una fila por hotel y día (grano: hotel_id, fecha). Aditividad por medida:
+      habitaciones, bloqueadas y disponibles son semiaditivas (aditivas entre hoteles; en el tiempo
+      solo como habitaciones-noche, nunca como saldo); noches_vendidas, noches_vendidas_directo e
+      ingreso_habitaciones son aditivas en todas las dimensiones. Ocupación y RevPAR propios se
+      calculan al final; con la base STR (habitaciones, no disponibles) cuando se comparan con el compset.
+    data_tests:
+      - unique: {arguments: {column_name: "hotel_id || '-' || fecha"}}
+    columns:
+      - {name: habitaciones, description: "Semiaditiva: inventario del día (base STR)."}
+      - {name: bloqueadas, description: "Semiaditiva: habitaciones fuera de servicio ese día."}
+      - {name: disponibles, description: "Semiaditiva: habitaciones menos bloqueadas (base interna)."}
+      - {name: noches_vendidas, description: "Aditiva."}
+      - {name: noches_vendidas_directo, description: "Aditiva."}
+      - {name: ingreso_habitaciones, description: "Aditiva (EUR, neto de IGIC)."}
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: hotel_sk, description: "Clave sustituta de la versión del hotel (dim_hotel)."}
+      - {name: fecha, description: "Día del snapshot."}
+  - name: fct_ciclo_reserva
+    description: >-
+      Snapshot acumulativo, una fila por reserva que se actualiza con sus hitos (grano: reserva_id).
+      Sin medidas aditivas:
+      las fechas son atributos y los días entre hitos se promedian, no se suman.
+    columns:
+      - {name: reserva_id, data_tests: [unique, not_null], description: "Identificador de la reserva en el PMS."}
+      - {name: cancelada, description: "Hito terminal: la reserva se canceló en fecha_cancelacion."}
+      - {name: hitos_alcanzados, description: "Número de hitos alcanzados (de 1 a 4): reserva, primer pago, primera noche y cierre (finalizada o cancelada)."}
+      - {name: hotel_sk, description: "Clave sustituta de la versión del hotel (dim_hotel)."}
+      - {name: canal_sk, description: "Clave sustituta del canal de venta (dim_canal)."}
+      - {name: fecha_reserva, description: "Fecha en que se hizo la reserva."}
+      - {name: fecha_primer_pago, description: "Fecha del primer pago de la reserva."}
+      - {name: fecha_cancelacion, description: "Fecha de cancelación; nula si no se canceló."}
+      - {name: fecha_llegada, description: "Fecha de llegada (check-in) de la reserva."}
+      - {name: fecha_primera_noche, description: "Primera noche con estancia."}
+      - {name: fecha_ultima_noche, description: "Última noche con estancia."}
+      - {name: fecha_salida_efectiva, description: "Fecha de salida de las reservas finalizadas; nula en las demás."}
+      - {name: estado_actual, description: "Estado actual de la reserva."}
+      - {name: dias_reserva_a_llegada, description: "Días entre la reserva y la llegada."}
+      - {name: dias_reserva_a_cancelacion, description: "Días entre la reserva y la cancelación; nulo si no se canceló."}
+      - {name: versiones_registradas, description: "Número de versiones de la reserva registradas en el historial."}
+  - name: fct_compset_diario
+    columns:
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: fecha, description: "Fecha del día (calendario)."}
+      - {name: ocupacion_compset, description: "Ocupación del conjunto competitivo (base STR, tanto por uno)."}
+      - {name: adr_compset, description: "Tarifa media diaria del conjunto competitivo (EUR)."}
+      - {name: revpar_compset, description: "Ingreso por habitación disponible del conjunto competitivo (EUR)."}
+      - {name: habitaciones_str, description: "Inventario propio del hotel ese día (base STR, sin descontar bloqueos); peso para agregar los ratios del compset."}
+      - {name: tiene_dato, description: "Falso si ese día no hay dato del compset (hueco)."}
+      - {name: formato_alternativo, description: "Verdadero si el dato llegó en el formato alternativo del proveedor."}
+    description: >-
+      Snapshot periódico del compset, una fila por hotel y día del periodo publicado (grano: hotel_id,
+      fecha). Ocupación, ADR y RevPAR son razones no aditivas
+      (se promedian ponderando por habitaciones_str, que es semiaditiva); tiene_dato = false marca huecos.
+    data_tests:
+      - unique: {arguments: {column_name: "hotel_id || '-' || fecha"}}
+  - name: agg_noches_hotel_mes
+    columns:
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: mes, description: "Primer día del mes."}
+      - {name: habitaciones_str, description: "Habitaciones-noche del mes con la base STR (inventario sin descontar bloqueos)."}
+      - {name: habitaciones_disponibles, description: "Habitaciones-noche disponibles del mes (inventario menos bloqueadas)."}
+      - {name: noches_vendidas, description: "Noches vendidas en el mes."}
+      - {name: noches_vendidas_directo, description: "Noches vendidas por canal directo en el mes."}
+      - {name: ingreso_habitaciones, description: "Ingreso de alojamiento del mes (EUR, neto de IGIC)."}
+    description: >-
+      Agregado mensual por hotel (grano: hotel_id, mes). habitaciones_str y habitaciones_disponibles son habitaciones-noche
+      (aditivas al sumar días); noches y el ingreso son aditivos. Sin ratios.

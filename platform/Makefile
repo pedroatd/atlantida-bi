@@ -7,6 +7,7 @@ COMPOSE = docker compose --profile $(PROFILE)
 # un perfil aquí no arranca sus servicios.
 TODOS = $(COMPOSE) --profile lite --profile ai --profile full --profile sim --profile vivo --profile servidor --profile elt --profile roles --profile informes
 ELT_RUN = $(TODOS) run --rm -T
+ARGS ?= build
 # make smoke de la edición del alumnado prueba también la API del profesor (scripts/smoke_alumno.sh);
 # la edición completa prueba su simulador local (smoke_h03.sh) y no la usa.
 SMOKE_API_PROFESOR := ./scripts/smoke_alumno.sh
@@ -58,17 +59,20 @@ reset: ## Borra contenedores Y DATOS (pide confirmación)
 ps: ## Estado de los servicios
 	$(TODOS) ps -a
 
-psql-pms: ## Consola SQL del PMS (OLTP)
+# Sin terminal (SQL por una tubería o un fichero: make psql-dwh < consulta.sql), exec -T.
+SIN_TTY = $$([ -t 0 ] || echo -T)
+psql-pms: ## Consola SQL del PMS (OLTP; también make psql-pms < consulta.sql)
 	@set -a; [ -f .env ] && . ./.env; set +a; \
-	$(COMPOSE) exec pms-db psql -U "$${PMS_USER:-pms}" -d "$${PMS_DB:-pms}"
+	$(COMPOSE) exec $(SIN_TTY) pms-db psql -U "$${PMS_USER:-pms}" -d "$${PMS_DB:-pms}"
 
-psql-dwh: ## Consola SQL del DWH (OLAP)
+psql-dwh: ## Consola SQL del DWH (OLAP; también make psql-dwh < consulta.sql)
 	@set -a; [ -f .env ] && . ./.env; set +a; \
-	$(COMPOSE) exec dwh psql -U "$${DWH_USER:-dwh_admin}" -d "$${DWH_DB:-dwh}"
+	$(COMPOSE) exec $(SIN_TTY) dwh psql -U "$${DWH_USER:-dwh_admin}" -d "$${DWH_DB:-dwh}"
 
 smoke: ## Prueba de humo de los servicios que trae esta copia de la plataforma
 	./scripts/smoke_h01.sh
 	$(SMOKE_API_PROFESOR)
+	./scripts/smoke_h04.sh
 
 
 el: comprobar-env imagen roles-pms ## Carga el PMS y las fuentes externas en el DWH (ORIGEN=pms|api; REINICIAR=1 desde cero; SOLO=pms|externas)
@@ -89,6 +93,26 @@ l3-cargador: comprobar-env imagen ## L3 (opcional): ejecuta el tercer cargador, 
 l3-comprobar: comprobar-env imagen ## L3 (opcional): ejecuta dos veces el tercer cargador y comprueba su contrato frente a raw_pms
 	$(ELT_RUN) $(L3_MONTAJE) elt sh -c '$(L3_LOADER) exec python /laboratorio/l03/kit/comprobar_carga.py --contrato-atlantida --dsn-variable DWH_LOADER_URL --esquema raw_lab --fuente lab3 --origen lab3 --referencia raw_pms --orden "python /laboratorio/l03/cargador/cargador.py"'
 
+# Laboratorio L4: el comprobador de la parte guiada (../laboratorio/l04/comprobar.py) construye en
+# el contenedor elt, con ../laboratorio montado de solo lectura, las piezas del modelo y sus
+# pruebas, y resume cada pieza. La pieza viaja como variable de entorno: el shell no la interpreta.
+# DBT_TARGET=prod (ENTORNO no se aplica): las piezas y sus padres se construyen y se prueban en
+# los esquemas que llena make pipeline y que leen los marts, no en los dev_* de ENTORNO=dev.
+L4_MONTAJE = -v $(abspath ../laboratorio):/laboratorio:ro
+l4-comprobar: export L4_PIEZA = $(PIEZA)
+l4-comprobar: comprobar-env imagen ## L4: construye y prueba las piezas del modelo (PIEZA=dim_huesped: solo una) y dice OK, sin completar o FALLA
+	$(ELT_RUN) -e DBT_TARGET=prod -e L4_PIEZA $(L4_MONTAJE) elt python /laboratorio/l04/comprobar.py
+
+ENTORNO ?= prod
+# make pipeline: carga y almacén; con la capa de IA, también las reseñas (la última definición manda).
+PIPELINE = atlantida-dbt pipeline
+
+dbt: comprobar-env imagen ## Ejecuta dbt en el DWH (ARGS="build"; ENTORNO=dev para probar en los esquemas dev_*)
+	$(if $(filter-out prod dev,$(ENTORNO)),$(error ENTORNO debe ser prod o dev),)
+	$(ELT_RUN) -e DBT_TARGET=$(ENTORNO) $(if $(MOTOR_EL),-e MOTOR_EL=$(MOTOR_EL),) elt atlantida-dbt dbt $(ARGS)
+
+pipeline: comprobar-env imagen roles-pms ## Carga incremental y almacén, y reseñas si hay IA (repetible sin duplicar; ORIGEN=pms|api; REINICIAR=1)
+	$(ELT_RUN) -e DBT_TARGET=prod $(if $(ORIGEN),-e ORIGEN_PMS=$(ORIGEN),) elt $(PIPELINE) $(if $(REINICIAR),--reiniciar,)
 
 
 
@@ -130,7 +154,8 @@ CONFIG ?=
 airbyte-proyecto: comprobar-env ## Perfil full: aplica CONFIG (por omisión, la del kit del L3: CDC de proyecto_origen a proyecto)
 	@nodo=$$(docker ps --filter name=airbyte-abctl-control-plane --format '{{.Names}}' | head -1); \
 	[ -n "$$nodo" ] || { echo "Airbyte no está instalado (make airbyte-instalar)."; exit 1; }; \
-	base=$$(docker ps --filter label=com.docker.compose.project=l03-proyecto --filter label=com.docker.compose.service=base --format '{{.Names}}' | head -1); \
+	proyecto=$$(sed -n 's/^COMPOSE_PROJECT_NAME=//p' $(KIT_L3)/.env 2>/dev/null | tail -n1); \
+	base=$$(docker ps --filter label=com.docker.compose.project=$${proyecto:-l03-proyecto} --filter label=com.docker.compose.service=base --format '{{.Names}}' | head -1); \
 	[ -n "$$base" ] || { echo "La base del kit del L3 no está levantada (make base en laboratorio/l03/kit)."; exit 1; }; \
 	red=$$(docker inspect $$base --format '{{range $$k, $$v := .NetworkSettings.Networks}}{{$$k}}{{end}}'); \
 	docker network connect $$red $$nodo 2>/dev/null || true; \
@@ -143,11 +168,21 @@ airbyte-proyecto: comprobar-env ## Perfil full: aplica CONFIG (por omisión, la 
 
 
 
+docs: comprobar-env imagen ## Documentación de dbt (catálogo y linaje) en platform/lakehouse/docs/index.html
+	$(ELT_RUN) elt sh -c 'atlantida-dbt dbt docs generate --static && \
+	  cp target/catalog.json "$$DBT_ESTADO_PROD"/ && mkdir -p /datos/lakehouse/docs && \
+	  cp target/static_index.html /datos/lakehouse/docs/index.html'
+	@mkdir -p lakehouse
+	$(ELT_RUN) --user "$$(id -u):$$(id -g)" -v "$(CURDIR)/lakehouse:/salida" elt \
+	  sh -c 'rm -rf /salida/docs && cp -r /datos/lakehouse/docs /salida/'
+	@echo "Documentación de dbt en platform/lakehouse/docs/index.html (ábrela en el navegador)."
 
 
 .PHONY: help comprobar-env imagen up migrar down reset ps psql-pms psql-dwh smoke roles-pms el
 .PHONY: fuentes
+.PHONY: dbt pipeline docs
 .PHONY: el-estado l3-cargador l3-comprobar
+.PHONY: l4-comprobar
 .PHONY: airbyte-instalar airbyte-configurar airbyte-sincronizar airbyte-quitar-ranura airbyte-proyecto
 
 # Órdenes de capas que esta copia no tiene (la edición del alumnado llega por etapas): de quién es
@@ -160,7 +195,7 @@ ORDENES_DE_CAPA := seed:profesor reseed:profesor vivo:profesor vivo-parar:profes
   ia-modelo:L8 ia-evaluar:L8 preguntar:L8 superset:L9 informes:L9 informes-parar:L9 alertas:L11 \
   accion:L11 accion-estado:L11 revertir:L11 impacto:L11 airbyte-instalar:L3 airbyte-configurar:L3 \
   airbyte-sincronizar:L3 airbyte-quitar-ranura:L3 airbyte-proyecto:L3 el-estado:L3 l3-cargador:L3 \
-  l3-comprobar:L3 openmetadata-instalar:L6 openmetadata-ingestar:L6 \
+  l3-comprobar:L3 l4-comprobar:L4 openmetadata-instalar:L6 openmetadata-ingestar:L6 \
   openmetadata-quitar:L6
 .DEFAULT:
 	@d=$$(printf '%s\n' $(ORDENES_DE_CAPA) | sed -n 's/^$@://p'); \

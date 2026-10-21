@@ -1,0 +1,138 @@
+version: 2
+
+models:
+  - name: int_periodos
+    description: >
+      Periodos de cálculo de los KPI dentro del horizonte simulado: años, meses y acumulados del
+      año (YTD) del periodo base y del evaluado. corte = hasta + madurez_dias (estado de las
+      reservas en esa fecha); completo = el corte ya ha pasado según los datos (última fecha de
+      reserva, sin pasar de fin_historico): hasta entonces sus reservas netas no están maduras.
+    columns:
+      - name: periodo_id
+        description: "'2024' (año), '2024-03' (mes) o '2025-YTD-03' (acumulado hasta marzo)."
+        data_tests: [unique, not_null]
+  - name: int_kpi_aportaciones_diarias
+    description: >
+      Aportación aditiva de cada hecho a cada métrica base, por hotel y día. valida_hasta (fecha
+      de cancelación): la aportación solo cuenta en los periodos cuyo corte es anterior.
+  - name: int_aspectos_rojo_diario
+    description: >
+      Semáforo diario de cada aspecto por hotel (parámetros en atlantida.yml; solo el modelo
+      oficial sobre el texto actual; vacío sin el módulo de IA).
+  - name: int_rachas_aspecto
+    description: Rachas de días consecutivos en rojo por hotel y aspecto.
+
+unit_tests:
+  - name: un_dia_sin_muestra_conserva_el_estado
+    model: int_aspectos_rojo_diario
+    overrides:
+      vars: {rojo_ventana_dias: 3, rojo_menciones_min: 2, rojo_umbral: -0.2, rojo_hueco_max_dias: 14}
+    given:
+      - input: source('meta', 'modelo_ia')
+        rows:
+          - {modelo: m, tarea: resenas, oficial: true, registrado_en: "2030-03-10 00:00:00+00"}
+          - {modelo: anterior, tarea: resenas, oficial: false, registrado_en: "2030-01-01 00:00:00+00"}
+          - {modelo: otra_tarea, tarea: otra, oficial: true, registrado_en: "2030-03-11 00:00:00+00"}
+      - input: source('ml', 'resena_aspecto')
+        rows:
+          - {review_id: 1, aspecto: ruido, polaridad: -1, modelo: m, huella_texto: "0cc175b9c0f1b6a831c399e269772661", procesado_en: "2030-03-10 00:00:00+00"}
+          - {review_id: 2, aspecto: ruido, polaridad: -1, modelo: m, huella_texto: "0cc175b9c0f1b6a831c399e269772661", procesado_en: "2030-03-10 00:00:00+00"}
+          - {review_id: 3, aspecto: ruido, polaridad: 1, modelo: m, huella_texto: "0cc175b9c0f1b6a831c399e269772661", procesado_en: "2030-03-10 00:00:00+00"}
+          - {review_id: 4, aspecto: ruido, polaridad: 1, modelo: m, huella_texto: "0cc175b9c0f1b6a831c399e269772661", procesado_en: "2030-03-10 00:00:00+00"}
+      - input: ref('stg_pms__resenas')
+        rows:
+          - {resena_id: 1, hotel_id: 1, fecha_publicacion: 2030-03-01, texto: a}
+          - {resena_id: 2, hotel_id: 1, fecha_publicacion: 2030-03-01, texto: a}
+          - {resena_id: 3, hotel_id: 1, fecha_publicacion: 2030-03-05, texto: a}
+          - {resena_id: 4, hotel_id: 1, fecha_publicacion: 2030-03-05, texto: a}
+    expect:
+      rows:
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-01, en_rojo: true}
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-02, en_rojo: true}
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-03, en_rojo: true}
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-04, en_rojo: true}
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-05, en_rojo: false}
+  - name: una_clasificacion_de_otro_texto_no_cuenta
+    model: int_aspectos_rojo_diario
+    overrides:
+      vars: {rojo_ventana_dias: 1, rojo_menciones_min: 1, rojo_umbral: -0.2, rojo_hueco_max_dias: 0}
+    given:
+      - input: source('meta', 'modelo_ia')
+        rows:
+          - {modelo: m, tarea: resenas, oficial: true, registrado_en: "2030-03-10 00:00:00+00"}
+          - {modelo: anterior, tarea: resenas, oficial: false, registrado_en: "2030-01-01 00:00:00+00"}
+          - {modelo: otra_tarea, tarea: otra, oficial: true, registrado_en: "2030-03-11 00:00:00+00"}
+      - input: source('ml', 'resena_aspecto')
+        rows:
+          - {review_id: 1, aspecto: ruido, polaridad: -1, modelo: m, huella_texto: "0cc175b9c0f1b6a831c399e269772661", procesado_en: "2030-03-10 00:00:00+00"}
+          - {review_id: 2, aspecto: ruido, polaridad: -1, modelo: m, huella_texto: "de otro texto", procesado_en: "2030-03-10 00:00:00+00"}
+      - input: ref('stg_pms__resenas')
+        rows:
+          - {resena_id: 1, hotel_id: 1, fecha_publicacion: 2030-03-01, texto: a}
+          - {resena_id: 2, hotel_id: 1, fecha_publicacion: 2030-03-02, texto: b}
+    expect:
+      rows:
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-01, en_rojo: true}
+  - name: solo_cuenta_el_modelo_de_la_ficha_oficial
+    model: int_aspectos_rojo_diario
+    overrides:
+      vars: {rojo_ventana_dias: 1, rojo_menciones_min: 1, rojo_umbral: -0.2, rojo_hueco_max_dias: 0}
+    given:
+      - input: source('meta', 'modelo_ia')
+        rows:
+          - {modelo: m, tarea: resenas, oficial: true, registrado_en: "2030-03-10 00:00:00+00"}
+          - {modelo: anterior, tarea: resenas, oficial: false, registrado_en: "2030-01-01 00:00:00+00"}
+          - {modelo: otra_tarea, tarea: otra, oficial: true, registrado_en: "2030-03-11 00:00:00+00"}
+      - input: source('ml', 'resena_aspecto')
+        rows:
+          - {review_id: 1, aspecto: ruido, polaridad: -1, modelo: ollama/otro, huella_texto: "0cc175b9c0f1b6a831c399e269772661", procesado_en: "2030-03-10 00:00:00+00"}
+          - {review_id: 1, aspecto: limpieza, polaridad: -1, modelo: anterior, huella_texto: "0cc175b9c0f1b6a831c399e269772661", procesado_en: "2030-03-10 00:00:00+00"}
+          - {review_id: 1, aspecto: comida, polaridad: -1, modelo: otra_tarea, huella_texto: "0cc175b9c0f1b6a831c399e269772661", procesado_en: "2030-03-10 00:00:00+00"}
+          - {review_id: 1, aspecto: personal, polaridad: -1, modelo: m, huella_texto: "0cc175b9c0f1b6a831c399e269772661", procesado_en: "2030-03-10 00:00:00+00"}
+      - input: ref('stg_pms__resenas')
+        rows:
+          - {resena_id: 1, hotel_id: 1, fecha_publicacion: 2030-03-01, texto: a}
+    expect:
+      rows:
+        - {hotel_id: 1, aspecto: personal, fecha: 2030-03-01, en_rojo: true}
+  - name: el_hueco_largo_no_conserva_el_rojo
+    model: int_aspectos_rojo_diario
+    overrides:
+      vars: {rojo_ventana_dias: 1, rojo_menciones_min: 1, rojo_umbral: -0.2, rojo_hueco_max_dias: 2}
+    given:
+      - input: source('meta', 'modelo_ia')
+        rows:
+          - {modelo: m, tarea: resenas, oficial: true, registrado_en: "2030-03-10 00:00:00+00"}
+          - {modelo: anterior, tarea: resenas, oficial: false, registrado_en: "2030-01-01 00:00:00+00"}
+          - {modelo: otra_tarea, tarea: otra, oficial: true, registrado_en: "2030-03-11 00:00:00+00"}
+      - input: source('ml', 'resena_aspecto')
+        rows:
+          - {review_id: 1, aspecto: ruido, polaridad: -1, modelo: m, huella_texto: "0cc175b9c0f1b6a831c399e269772661", procesado_en: "2030-03-10 00:00:00+00"}
+          - {review_id: 2, aspecto: ruido, polaridad: 1, modelo: m, huella_texto: "92eb5ffee6ae2fec3ad71c777531578f", procesado_en: "2030-03-10 00:00:00+00"}
+      - input: ref('stg_pms__resenas')
+        rows:
+          - {resena_id: 1, hotel_id: 1, fecha_publicacion: 2030-03-01, texto: a}
+          - {resena_id: 2, hotel_id: 1, fecha_publicacion: 2030-03-06, texto: b}
+    expect:
+      rows:
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-01, en_rojo: true}
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-02, en_rojo: true}
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-03, en_rojo: true}
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-04, en_rojo: false}
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-05, en_rojo: false}
+        - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-06, en_rojo: false}
+  - name: rachas_de_dias_en_rojo
+    model: int_rachas_aspecto
+    given:
+      - input: ref('int_aspectos_rojo_diario')
+        rows:
+          - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-01, en_rojo: true}
+          - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-02, en_rojo: true}
+          - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-03, en_rojo: false}
+          - {hotel_id: 1, aspecto: ruido, fecha: 2030-03-04, en_rojo: true}
+          - {hotel_id: 2, aspecto: limpieza, fecha: 2030-03-04, en_rojo: true}
+    expect:
+      rows:
+        - {hotel_id: 1, aspecto: ruido, inicio: 2030-03-01, fin: 2030-03-02, dias: 2}
+        - {hotel_id: 1, aspecto: ruido, inicio: 2030-03-04, fin: 2030-03-04, dias: 1}
+        - {hotel_id: 2, aspecto: limpieza, inicio: 2030-03-04, fin: 2030-03-04, dias: 1}

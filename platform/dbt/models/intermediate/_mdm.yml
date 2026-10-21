@@ -1,0 +1,9 @@
+version: 2
+models:
+  - name: int_huespedes_grupos
+    columns:
+      - {name: huesped_id, data_tests: [unique, not_null]}
+      - {name: huesped_golden_id, data_tests: [not_null]}
+  - name: int_huesped_golden
+    columns:
+      - {name: huesped_golden_id, data_tests: [unique, not_null]}

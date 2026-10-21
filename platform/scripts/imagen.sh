@@ -3,7 +3,9 @@
 # atlantida-dash, las que tenga esta copia) salvo que ya estén construidas desde esta misma
 # revisión del repositorio (etiqueta org.opencontainers.image.revision) y el árbol no tenga cambios
 # sin confirmar. FORZAR=1 reconstruye siempre. Si la construcción falla y ya existen, avisa y
-# sigue con las construidas; en CI (variable CI) falla.
+# sigue con las construidas, salvo que a la de las cargas le falte una orden de los paquetes de esta
+# copia (p. ej. atlantida-dbt tras actualizar a una etapa con dbt): entonces falla; en CI (variable
+# CI) falla siempre.
 # Variables (las fija make): ATLANTIDA_REV (git describe --always --dirty) y COMPOSE_TODOS (la
 # orden docker compose con todos los perfiles). IMAGEN_SIM, IMAGEN_ELT, IMAGEN_SUPERSET e
 # IMAGEN_DASH cambian las etiquetas: como en compose, las del entorno mandan y si no se leen de
@@ -84,7 +86,26 @@ if [ -n "${CI:-}" ]; then
   echo "ERROR: no se pudieron construir las imágenes (en CI no se usa una anterior)." >&2
   exit 1
 fi
-for i in "${imagenes[@]}"; do
+# Las órdenes que la imagen de las cargas debe tener según los paquetes de esta copia (la edición
+# del alumnado llega por etapas: una imagen de una etapa anterior no tiene las de la nueva).
+ordenes_elt=()
+for par in el:atlantida-el dbt:atlantida-dbt orchestration:atlantida-orq ai:atlantida-ia \
+  accion:atlantida-accion; do
+  if [ -f "${par%%:*}/pyproject.toml" ]; then ordenes_elt+=("${par#*:}"); fi
+done
+for n in "${!imagenes[@]}"; do
+  i=${imagenes[$n]}
   r=$(revision "$i") || { echo "ERROR: no se pudo construir $i y no hay una anterior." >&2; exit 1; }
-  echo "AVISO: no se pudo reconstruir $i; se usa la ya construida (revisión ${r:-desconocida}; repositorio $rev)." >&2
+  if [ "${construir[$n]}" = elt ] && [ ${#ordenes_elt[@]} -gt 0 ]; then
+    # shellcheck disable=SC2016
+    faltan=$(docker run --rm --entrypoint sh "$i" -c \
+      'for p in "$@"; do command -v "$p" >/dev/null || printf "%s " "$p"; done' sh "${ordenes_elt[@]}") \
+      || faltan="(no se pudo comprobar)"
+    if [ -n "$faltan" ]; then
+      echo "ERROR: no se pudo construir $i (el error está más arriba) y la que hay, de la revisión ${r:-desconocida}, no tiene lo que esta copia necesita: $faltan" >&2
+      echo "  Arregla la construcción y vuelve a intentarlo con make imagen FORZAR=1." >&2
+      exit 1
+    fi
+  fi
+  echo "AVISO: no se pudo reconstruir $i (el error está más arriba); se usa la ya construida (revisión ${r:-desconocida}; repositorio $rev): no tiene tus últimos cambios." >&2
 done

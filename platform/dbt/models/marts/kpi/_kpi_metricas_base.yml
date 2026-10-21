@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: kpi_metricas_base
+    description: >
+      Métricas base de atlantida.yml (y coste_total, auxiliar de costes_operativos) por periodo y
+      ámbito: el código de cada hotel o CADENA. Cada métrica respeta su agregación: las aditivas
+      se suman, los distintos se recalculan sobre la cadena, lo publicado por el compset se
+      pondera por el inventario STR y los días en rojo son un máximo. '-1' agrupa los hechos de un
+      hotel sin versión vigente en la dimensión (miembro desconocido). Las aditivas valen 0 sin
+      hechos (rejilla densa), salvo los costes: un hotel-periodo sin ningún apunte de coste (sin
+      cierre contable) tiene coste_total, coste_marketing_atribuido y costes_operativos nulos.
+    columns:
+      - name: periodo_id
+        description: "Identificador del periodo (año, mes o acumulado del año)."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('int_periodos')
+                field: periodo_id
+      - name: ambito
+        description: "Código del hotel, CADENA (total de la cadena) o '-1' (hechos sin hotel en la dimensión; no es un hotel)."
+        data_tests: [not_null]
+      - name: metrica
+        description: "Identificador de la métrica base."
+        data_tests: [not_null]
+      - {name: valor, description: "Valor de la métrica base en el periodo."}

@@ -1,0 +1,18 @@
+# Plantilla de snapshot (L4): la historia SCD2 de una tabla de staging. Cada `make snapshot`
+# compara cada fila con su versión vigente y, si cambió, cierra la vigente (dbt_valid_to) y abre
+# otra. Solo ve los cambios entre dos ejecuciones: ejecútalo después de cada carga del L3.
+# COMPLETA: quita los # de las líneas de abajo y pon tu modelo de staging y sus columnas.
+#   - strategy: timestamp, si la tabla tiene columna de última modificación («incremental» en
+#     el contrato del L3), con updated_at;
+#   - si no la tiene, strategy: check, con check_cols (las columnas cuyo cambio abre versión).
+# updated_at, mejor un timestamp sin zona (en staging, «at time zone 'UTC'»): es el tipo de
+# dbt_valid_from. Para rehacer un snapshot desde cero (se pierde su historia) no hay
+# --full-refresh: borra su tabla (drop table snapshots.snp_<tabla>) y vuelve a ejecutarlo.
+# snapshots:
+#   - name: snp_<tabla>
+#     relation: ref('stg_<tabla>')
+#     config:
+#       unique_key: <clave natural>
+#       strategy: timestamp
+#       updated_at: <columna de última modificación>
+#       dbt_valid_to_current: "'9999-12-31'"   # la vigente acaba en 9999-12-31, no en nulo

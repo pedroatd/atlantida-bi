@@ -1,0 +1,14 @@
+objetivo_id,orden,kpi,papel,peso,tipo,sentido,meta
+O1,1,revpar,principal,1.0,variacion_relativa,al_menos,0.08
+O1,2,goppar,guardarrail,,variacion_relativa,al_menos,0.0
+O1,3,adr,guardarrail,,variacion_relativa,al_menos,-0.03
+O2,1,cuota_directa,principal,0.7,umbral,al_menos,0.3
+O2,2,cac_reserva_neta,principal,0.3,variacion_relativa,como_maximo,-0.1
+O2,3,ocupacion,guardarrail,,variacion_absoluta,al_menos,-0.02
+O2,4,goppar,guardarrail,,variacion_relativa,al_menos,0.0
+O3,1,tasa_cancelacion_ota,principal,0.5,umbral,como_maximo,0.18
+O3,2,ingreso_perdido_neto,principal,0.5,variacion_relativa,como_maximo,-0.25
+O3,3,ocupacion,guardarrail,,variacion_absoluta,al_menos,-0.02
+O4,1,nps,principal,0.6,umbral,al_menos,45.0
+O4,2,tasa_repeticion,principal,0.4,variacion_relativa,al_menos,0.1
+O4,3,dias_max_aspecto_en_rojo,guardarrail,,umbral,como_maximo,30.0

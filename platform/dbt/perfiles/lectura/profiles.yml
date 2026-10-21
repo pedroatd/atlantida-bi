@@ -1,0 +1,18 @@
+# Perfil de SOLO LECTURA para consultar la capa semántica (MetricFlow) desde el texto a SQL de la
+# IA: rol bi_reader (lee marts_* y ml, no escribe nada) y, además, transacción de solo lectura y
+# límite de 60 s por consulta (PGOPTIONS, lo añade atlantida_dbt.semantica). El destino se llama
+# prod para que los esquemas sean los de producción (macro generate_schema_name). Nunca se usa
+# para construir.
+atlantida:
+  target: prod
+  outputs:
+    prod:
+      type: postgres
+      host: "{{ env_var('DWH_HOST', '127.0.0.1') }}"
+      port: "{{ env_var('DWH_PORT_INTERNO', env_var('DWH_PORT', '5434')) | as_number }}"
+      user: "{{ env_var('BI_READER_USER', 'bi_reader') }}"
+      password: "{{ env_var('BI_READER_PASSWORD', '') }}"
+      dbname: "{{ env_var('DWH_DB', 'dwh') }}"
+      schema: marts_core
+      threads: 1
+      connect_timeout: 10

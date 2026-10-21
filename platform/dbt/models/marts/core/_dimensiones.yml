@@ -1,0 +1,131 @@
+version: 2
+models:
+  - name: dim_fecha
+    description: Dimensión fecha y time spine de MetricFlow.
+    time_spine:
+      standard_granularity_column: fecha
+    columns:
+      - name: fecha
+        description: "Fecha del día (calendario)."
+        granularity: day
+        data_tests: [unique, not_null]
+      - {name: anio, description: "Año."}
+      - {name: trimestre, description: "Trimestre del año (1 a 4)."}
+      - {name: mes, description: "Mes del año (1 a 12)."}
+      - {name: anio_mes, description: "Año y mes en formato AAAA-MM."}
+      - {name: nombre_mes, description: "Nombre del mes."}
+      - {name: dia_mes, description: "Día del mes."}
+      - {name: dia_semana, description: "Día de la semana (ISO: 1 lunes a 7 domingo)."}
+      - {name: nombre_dia, description: "Nombre del día de la semana."}
+      - {name: es_fin_de_semana, description: "Verdadero en sábado y domingo."}
+      - {name: anio_iso, description: "Año de la semana ISO."}
+      - {name: semana_iso, description: "Número de semana ISO."}
+      - {name: temporada_turistica, description: "Temporada turística en que cae el día."}
+      - {name: festivo_conocido, description: "Verdadero si el día está dentro de la cobertura del calendario de festivos; si es falso, los indicadores de festivo son nulos (sin dato)."}
+      - {name: es_festivo_nacional, description: "Verdadero si es festivo nacional; nulo fuera de la cobertura del calendario de festivos."}
+      - {name: es_festivo_canarias, description: "Verdadero si es festivo de Canarias; nulo fuera de la cobertura del calendario de festivos."}
+      - {name: festivo_insular_en, description: "Islas en las que es festivo insular."}
+      - {name: mercados_en_vacaciones_escolares, description: "Número de mercados emisores en vacaciones escolares ese día; nulo fuera de la cobertura del calendario."}
+  - name: dim_hotel
+    description: "Dimensión de hoteles con historia de cambios (una fila por versión del hotel)."
+    columns:
+      - {name: hotel_sk, data_tests: [unique, not_null], description: "Clave sustituta de la versión del hotel (dim_hotel)."}
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: codigo, description: "Código de tres letras del hotel."}
+      - {name: nombre, description: "Nombre del hotel."}
+      - {name: isla, description: "Isla del archipiélago canario."}
+      - {name: municipio, description: "Municipio."}
+      - {name: tipo_hotel, description: "Tipología del hotel: urbano, vacacional, todo_incluido o rural."}
+      - {name: estrellas, description: "Categoría del hotel en estrellas."}
+      - {name: valido_desde, description: "Inicio de validez de esta versión de la fila (historia de cambios)."}
+      - {name: valido_hasta, description: "Fin de validez de esta versión de la fila; 9999-12-31 si es la vigente."}
+      - {name: es_actual, description: "Verdadero si es la versión vigente de la fila."}
+  - name: dim_habitacion
+    description: "Dimensión de habitaciones físicas con su tipo."
+    columns:
+      - {name: habitacion_sk, data_tests: [unique, not_null], description: "Clave sustituta de la habitación (dim_habitacion)."}
+      - {name: habitacion_id, description: "Identificador natural de la habitación en el PMS."}
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: numero, description: "Número de la habitación."}
+      - {name: planta, description: "Planta."}
+      - {name: tipo_habitacion_id, description: "Identificador del tipo de habitación."}
+      - {name: tipo_codigo, description: "Código del tipo de habitación."}
+      - {name: tipo_nombre, description: "Nombre del tipo de habitación."}
+      - {name: capacidad, description: "Capacidad máxima de personas."}
+      - {name: tarifa_base, description: "Tarifa base de la habitación (EUR por noche)."}
+  - name: dim_canal
+    description: "Dimensión de canales de venta, con su jerarquía de niveles."
+    columns:
+      - {name: canal_sk, data_tests: [unique, not_null], description: "Clave sustituta del canal de venta (dim_canal)."}
+      - {name: canal_id, description: "Identificador natural del canal en el PMS."}
+      - {name: codigo_origen, description: "Código del canal tal como llega del PMS (puede ser un código heredado)."}
+      - {name: canal_canonico_id, description: "Identificador del canal canónico al que se normaliza."}
+      - {name: codigo, description: "Código canónico del canal."}
+      - {name: nombre, description: "Nombre del canal."}
+      - {name: tipo_canal, description: "Tipo de canal de venta: directo, ota, turoperador o agencia."}
+      - {name: es_codigo_heredado, description: "Verdadero si el código de origen es un código antiguo que se normaliza."}
+      - {name: nivel_1, description: "Nivel 1 de la jerarquía (directo o intermediado)."}
+      - {name: nivel_2, description: "Tipo de intermediario: Agencia en línea (OTA), Turoperador o Agencia de viajes; nulo en el canal directo."}
+      - {name: nivel_2_relleno, description: "Nivel 2 con 'Directo' en el canal directo (para agrupar sin huecos)."}
+      - {name: nivel_3, description: "Nivel 3 de la jerarquía (el canal concreto)."}
+  - name: dim_tarifa
+    description: "Dimensión de planes de tarifa."
+    columns:
+      - {name: tarifa_sk, data_tests: [unique, not_null], description: "Clave sustituta del plan de tarifa (dim_tarifa)."}
+      - {name: plan_tarifa_id, description: "Identificador natural del plan de tarifa en el PMS."}
+      - {name: codigo, description: "Código del plan."}
+      - {name: nombre, description: "Nombre del plan."}
+      - {name: regimen_codigo, description: "Código del régimen de comidas."}
+      - {name: regimen, description: "Régimen de comidas (solo alojamiento, desayuno, media pensión, etc.)."}
+      - {name: es_reembolsable, description: "Verdadero si la tarifa permite cancelar con reembolso."}
+      - {name: pct_deposito, description: "Parte del importe exigida como depósito (tanto por uno; 1 = el total)."}
+      - {name: pct_descuento, description: "Descuento del plan sobre la tarifa (tanto por uno)."}
+  - name: dim_campana
+    description: "Dimensión de campañas de marketing."
+    columns:
+      - {name: campana_sk, data_tests: [unique, not_null], description: "Clave sustituta de la campaña de marketing (dim_campana)."}
+      - {name: campana_id, description: "Identificador natural de la campaña en el PMS."}
+      - {name: codigo, description: "Código de la campaña."}
+      - {name: nombre, description: "Nombre de la campaña."}
+      - {name: tipo_canal_objetivo, description: "Tipo de canal al que se dirige la campaña."}
+      - {name: fecha_inicio, description: "Primer día de la campaña."}
+      - {name: fecha_fin, description: "Último día de la campaña."}
+      - {name: presupuesto, description: "Presupuesto de la campaña (EUR)."}
+      - {name: hoteles, description: "Hoteles en los que se ejecuta la campaña."}
+  - name: dim_mercado
+    description: "Dimensión de mercados emisores (país de residencia)."
+    columns:
+      - {name: mercado_sk, data_tests: [unique, not_null], description: "Clave sustituta del mercado emisor (dim_mercado)."}
+      - {name: pais_codigo, description: "Código ISO del país."}
+      - {name: pais, description: "Nombre del país."}
+      - {name: mercado_istac, description: "Mercado emisor según la clasificación del ISTAC."}
+  - name: dim_meteo
+    description: "Dimensión de meteorología diaria por isla."
+    columns:
+      - {name: meteo_sk, data_tests: [unique, not_null], description: "Clave sustituta del día meteorológico de la isla (dim_meteo)."}
+      - {name: isla, description: "Isla del archipiélago canario."}
+      - {name: fecha, description: "Fecha del día (calendario)."}
+      - {name: precipitacion_mm, description: "Precipitación del día (mm)."}
+      - {name: temperatura_maxima_c, description: "Temperatura máxima del día (grados Celsius)."}
+      - {name: dia_lluvioso, description: "Verdadero si el día se considera lluvioso."}
+      - {name: banda_temperatura, description: "Banda de temperatura máxima del día."}
+      - {name: fuente_dato, description: "Proveedor del dato: AEMET u Open-Meteo."}
+  - name: dim_indicadores_reserva
+    description: "Dimensión degenerada con las combinaciones de indicadores de una reserva."
+    columns:
+      - {name: indicadores_sk, data_tests: [unique, not_null], description: "Clave sustituta de la combinación de indicadores de la reserva (dim_indicadores_reserva)."}
+      - {name: es_reembolsable, description: "Verdadero si la tarifa permite cancelar con reembolso."}
+      - {name: con_deposito, description: "Verdadero si la reserva exige depósito."}
+      - {name: con_campana, description: "Verdadero si la reserva viene de una campaña."}
+      - {name: con_ninos, description: "Verdadero si la reserva incluye niños."}
+  - name: dim_hotel_actual
+    description: "Hoteles en su versión vigente: la dimensión para cruzar hechos por hotel_id."
+    columns:
+      - {name: hotel_sk, description: "Clave sustituta de la versión del hotel (dim_hotel)."}
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: codigo, description: "Código de tres letras del hotel."}
+      - {name: nombre, description: "Nombre del hotel."}
+      - {name: isla, description: "Isla del archipiélago canario."}
+      - {name: municipio, description: "Municipio."}
+      - {name: tipo_hotel, description: "Tipología del hotel: urbano, vacacional, todo_incluido o rural."}
+      - {name: estrellas, description: "Categoría del hotel en estrellas."}

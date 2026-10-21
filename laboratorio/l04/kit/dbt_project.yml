@@ -1,0 +1,35 @@
+# Proyecto dbt del modelo dimensional de tu proyecto (laboratorio L4), sobre la base «proyecto»
+# del kit del L3. Cada capa es un esquema fijo: staging (vistas sobre raw, con los datos
+# personales seudonimizados), snapshots (la historia SCD2) y marts (dimensiones y hechos).
+name: proyecto
+version: "0.1.0"
+config-version: 2
+require-dbt-version: [">=1.12.0", "<1.13.0"]
+profile: proyecto
+
+model-paths: ["models"]
+snapshot-paths: ["snapshots"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+analysis-paths: []
+target-path: target
+clean-targets: [target, logs]
+
+flags:
+  send_anonymous_usage_stats: false
+
+models:
+  proyecto:
+    staging:
+      +schema: staging
+      +materialized: view
+      # Sin la sal en la conexión, staging no se construye (ver macros/seudonimo.sql).
+      +pre-hook: "{{ comprobar_sal() }}"
+    marts:
+      +schema: marts
+      +materialized: table
+
+snapshots:
+  proyecto:
+    +schema: snapshots

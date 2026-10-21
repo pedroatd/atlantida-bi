@@ -1,45 +1,9 @@
-"""Esqueleto del laboratorio L3: el cargador dlt del PMS desde la API de cambios del profesor.
+"""Origen «api»: carga incremental desde la API de cambios del PMS que publica el profesor
+(atlantida-sim servir). Cada tabla se lee siguiendo un cursor opaco que la API devuelve en cada
+página; dlt lo guarda en su estado (en el propio DWH) y la siguiente carga sigue desde ahí.
 
-Lo que tienes que construir. Las funciones con `raise NotImplementedError("completa …")` son
-los huecos; las pruebas que dicen cuándo están bien:
-
-    uv run pytest platform/el/tests/test_fuente_api.py
-
-Cuando pasen, `make -C platform el SOLO=pms REINICIAR=1` carga raw_pms desde la API y
-`make -C platform el SOLO=pms` repetido solo trae lo nuevo. Cómo se configura la API (SIM_API_URL,
-SIM_API_TOKEN): README.md (raíz del repositorio) y platform/el/README.md («Cargar desde la API del
-profesor»).
-
-El contrato de la API (todas las rutas bajo SIM_API_URL, que termina en /v1; todas, también
-/salud, llevan la cabecera «Authorization: Bearer <token>»):
-
-- GET /salud: {"estado": "ok" | "sin_sembrar", "reloj", "huella", "epoca", …}. El «reloj» es el
-  instante hasta el que hay datos: una sincronización lo fija una vez, al empezar, como su corte.
-  La «huella» y la «epoca» identifican la siembra del PMS: cambian cuando el profesor lo vuelve a
-  sembrar, y el cursor las lleva dentro (por eso un cursor de otra siembra da 409).
-- GET /tablas: una entrada por tabla, {"tabla", "columnas": [{"nombre", "tipo"}], "clave",
-  "clave_con_nulos"}. «tipo» es el tipo de PostgreSQL de la columna (p. ej. numeric(10,2)).
-- GET /cambios?tabla=…&limite=…[&hasta=…][&cursor=…]: una página de filas cambiadas,
-  {"filas", "cursor", "hay_mas", "hasta"}. El cursor es opaco: no se interpreta, se guarda y se
-  devuelve tal cual en la petición siguiente (la primera página va sin cursor). El parámetro
-  «hasta» es opcional: con él, la API corta en el menor entre él y su reloj; sin él, en su reloj.
-  En los dos casos la respuesta trae en «hasta» el corte que aplicó de verdad, y ese se repite en
-  todas las páginas siguientes: es el corte común de la sincronización, y ninguna página trae
-  cambios posteriores a él aunque el PMS siga cambiando. No es una foto a un instante: una fila
-  que cambia después del corte deja de verse en esta sincronización y llega en la siguiente. Este
-  módulo fija un corte para toda la sincronización (todas las tablas) y lo
-  pide ya en la primera página. Se pide la página siguiente mientras «hay_mas» sea verdadero.
-- Los valores llegan en JSON: las fechas y los instantes como texto ISO 8601 y los numeric como
-  número o texto; se convierten a los tipos de «columnas» (los numeric, a decimales exactos).
-- 401: el token no vale. 409: el profesor ha vuelto a sembrar el PMS y el cursor guardado ya no
-  vale: hay que cargar desde cero. 429, 502, 503 y 504: se reintenta, respetando Retry-After.
-
-Ya está resuelto lo que no es el objeto del laboratorio: las peticiones con reintentos y la
-traducción de cada error de la API a su excepción (ClienteCambios._get) y la conversión de tipos
-a Arrow (_esquema_arrow, _valor, _a_tabla). Te toca: las tres llamadas a la API (salud, corte y
-tablas), la paginación con cursor y «hasta» (ClienteCambios.paginas), el recurso de dlt con
-merge por la clave de la tabla y el cursor guardado en su estado (_recurso) y la fuente que reúne
-un recurso por tabla (fuente_api). Mantén los nombres y las firmas: pipeline.py los usa."""
+La API identifica cada siembra (huella y época): si el profesor vuelve a sembrar el PMS, el
+cursor guardado ya no vale (409) y hay que cargar desde cero con --reiniciar."""
 
 from __future__ import annotations
 
@@ -54,7 +18,7 @@ import pyarrow as pa
 
 from .errores import ApiNoDisponible, ErrorDeCarga, ReinicioNecesario, TokenNoValido
 from .esquema import TablaOrigen, tipo_dlt
-from .fuente_pms import con_columnas_de_carga  # noqa: F401 (la usa _recurso)
+from .fuente_pms import con_columnas_de_carga
 
 MENSAJE_409 = (
     "El PMS del profesor se ha vuelto a sembrar y el cursor guardado ya no vale: hay que cargar "
@@ -137,35 +101,49 @@ class ClienteCambios:
         )
 
     def salud(self) -> dict:
-        """Estado del PMS servido: el cuerpo de GET /salud, que lleva el token como todas las
-        rutas, con estado, reloj, huella y época. La época cambia en cada siembra."""
-        raise NotImplementedError("completa ClienteCambios.salud: pide /salud con self._get")
+        """Estado del PMS servido (GET /v1/salud, que lleva el token como todas las rutas):
+        estado, reloj, huella y época. El sensor de Dagster sigue el reloj; la época cambia en
+        cada siembra."""
+        return self._get("/salud")
 
     def corte(self) -> str:
-        """El corte de una sincronización: el «reloj» de /salud (se fija una vez, al empezar). Si
-        el PMS aún no está sembrado (estado distinto de «ok»), lanza ApiNoDisponible con un
-        mensaje que lo diga."""
-        raise NotImplementedError(
-            "completa ClienteCambios.corte: mira el estado de self.salud() y devuelve su reloj"
-        )
+        """Reloj del PMS servido: el corte de una sincronización (se fija una vez, al empezar)."""
+        salud = self.salud()
+        if salud.get("estado") != "ok":
+            raise ApiNoDisponible("El PMS del profesor aún no está sembrado: inténtalo más tarde.")
+        return salud["reloj"]
 
     def tablas(self) -> list[dict]:
-        """Las tablas que sirve la API, con sus columnas, su clave y las columnas de la clave que
-        admiten nulos: el cuerpo de GET /tablas."""
-        raise NotImplementedError("completa ClienteCambios.tablas: pide /tablas con self._get")
+        return self._get("/tablas")
 
     def paginas(
         self, tabla: str, cursor: str | None, hasta: str, limite: int = 5000
     ) -> Iterator[dict]:
-        """Todas las páginas de cambios de «tabla» desde «cursor» (None: desde el principio),
-        cada una como el cuerpo de GET /cambios (pídelo con self._get). La primera página ya pide
-        el corte «hasta» de la sincronización; las siguientes repiten el «hasta» que devolvió la
-        API (el corte aplicado). Para cuando «hay_mas» es falso. Si la API dice que hay más pero
-        no avanza el cursor, o no termina en MAX_PAGINAS páginas, lanza ApiNoDisponible (sin eso,
-        un fallo de la API colgaría la carga)."""
-        raise NotImplementedError(
-            "completa ClienteCambios.paginas: pide /cambios con tabla, limite, hasta y cursor, "
-            "repite el «hasta» de la respuesta y sigue el cursor mientras hay_mas"
+        """Todas las páginas, también la primera sin cursor, con el mismo corte «hasta»: ninguna
+        página trae cambios posteriores al corte aunque el vivo avance mientras se lee."""
+        for _ in range(MAX_PAGINAS):
+            params = {
+                "tabla": tabla,
+                "limite": limite,
+                "hasta": hasta,
+                **({"cursor": cursor} if cursor else {}),
+            }
+            cuerpo = self._get("/cambios", params)
+            # El cursor no lleva el corte: se repite el que la API aplicó de verdad (min(pedido,
+            # reloj)) para que todas las páginas compartan el mismo corte.
+            hasta = cuerpo.get("hasta") or hasta
+            yield cuerpo
+            siguiente = cuerpo.get("cursor") or cursor
+            if not cuerpo.get("hay_mas"):
+                return
+            if siguiente == cursor:
+                raise ApiNoDisponible(
+                    f"La API de cambios dice que hay más filas de {tabla} pero no avanza el "
+                    "cursor: pregunta al profesor."
+                )
+            cursor = siguiente
+        raise ApiNoDisponible(
+            f"La API de cambios no termina de paginar {tabla} tras {MAX_PAGINAS} páginas."
         )
 
 
@@ -214,36 +192,31 @@ def _a_tabla(filas: list[dict], esquema: pa.Schema) -> pa.Table:
 
 
 def _recurso(t: TablaOrigen, cliente: ClienteCambios, instante: datetime, hasta: str):
-    """El recurso de dlt de la tabla «t» (se devuelve sin ejecutarlo), según el contrato:
+    incremental = t.disposicion == "merge"
+    esquema = _esquema_arrow(t)
 
-    - nombre, disposición (t.disposicion) y columnas (t.hints()) de la tabla; con merge, por la
-      clave de /tablas (t.clave), para que repetir una carga no duplique filas; con replace, sin
-      clave (dlt haría NOT NULL las columnas de la clave, y en algunas tablas admite nulos);
-    - lee las páginas de cliente.paginas con el corte «hasta», desde el cursor de la carga
-      anterior (en merge; replace relee la tabla entera desde el principio, así que puede perder
-      en esa carga las filas que cambien después del corte: llegan en la siguiente);
-    - el cursor que se guarda es el de la última página leída, en el estado del recurso, que dlt
-      solo conserva si la carga termina bien;
-    - cada fila llega con las columnas de linaje _loaded_at (instante) y _origen ("api"), con
-      los tipos de las columnas de la tabla: _a_tabla(filas, _esquema_arrow(t)) convierte las
-      filas de una página en una tabla de Arrow, y con_columnas_de_carga(tabla, instante, "api")
-      (de fuente_pms.py) le añade el linaje.
-
-    Las piezas de dlt que hacen falta (el paso 4 del capítulo del L3 enlaza su documentación):
-    el decorador @dlt.resource, con name, write_disposition, primary_key y columns; el estado del
-    recurso, dlt.current.resource_state(), un diccionario que dlt guarda entre cargas (en su
-    documentación, «State»); y que un recurso es una función generadora que entrega (yield) lo
-    que se carga, aquí una tabla de Arrow por página con filas."""
-    raise NotImplementedError(
-        "completa _recurso: un @dlt.resource de la tabla con su disposición y su clave, que "
-        "sigue el cursor guardado en el estado del recurso"
+    @dlt.resource(
+        name=t.nombre,
+        write_disposition=t.disposicion,
+        primary_key=list(t.clave) if incremental else None,
+        columns=t.hints(),
     )
+    def leer():
+        estado = dlt.current.resource_state()
+        cursor = estado.get("cursor") if incremental else None
+        for pagina in cliente.paginas(t.nombre, cursor, hasta):
+            filas = pagina.get("filas") or []
+            if filas:
+                yield con_columnas_de_carga(_a_tabla(filas, esquema), instante, "api")
+            if incremental and pagina.get("cursor"):
+                estado["cursor"] = pagina["cursor"]  # dlt solo lo guarda si la carga termina bien
+
+    return leer
 
 
 @dlt.source(name="pms", max_table_nesting=0)
 def fuente_api(
     cliente: ClienteCambios, tablas: dict[str, TablaOrigen], instante: datetime, hasta: str
 ):
-    """La fuente de dlt del PMS: un recurso (_recurso) por cada tabla de «tablas», todos con el
-    mismo instante de carga y el mismo corte «hasta»."""
-    raise NotImplementedError("completa fuente_api: entrega (yield) el _recurso de cada tabla")
+    for t in tablas.values():
+        yield _recurso(t, cliente, instante, hasta)

@@ -84,6 +84,7 @@ services:
       args: { REV: "${ATLANTIDA_REV:-desconocida}" }
     image: ${IMAGEN_ELT:-atlantida-elt:0.4.0}
     profiles: ["elt"]
+    command: ["atlantida-dbt", "pipeline"]
     restart: "no"
     environment:
       <<: *rs-externo
@@ -98,6 +99,9 @@ services:
       DWH_PORT_INTERNO: "5432"
       DWH_DB: ${DWH_DB}
       LOADER_PASSWORD: ${LOADER_PASSWORD}
+      TRANSFORMER_PASSWORD: ${TRANSFORMER_PASSWORD}
+      BI_READER_PASSWORD: ${BI_READER_PASSWORD}
+      DWH_SEUDONIMO_SAL: ${DWH_SEUDONIMO_SAL:-sal_de_desarrollo}
       ORIGEN_PMS: ${ORIGEN_PMS:-pms}
       SIM_API_URL: ${SIM_API_URL:-}
       SIM_API_TOKEN: ${SIM_API_TOKEN:-}
@@ -105,6 +109,9 @@ services:
       RS_REINTENTOS: ${RS_REINTENTOS:-4}
       RS_TARIFAS_DESDE: ${RS_TARIFAS_DESDE:-}
       MOTOR_EL: ${MOTOR_EL:-dlt}
+    volumes:
+      - dbt-estado:/datos/estado
+      - lakehouse:/datos/lakehouse
     depends_on:
       pms-db: { condition: service_healthy }
       dwh: { condition: service_healthy }
@@ -117,3 +124,5 @@ services:
 volumes:
   pms-data:
   dwh-data:
+  dbt-estado:
+  lakehouse:

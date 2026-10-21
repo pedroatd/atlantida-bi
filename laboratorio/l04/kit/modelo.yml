@@ -1,0 +1,32 @@
+# Tu modelo dimensional (L4): lo que `make comprobar` mira en tu base, tal como la deja dbt.
+# Sustituye los nombres de ejemplo por los de tus modelos. Una tabla sin esquema está en marts.
+version: 1                          # versión del formato (siempre 1)
+# contrato: ../l03-kit/contrato.yml # opcional: tu contrato del L3 (por omisión, el de L3_KIT);
+                                    #   de él salen las «personales», que no pueden salir de raw
+hechos:                             # una entrada por tabla de hechos
+  fct_mi_proceso:
+    grano: [mi_id]                  # las columnas que identifican una fila: el grano
+    claves_foraneas:                # columna del hecho → dimensión a la que apunta (−1 si no casa)
+      mi_entidad_sk:                # hacia una SCD2, con «fecha»: la columna del hecho con la que
+        dimension: dim_mi_entidad   #   se elige la versión (comprueba que sea la vigente en ella)
+        fecha: mi_instante
+      # mi_otra_sk: dim_mi_otra     # hacia una de tipo 1, basta su nombre
+      # mi_fecha_fin_sk:            # un rol de fecha que puede faltar (lo que aún no ha
+      #   dimension: dim_fecha      #   terminado): nulo, no −1 (o −2 «no aplica», si la
+      #   opcional: true            #   dimensión tiene esa fila); el motivo es obligatorio
+      #   motivo: lo que aún no ha terminado no tiene fecha de fin
+dimensiones:                        # una entrada por dimensión
+  dim_mi_entidad:
+    clave_sustituta: mi_entidad_sk  # entera y única; −1 es el miembro desconocido
+    scd2:                           # opcional: solo si la dimensión guarda la historia (SCD2)
+      clave_natural: [mi_id]        #   la clave de negocio (varias versiones por clave)
+      desde: valido_desde           #   inicio de la versión (incluido)
+      hasta: valido_hasta           #   fin (excluido); la vigente: nulo o 9999-12-31
+      origen: mi_fichero            #   la tabla del contrato del L3 de la que sale su historia
+  # dim_mi_otra:
+  #   clave_sustituta: mi_otra_sk
+  #   clave_natural: [mi_otra_id]   # opcional en una de tipo 1: comprueba que no se repite
+  # dim_fecha:                      # un calendario generado completo no necesita el −1:
+  #   clave_sustituta: fecha_sk
+  #   miembro_desconocido: false
+  #   motivo: calendario generado completo

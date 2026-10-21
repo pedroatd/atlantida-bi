@@ -1,0 +1,40 @@
+# Conexión de dbt al DWH con el rol transformer. Dos destinos (DataOps):
+#   prod (por omisión): las capas del contrato C4 (staging, marts_core…), las que leen los paneles.
+#   dev: las mismas capas con prefijo dev_ (dev_staging, dev_marts_core…) para probar cambios sin
+#        tocar prod: make dbt ENTORNO=dev (o DBT_TARGET=dev). Lo no construido en dev se lee de
+#        prod (--defer, lo añade atlantida-dbt).
+# Todo sale del entorno (platform/.env con make): en el anfitrión, el puerto publicado (DWH_PORT);
+# dentro de Compose, el interno.
+# Sin `options` ni `search_path`: dbt-postgres no admite `options` (lo ignoraría sin avisar) y
+# `search_path` haría que el adaptador construyera las opciones de libpq y pisara PGOPTIONS.
+# atlantida-dbt (y Dagster) pasan las opciones de sesión por PGOPTIONS, que lee libpq al conectar:
+#   -c statement_timeout=…  una consulta desbocada falla con un error claro en vez de colgar
+#                           la ejecución (DBT_STATEMENT_TIMEOUT_MS; por defecto 10 min; 0 lo
+#                           desactiva);
+#   -c atlantida.sal=…      la sal de los seudónimos (de DWH_SEUDONIMO_SAL), que el SQL lee
+#                           con current_setting: así no aparece en el SQL compilado de
+#                           target/ ni en logs/. Además va en DBT_ENV_SECRET_SAL, y dbt borra
+#                           de sus registros el valor de las variables DBT_ENV_SECRET_*.
+atlantida:
+  target: prod
+  outputs:
+    prod:
+      type: postgres
+      host: "{{ env_var('DWH_HOST', '127.0.0.1') }}"
+      port: "{{ env_var('DWH_PORT_INTERNO', env_var('DWH_PORT', '5434')) | as_number }}"
+      user: "{{ env_var('TRANSFORMER_USER', 'transformer') }}"
+      password: "{{ env_var('TRANSFORMER_PASSWORD', '') }}"
+      dbname: "{{ env_var('DWH_DB', 'dwh') }}"
+      schema: staging
+      threads: 4
+      connect_timeout: 10
+    dev:
+      type: postgres
+      host: "{{ env_var('DWH_HOST', '127.0.0.1') }}"
+      port: "{{ env_var('DWH_PORT_INTERNO', env_var('DWH_PORT', '5434')) | as_number }}"
+      user: "{{ env_var('TRANSFORMER_USER', 'transformer') }}"
+      password: "{{ env_var('TRANSFORMER_PASSWORD', '') }}"
+      dbname: "{{ env_var('DWH_DB', 'dwh') }}"
+      schema: dev_staging
+      threads: 2
+      connect_timeout: 10

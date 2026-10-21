@@ -1,0 +1,41 @@
+version: 2
+models:
+  - name: dim_huesped
+    description: "Dimensión de huéspedes sobre el golden record, con historia de cambios."
+    columns:
+      - {name: huesped_sk, data_tests: [unique, not_null], description: "Clave sustituta de la versión del huésped (dim_huesped)."}
+      - name: segmento
+        description: "Segmento comercial del huésped."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_perfil_huesped'), field: segmento}}
+      - {name: huesped_golden_id, description: "Identificador del huésped en el golden record (tras resolver fichas duplicadas)."}
+      - {name: pais_codigo, description: "Código ISO del país de residencia."}
+      - {name: anio_nacimiento, description: "Año de nacimiento."}
+      - {name: num_fichas, description: "Número de fichas del PMS que forman el golden record."}
+      - {name: tiene_documento, description: "Verdadero si el huésped tiene documento de identidad registrado."}
+      - {name: es_contactable, description: "Verdadero si alguna de sus fichas tiene correo o teléfono."}
+      - {name: valido_desde, description: "Inicio de validez de esta versión de la fila (historia de cambios)."}
+      - {name: valido_hasta, description: "Fin de validez de esta versión de la fila; 9999-12-31 si es la vigente."}
+      - {name: es_actual, description: "Verdadero si es la versión vigente de la fila."}
+  - name: dim_perfil_huesped
+    description: "Dimensión de perfiles de huésped (combinaciones de atributos, no personas)."
+    columns:
+      - {name: perfil_sk, data_tests: [unique, not_null], description: "Clave sustituta del perfil del huésped (dim_perfil_huesped)."}
+      - {name: segmento, description: "Segmento comercial del huésped."}
+      - {name: banda_edad, description: "Banda de edad."}
+      - {name: es_miembro_programa, description: "Verdadero si es miembro del programa de fidelización."}
+      - {name: banda_estancias_previas, description: "Banda del número de estancias previas."}
+  - name: brg_reserva_huesped
+    description: "Puente entre reservas y huéspedes: una fila por reserva y huésped asociado, con el factor de ponderación para repartir medidas."
+    data_tests:
+      - unique: {arguments: {column_name: "reserva_id || '-' || huesped_id"}}
+    columns:
+      - name: huesped_sk
+        description: "Clave sustituta de la versión del huésped (dim_huesped)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_huesped'), field: huesped_sk}}
+      - {name: reserva_id, description: "Identificador de la reserva en el PMS."}
+      - {name: huesped_id, description: "Identificador de la ficha de huésped en el PMS."}
+      - {name: huesped_golden_id, description: "Identificador del huésped en el golden record (tras resolver fichas duplicadas)."}
+      - {name: es_titular, description: "Verdadero si el huésped es el titular de la reserva."}
+      - {name: factor_ponderacion, description: "Parte de la reserva que corresponde a este huésped (suma 1 por reserva)."}

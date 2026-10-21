@@ -1,0 +1,18 @@
+# Conexión de dbt a la base «proyecto» del kit del L3. Todo sale del .env de ese kit, que el
+# Makefile lee de L3_KIT (por omisión, ../l03-kit): ejecuta dbt siempre con make.
+# Sin `options` ni `search_path`: así libpq toma de PGOPTIONS la sal de los seudónimos
+# (-c proyecto.sal=…), que el Makefile pone en la conexión y el SQL lee con current_setting.
+# La sal nunca se escribe en el SQL, en target/ ni en logs/.
+proyecto:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: "{{ env_var('PROYECTO_HOST', '127.0.0.1') }}"
+      port: "{{ env_var('PROYECTO_PUERTO', '5440') | as_number }}"
+      user: "{{ env_var('PROYECTO_USUARIO', 'proyecto') }}"
+      password: "{{ env_var('PROYECTO_CLAVE') }}"
+      dbname: "{{ env_var('PROYECTO_BASE', 'proyecto') }}"
+      schema: staging
+      threads: 4
+      connect_timeout: 10

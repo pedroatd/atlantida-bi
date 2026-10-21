@@ -1,0 +1,18 @@
+pais_codigo,pais,mercado_istac
+ES,España,ES
+GB,Reino Unido,GB
+DE,Alemania,DE
+SE,Suecia,NORD
+NO,Noruega,NORD
+DK,Dinamarca,NORD
+FI,Finlandia,NORD
+NL,Países Bajos,NL
+BE,Bélgica,BE
+FR,Francia,FR
+IE,Irlanda,IE
+IT,Italia,IT
+AT,Austria,DE
+CH,Suiza,OTROS
+PL,Polonia,OTROS
+PT,Portugal,OTROS
+US,Estados Unidos,OTROS

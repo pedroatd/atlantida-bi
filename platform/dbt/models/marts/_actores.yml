@@ -1,0 +1,304 @@
+version: 2
+models:
+  - name: rev_rendimiento_diario
+    columns:
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: hotel, description: "Código del hotel."}
+      - {name: fecha, description: "Fecha del día (calendario)."}
+      - {name: ocupacion, description: "Ocupación del día."}
+      - {name: adr, description: "Tarifa media diaria (EUR)."}
+      - {name: revpar, description: "Ingreso de alojamiento por habitación disponible (EUR)."}
+      - {name: ocupacion_compset, description: "Ocupación del conjunto competitivo."}
+      - {name: adr_compset, description: "ADR del conjunto competitivo (EUR)."}
+      - {name: revpar_compset, description: "RevPAR del conjunto competitivo (EUR)."}
+      - {name: mpi, description: "Índice de penetración: 100 × ocupación propia en base STR (todo el inventario) / ocupación del compset; 100 = paridad (puntos). La columna ocupacion usa la base interna y no lo reproduce."}
+      - {name: ari, description: "Índice de tarifa media: 100 × ADR propio / ADR del compset; 100 = paridad (puntos)."}
+      - {name: rgi, description: "Índice de ingreso por habitación: 100 × RevPAR propio en base STR (todo el inventario) / RevPAR del compset; 100 = paridad (puntos). La columna revpar usa la base interna y no lo reproduce."}
+    description: Revenue manager. Rendimiento diario por hotel y posición frente al compset.
+    data_tests:
+      - unique: {arguments: {column_name: "hotel_id || '-' || fecha"}}
+  - name: rev_cancelacion_segmentos
+    columns:
+      - {name: mes_llegada, description: "Primer día del mes de llegada (cohorte)."}
+      - {name: hotel, description: "Código del hotel."}
+      - {name: tipo_canal, description: "Tipo de canal de venta: directo, ota, turoperador o agencia."}
+      - {name: es_reembolsable, description: "Verdadero si la tarifa es reembolsable; nulo si no se conoce el plan."}
+      - {name: tramo_antelacion, description: "Tramo de antelación de la reserva."}
+      - {name: reservas_llegada, description: "Reservas del segmento con llegada en el mes, en cualquier estado (también las canceladas)."}
+      - {name: reservas_canceladas_llegada, description: "Reservas de esa cohorte canceladas por el cliente."}
+      - {name: tasa_cancelacion, description: "Canceladas entre reservas de la cohorte."}
+    description: Revenue manager. Cancelación de clientes por cohorte de llegada y segmento.
+    data_tests:
+      - unique:
+          arguments:
+            column_name: "mes_llegada || '-' || hotel || '-' || coalesce(tipo_canal, '?') || '-' || coalesce(es_reembolsable::text, '?') || '-' || tramo_antelacion"
+  - name: rev_pickup
+    columns:
+      - {name: corte, description: "Día de corte: la ventana son los 7 días de reserva hasta el corte, para estancias posteriores."}
+      - {name: hotel, description: "Código del hotel."}
+      - {name: noches_captadas_ventana, description: "Noches posteriores al corte de reservas creadas en los 7 días hasta el corte (en cualquier estado actual). No aditiva entre cortes (ventanas solapadas)."}
+      - {name: noches_canceladas_ventana, description: "Noches posteriores al corte de reservas canceladas en los 7 días hasta el corte. No aditiva entre cortes (ventanas solapadas)."}
+      - {name: pickup, description: "Noches netas captadas en los 7 días hasta el corte para estancias posteriores (captadas menos canceladas). No aditiva entre cortes (ventanas solapadas); sí entre hoteles."}
+    description: "Revenue manager. Pickup por día de corte, con ventana móvil de 7 días; una fila por corte y hotel: no sumar entre cortes."
+    data_tests:
+      - unique: {arguments: {column_name: "corte || '-' || hotel"}}
+  - name: mv_rendimiento_mensual
+    columns:
+      - {name: mes, description: "Primer día del mes."}
+      - {name: ambito, description: "Hotel (código) o CADENA para el total de la cadena."}
+      - {name: completo, description: "Falso mientras el periodo no ha madurado y sus cifras pueden cambiar."}
+      - {name: ocupacion, description: "Ocupación del mes."}
+      - {name: adr, description: "Tarifa media diaria (EUR)."}
+      - {name: revpar, description: "Ingreso de alojamiento por habitación disponible (EUR)."}
+      - {name: trevpar, description: "Ingreso total por habitación disponible (EUR)."}
+      - {name: goppar, description: "Resultado bruto de explotación por habitación disponible (EUR); nulo sin cierre contable."}
+      - {name: mpi, description: "Índice de penetración: 100 × ocupación propia en base STR (todo el inventario) / ocupación del compset; 100 = paridad (puntos)."}
+      - {name: ari, description: "Índice de tarifa media: 100 × ADR propio / ADR del compset; 100 = paridad (puntos)."}
+      - {name: rgi, description: "Índice de ingreso por habitación: 100 × RevPAR propio en base STR (todo el inventario) / RevPAR del compset; 100 = paridad (puntos)."}
+      - {name: ingreso_perdido_neto, description: "Proporción del ingreso reservado para las llegadas del mes que se pierde por cancelaciones del cliente, descontadas las penalizaciones retenidas y la reventa (tanto por uno; cohorte de llegada)."}
+      - {name: lead_time_medio, description: "Antelación media (días) de las reservas creadas en el mes."}
+      - {name: estancia_media, description: "Noches medias por reserva neta creada en el mes (por fecha de creación, no por salidas)."}
+    description: >
+      Dirección y revenue. Rendimiento mensual precalculado (vista materializada), con ingreso
+      perdido neto, antelación media y estancia media. Lee kpi_periodo. completo = false: el mes
+      aún no ha madurado; un mes sin cierre contable (sin apuntes de coste) tiene el GOPPAR nulo.
+    data_tests:
+      - unique: {arguments: {column_name: "mes || '-' || ambito"}}
+  - name: mkt_mix_canal_mensual
+    columns:
+      - {name: mes, description: "Primer día del mes."}
+      - {name: hotel, description: "Código del hotel."}
+      - {name: nivel_1, description: "Nivel 1 de la jerarquía de canales."}
+      - {name: nivel_2_relleno, description: "Nivel 2 de la jerarquía de canales, con 'Directo' en el canal directo (para agrupar sin huecos)."}
+      - {name: canal, description: "Código del canal."}
+      - {name: tipo_canal, description: "Tipo de canal de venta: directo, ota, turoperador o agencia."}
+      - {name: noches, description: "Noches vendidas por el canal en el mes."}
+      - {name: ingreso_habitaciones, description: "Ingreso de alojamiento del canal (EUR, neto de IGIC)."}
+      - {name: comisiones, description: "Comisiones pagadas al canal (EUR)."}
+      - {name: peso_en_noches, description: "Parte de las noches del hotel y mes que vendió el canal."}
+    description: >
+      Marketing. Mezcla de canales por mes y hotel. peso_en_noches es un reparto descriptivo
+      (parte de las noches del hotel y mes), no un KPI de la definición.
+    data_tests:
+      - unique: {arguments: {column_name: "mes || '-' || hotel || '-' || canal"}}
+  - name: mkt_captacion_semanal
+    columns:
+      - {name: semana, description: "Primer día de la semana de reserva."}
+      - {name: hotel, description: "Código del hotel."}
+      - {name: en_campana, description: "Verdadero si el hotel tiene una campaña activa algún día de esa semana."}
+      - {name: noches_por_reserva_actual, description: "Noches (salida menos llegada) de las reservas creadas en la semana que hoy no están canceladas (estado actual, sin la madurez del corte; las reubicaciones cuentan como canceladas)."}
+      - {name: noches_reservadas_directo_actual, description: "Parte de noches_por_reserva_actual de reservas hechas por canal directo."}
+      - {name: cuota_directa_captacion_actual, description: "Parte directa de las noches reservadas de la semana."}
+    description: >
+      Marketing. Cuota directa de captación semanal con las semanas de campaña, con el estado
+      actual de las reservas (sufijo _actual). No es el KPI cuota_directa_captacion de la
+      definición, que mide las reservas netas en el corte (madurez a 30 días): ese está en
+      marts_kpi.kpi_periodo.
+    data_tests:
+      - unique: {arguments: {column_name: "semana || '-' || hotel"}}
+  - name: mkt_cac_mensual
+    columns:
+      - {name: mes, description: "Primer día del mes."}
+      - {name: ambito, description: "Hotel (código) o CADENA para el total de la cadena."}
+      - {name: completo, description: "Falso mientras el periodo no ha madurado y sus cifras pueden cambiar."}
+      - {name: comisiones, description: "Comisiones de intermediación devengadas por las noches con estancia en el mes (EUR)."}
+      - {name: coste_marketing_atribuido, description: "Coste de marketing atribuido al mes (EUR); nulo sin cierre contable."}
+      - {name: reservas_netas, description: "Reservas creadas en el mes (fecha de creación) que no estaban canceladas en la fecha de corte (madurez); las reubicaciones del hotel también cuentan como canceladas."}
+      - {name: cac_reserva_neta, description: "Coste de adquisición por reserva neta (EUR)."}
+      - {name: cuota_directa, description: "Parte de las noches vendidas por canal directo, por fecha de estancia (tanto por uno)."}
+    description: >
+      Marketing. Coste de adquisición por reserva neta. completo = false: el mes aún no ha
+      madurado; sin cierre contable, el coste de marketing y el CAC son nulos.
+    data_tests:
+      - unique: {arguments: {column_name: "mes || '-' || ambito"}}
+  - name: exp_nps_mensual
+    columns:
+      - {name: mes, description: "Primer día del mes."}
+      - {name: hotel, description: "Código del hotel."}
+      - {name: fuente, description: "Fuente de la respuesta (encuesta o plataforma de reseñas)."}
+      - {name: promotores, description: "Respuestas de promotores."}
+      - {name: detractores, description: "Respuestas de detractores."}
+      - {name: respuestas_recomendacion, description: "Respuestas con recomendación (denominador del NPS)."}
+      - {name: nps, description: "Índice NPS: promotores menos detractores, en puntos porcentuales."}
+    description: Direcciones de hotel. NPS por mes, hotel y fuente.
+    data_tests:
+      - unique: {arguments: {column_name: "mes || '-' || hotel || '-' || fuente"}}
+  - name: exp_repeticion_mensual
+    columns:
+      - {name: mes, description: "Primer día del mes."}
+      - {name: ambito, description: "Hotel (código) o CADENA para el total de la cadena."}
+      - {name: huespedes_con_estancia, description: "Titulares distintos (golden record) con estancia finalizada y llegada en el mes. Recuento de distintos: no se suma entre hoteles ni entre meses."}
+      - {name: huespedes_repetidores, description: "De ellos, los que tienen otra estancia como titular con llegada en los 24 meses anteriores. No aditiva."}
+      - {name: tasa_repeticion, description: "Repetidores entre huéspedes con estancia."}
+    description: Marketing y direcciones de hotel. Repetición sobre el golden record.
+    data_tests:
+      - unique: {arguments: {column_name: "mes || '-' || ambito"}}
+  - name: exp_aspectos_diario
+    columns:
+      - {name: hotel, description: "Código del hotel."}
+      - {name: aspecto, description: "Aspecto valorado en las reseñas (limpieza, servicio, etc.)."}
+      - {name: fecha, description: "Fecha del día (calendario)."}
+      - {name: menciones, description: "Menciones del aspecto en las reseñas publicadas en la ventana móvil de días anteriores a ese día."}
+      - {name: sentimiento_medio, description: "Polaridad media (de -1 a 1) de esas menciones en la ventana móvil."}
+      - {name: en_rojo, description: "Verdadero si la polaridad media de la ventana está bajo el umbral con muestra suficiente; un día sin muestra suficiente conserva el último estado durante un número máximo de días (hueco_max_dias en atlantida.yml)."}
+    description: Direcciones de hotel. Semáforo de aspectos de las reseñas.
+    data_tests:
+      - unique: {arguments: {column_name: "hotel || '-' || aspecto || '-' || fecha"}}
+  - name: rev_precios_diarios
+    description: "Revenue manager. Precio medio por día, hotel y tipo de habitación frente al compset del hotel ese día (índice de tarifa media, 100 = paridad)."
+    columns:
+      - {name: fecha, description: "Fecha de la noche de estancia."}
+      - {name: hotel, description: "Código del hotel."}
+      - {name: tipo_habitacion, description: "Código del tipo de habitación; ? si la habitación no está en la dimensión."}
+      - {name: noches, description: "Noches vendidas de ese tipo ese día."}
+      - {name: adr, description: "Tarifa media diaria del tipo (EUR)."}
+      - {name: adr_compset, description: "ADR del conjunto competitivo del hotel ese día (EUR); nulo si el proveedor no informó."}
+      - {name: indice_precio, description: "Índice de tarifa media: 100 × ADR propio / ADR del compset; 100 = paridad (puntos); nulo sin dato del compset."}
+    data_tests:
+      - unique: {arguments: {column_name: "fecha || '-' || hotel || '-' || tipo_habitacion"}}
+  - name: rev_tarifas_mercado
+    description: "Revenue manager. Tarifas de la competencia para cada fecha de estancia, según la consulta hecha 7 días antes: mínima, mediana y máxima del mercado (no del compset de cada hotel)."
+    columns:
+      - {name: fecha_estancia, description: "Fecha de la estancia a la que se refiere la tarifa."}
+      - {name: competidores, description: "Competidores con tarifa publicada para esa fecha."}
+      - {name: tarifa_min, description: "Tarifa mínima del mercado (EUR)."}
+      - {name: tarifa_mediana, description: "Tarifa mediana del mercado (EUR)."}
+      - {name: tarifa_max, description: "Tarifa máxima del mercado (EUR)."}
+    data_tests:
+      - unique: {arguments: {column_name: "fecha_estancia"}}
+  - name: rev_ocupacion_tipo
+    description: "Revenue manager. Cupos por tipo de habitación: habitaciones y noches vendidas por día, hotel y tipo. No descuenta las habitaciones fuera de servicio."
+    columns:
+      - {name: fecha, description: "Fecha de la noche."}
+      - {name: hotel, description: "Código del hotel."}
+      - {name: tipo_habitacion, description: "Código del tipo de habitación; ? si la habitación no está en la dimensión."}
+      - {name: habitaciones, description: "Habitaciones de ese tipo en el inventario del hotel."}
+      - {name: noches_vendidas, description: "Noches vendidas de ese tipo ese día."}
+      - {name: ocupacion, description: "Noches vendidas entre habitaciones del tipo (tanto por uno); no descuenta las fuera de servicio."}
+    data_tests:
+      - unique: {arguments: {column_name: "fecha || '-' || hotel || '-' || tipo_habitacion"}}
+  - name: exp_incidencias
+    description: "Direcciones de hotel. Incidencias por hotel y día: habitaciones fuera de servicio, aspectos de las reseñas en rojo y días anómalos de los KPI diarios."
+    columns:
+      - {name: fecha, description: "Día de la incidencia."}
+      - {name: hotel, description: "Código del hotel."}
+      - {name: tipo, description: "Tipo de incidencia: fuera_de_servicio, aspecto_en_rojo o anomalia_kpi."}
+      - {name: detalle, description: "Motivo del bloqueo, aspecto en rojo o KPI anómalo."}
+      - {name: cantidad, description: "Habitaciones fuera de servicio, aspectos en rojo o métodos que marcan el día como anómalo."}
+    data_tests:
+      - unique: {arguments: {column_name: "fecha || '-' || hotel || '-' || tipo || '-' || detalle"}}
+  - name: rev_prevision_vigente
+    description: "Revenue manager. Previsión de ocupación oficial del último origen de cada hotel (módulo de IA); vacía hasta que se ejecuta."
+    columns:
+      - {name: fecha, description: "Noche prevista."}
+      - {name: hotel, description: "Código del hotel."}
+      - {name: metodo, description: "Método de la previsión oficial (pickup)."}
+      - {name: horizonte_dias, description: "Días entre la fecha de origen y la noche prevista."}
+      - {name: ocupacion, description: "Ocupación prevista (tanto por uno)."}
+      - {name: inferior, description: "Límite inferior del intervalo de predicción."}
+      - {name: superior, description: "Límite superior del intervalo de predicción."}
+      - {name: origen, description: "Fecha desde la que se hizo la previsión."}
+    data_tests:
+      - unique: {arguments: {column_name: "fecha || '-' || hotel || '-' || metodo"}}
+  - name: mkt_cuota_mercado_istac
+    description: "Marketing. Cuota de mercado por isla, mes y mercado emisor: viajeros alojados por Atlántida frente a las llegadas de turistas del ISTAC."
+    columns:
+      - {name: mes, description: "Primer día del mes de llegada."}
+      - {name: isla, description: "Isla del hotel."}
+      - {name: mercado_istac, description: "Mercado emisor según la clasificación del ISTAC."}
+      - {name: llegadas_istac, description: "Llegadas de turistas a la isla desde ese mercado en el mes (ISTAC); nulo si no se publica."}
+      - {name: viajeros_atlantida, description: "Adultos y niños de las reservas de Atlántida con llegada en el mes (en casa o finalizadas)."}
+      - {name: cuota, description: "Viajeros de Atlántida entre llegadas del ISTAC (tanto por uno); nula sin dato del ISTAC."}
+    data_tests:
+      - unique: {arguments: {column_name: "mes || '-' || isla || '-' || mercado_istac"}}
+  - name: mkt_valor_huesped
+    description: "Marketing y direcciones de hotel (acción A7). Valor de cada huésped del golden record en la ventana de la definición, su percentil, si es de alto valor y su grupo (tratamiento o control). Una fila por ficha titular; solo ids seudónimos."
+    columns:
+      - {name: huesped_golden_id, description: "Identificador del huésped en el golden record (seudónimo)."}
+      - {name: huesped_id, description: "Identificador de la ficha del huésped en el PMS (seudónimo)."}
+      - {name: valor, description: "Importe en EUR de las reservas no canceladas de las que es titular en la ventana de valor."}
+      - {name: reservas, description: "Reservas no canceladas de la ventana."}
+      - {name: percentil_valor, description: "Posición del valor entre los huéspedes con valor (0 a 1)."}
+      - {name: es_alto_valor, description: "Verdadero si el percentil alcanza el umbral de alto valor de la definición."}
+      - {name: grupo, description: "tratamiento o control (de mkt_grupo_a7: hash con la sal secreta del almacén)."}
+      - {name: ya_vip, description: "Verdadero si el huésped (alguna de sus fichas) ya tiene la marca vip en el PMS, de cualquier origen."}
+      - {name: fecha_referencia, description: "Última llegada registrada: el fin de la ventana de valor."}
+    data_tests:
+      - unique: {arguments: {column_name: "huesped_golden_id || '-' || huesped_id"}}
+  - name: mkt_grupo_a7
+    description: "Marketing (acción A7). Grupo de cada huésped del golden record en la selección de A7: control (fracción de atlantida.yml, no se marca) o tratamiento, con un hash de la sal secreta del almacén: reproducible en el almacén, no predecible con el id. Solo ids seudónimos."
+    columns:
+      - {name: huesped_golden_id, description: "Identificador del huésped en el golden record (seudónimo).", data_tests: [unique, not_null]}
+      - {name: grupo, description: "control o tratamiento.", data_tests: [{accepted_values: {arguments: {values: [control, tratamiento]}}}]}
+  - name: mkt_marca_huesped
+    description: "Marketing y direcciones de hotel. Marcas de huésped del PMS (del simulador y del reverse ETL del almacén) sobre el golden record; solo ids seudónimos."
+    columns:
+      - {name: huesped_golden_id, description: "Identificador del huésped en el golden record (seudónimo)."}
+      - {name: huesped_id, description: "Identificador de la ficha del huésped en el PMS (seudónimo)."}
+      - {name: marca, description: "Marca puesta al huésped."}
+      - {name: marcada_en, description: "Instante en que se puso la marca."}
+      - {name: marcada_por, description: "Origen de la marca; las del almacén empiezan por almacen:."}
+    data_tests:
+      - unique: {arguments: {column_name: "huesped_id || '-' || marca"}}
+  - name: mkt_fidelizacion
+    description: "Marketing (acción A3). Pertenencia al programa de fidelización por huésped del golden record: primera alta y baja (nula si alguna ficha sigue dentro); solo ids seudónimos."
+    columns:
+      - {name: huesped_golden_id, description: "Identificador del huésped en el golden record (seudónimo)."}
+      - {name: alta_en, description: "Primera alta en el programa."}
+      - {name: baja_en, description: "Baja del programa; nula si alguna ficha sigue en él."}
+    data_tests:
+      - unique: {arguments: {column_name: "huesped_golden_id"}}
+unit_tests:
+  # Sin plan de tarifa no se sabe si es reembolsable: desconocido (nulo), no «no reembolsable».
+  - name: reembolsable_desconocido_no_es_no
+    model: rev_cancelacion_segmentos
+    given:
+      - input: ref('fct_reserva')
+        rows:
+          - {reserva_id: 1, hotel_id: 1, tarifa_sk: 5, tipo_canal: ota, fecha_llegada: 2030-01-10, lead_time_dias: 10, es_cancelacion_cliente: true}
+          - {reserva_id: 2, hotel_id: 1, tarifa_sk: -1, tipo_canal: ota, fecha_llegada: 2030-01-10, lead_time_dias: 10, es_cancelacion_cliente: false}
+      - input: ref('dim_hotel_actual')
+        rows:
+          - {hotel_id: 1, codigo: TFN}
+      - input: ref('dim_tarifa')
+        rows:
+          - {tarifa_sk: 5, es_reembolsable: false}
+          - {tarifa_sk: -1, es_reembolsable: null}
+    expect:
+      rows:
+        - {mes_llegada: 2030-01-01, hotel: TFN, es_reembolsable: false, reservas_llegada: 1}
+        - {mes_llegada: 2030-01-01, hotel: TFN, es_reembolsable: null, reservas_llegada: 1}
+  # El método de la previsión sale de la ficha oficial vigente de meta.modelo_ia, no del código.
+  - name: prevision_vigente_usa_el_metodo_de_la_ficha_oficial
+    model: rev_prevision_vigente
+    given:
+      - input: source('meta', 'modelo_ia')
+        rows:
+          - {modelo: nuevo, tarea: prevision_ocupacion, oficial: true, parametros: '{"metodo": "m2"}', registrado_en: "2030-03-10 00:00:00+00"}
+          - {modelo: viejo, tarea: prevision_ocupacion, oficial: true, parametros: '{"metodo": "m1"}', registrado_en: "2030-01-01 00:00:00+00"}
+          - {modelo: otra, tarea: otra, oficial: true, parametros: '{"metodo": "m1"}', registrado_en: "2030-04-01 00:00:00+00"}
+      - input: source('ml', 'prevision_ocupacion')
+        rows:
+          - {hotel_id: 1, fecha: 2030-05-01, origen: 2030-04-01, metodo: m2, horizonte_dias: 30, ocupacion: 0.25}
+          - {hotel_id: 1, fecha: 2030-05-01, origen: 2030-04-02, metodo: m2, horizonte_dias: 29, ocupacion: 0.5}
+          - {hotel_id: 1, fecha: 2030-05-01, origen: 2030-04-03, metodo: m1, horizonte_dias: 28, ocupacion: 0.75}
+      - input: ref('dim_hotel_actual')
+        rows:
+          - {hotel_id: 1, codigo: TFN}
+    expect:
+      rows:
+        - {fecha: 2030-05-01, hotel: TFN, metodo: m2, horizonte_dias: 29, ocupacion: 0.5, origen: 2030-04-02}
+  - name: prevision_vigente_vacia_sin_ficha_oficial
+    model: rev_prevision_vigente
+    given:
+      - input: source('meta', 'modelo_ia')
+        rows:
+          - {modelo: x, tarea: prevision_ocupacion, oficial: false, parametros: '{"metodo": "m1"}', registrado_en: "2030-01-01 00:00:00+00"}
+      - input: source('ml', 'prevision_ocupacion')
+        rows:
+          - {hotel_id: 1, fecha: 2030-05-01, origen: 2030-04-01, metodo: m1, horizonte_dias: 30, ocupacion: 0.25}
+      - input: ref('dim_hotel_actual')
+        rows:
+          - {hotel_id: 1, codigo: TFN}
+    expect:
+      rows: []

@@ -1,0 +1,18 @@
+version: 2
+models:
+  - name: stg_ext__compset_diario
+    data_tests:
+      - unique: {arguments: {column_name: "hotel_id || '-' || fecha"}}
+  - name: stg_ext__tipos_cambio
+    data_tests:
+      - unique: {arguments: {column_name: "divisa || '-' || fecha"}}
+    columns:
+      - {name: unidades_por_euro, data_tests: [not_null]}
+  - name: stg_ext__llegadas_istac
+    data_tests:
+      - unique: {arguments: {column_name: "mes || '-' || isla || '-' || mercado_istac"}}
+  - name: stg_ext__meteo_diaria
+    columns:
+      - name: fuente_dato
+        data_tests:
+          - accepted_values: {arguments: {values: [AEMET, Open-Meteo]}}

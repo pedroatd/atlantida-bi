@@ -1,0 +1,29 @@
+# Historia de los cambios (SCD tipo 2) de las filas que cambian en el PMS. Cada `dbt snapshot`
+# compara la fila de staging con su versión vigente: si su actualizado_en es posterior, cierra
+# la vigente (dbt_valid_to) y abre otra. Solo se ven los cambios ocurridos entre dos ejecuciones:
+# para tener la historia completa desde el principio, ver `make historico`.
+snapshots:
+  - name: snp_hoteles
+    relation: ref('stg_pms__hoteles')
+    description: Versiones de cada hotel (la categoría puede cambiar).
+    config:
+      unique_key: hotel_id
+      strategy: timestamp
+      updated_at: actualizado_en
+      dbt_valid_to_current: "'9999-12-31 00:00:00+00'::timestamptz"
+  - name: snp_huespedes
+    relation: ref('stg_pms__huespedes')
+    description: Versiones de cada ficha de huésped (el segmento puede cambiar); ya seudonimizadas.
+    config:
+      unique_key: huesped_id
+      strategy: timestamp
+      updated_at: actualizado_en
+      dbt_valid_to_current: "'9999-12-31 00:00:00+00'::timestamptz"
+  - name: snp_reservas
+    relation: ref('stg_pms__reservas')
+    description: Versiones de cada reserva (su estado avanza o se cancela).
+    config:
+      unique_key: reserva_id
+      strategy: timestamp
+      updated_at: actualizado_en
+      dbt_valid_to_current: "'9999-12-31 00:00:00+00'::timestamptz"

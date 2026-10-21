@@ -11,6 +11,9 @@ dev = [
   "atlantida-def",
   "atlantida-sources",
   "atlantida-el",
+  "atlantida-dbt",
+  "sqlfluff==4.4.0",
+  "sqlfluff-templater-dbt==4.4.0",
 ]
 libro = ["atlantida-def", "jupyter==1.1.1", "ipykernel==7.4.0", "pandas==3.0.6", "plotly==7.1.0", "pyyaml==6.0.3", "cairosvg==2.9.1",
          "duckdb==1.5.6", "matplotlib==3.11.2"]
@@ -20,12 +23,14 @@ members = [
   "platform/definicion",
   "platform/sources",
   "platform/el",
+  "platform/dbt",
 ]
 
 [tool.uv.sources]
 atlantida-def = { workspace = true }
 atlantida-sources = { workspace = true }
 atlantida-el = { workspace = true }
+atlantida-dbt = { workspace = true }
 
 [tool.ruff]
 line-length = 100
@@ -40,6 +45,7 @@ select = ["E", "F", "I", "UP", "B"]
 "platform/sources/tests/test_fuentes_descargas.py" = ["E501"]
 "platform/sources/tests/test_fuentes_rate_shopper.py" = ["E501"]
 "platform/el/tests/*.py" = ["E501"]
+"platform/dbt/tests/*.py" = ["E501"]
 
 [tool.pytest.ini_options]
 testpaths = [
@@ -47,6 +53,7 @@ testpaths = [
   "platform/definicion/tests",
   "platform/sources/tests",
   "platform/el/tests",
+  "platform/dbt/tests",
 ]
 pythonpath = ["."]
 addopts = "-m 'not red and not lento and not ollama and not superset and not navegador and not libro_render and not exportacion'"

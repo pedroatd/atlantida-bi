@@ -1,0 +1,235 @@
+version: 2
+models:
+  - name: fct_reserva
+    description: >-
+      Hecho de transacción, una fila por reserva (grano: reserva_id). Las claves de hotel y huésped
+      apuntan a la versión vigente al reservar (reservada_en); fct_noche_estancia usa la del día de
+      estancia, así que para cruzar hechos se usa hotel_id o dim_hotel_actual.
+    config:
+      contract: {enforced: true}
+    columns:
+      - {name: reserva_id, data_type: bigint, constraints: [{type: not_null}, {type: primary_key}], data_tests: [unique], description: "Identificador de la reserva en el PMS."}
+      - {name: localizador, data_type: text, description: "Localizador de la reserva."}
+      - name: hotel_sk
+        description: "Clave sustituta de la versión del hotel (dim_hotel)."
+        data_type: bigint
+        constraints: [{type: not_null}]
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_hotel'), field: hotel_sk}}
+      - {name: hotel_id, data_type: bigint, description: "Identificador natural del hotel en el PMS."}
+      - name: canal_sk
+        description: "Clave sustituta del canal de venta (dim_canal)."
+        data_type: bigint
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_canal'), field: canal_sk}}
+      - {name: canal_id, data_type: bigint, description: "Identificador natural del canal en el PMS."}
+      - {name: tipo_canal, data_type: text, description: "Tipo de canal de venta: directo, ota, turoperador o agencia."}
+      - {name: es_directo, data_type: boolean, description: "Verdadero si es de canal directo."}
+      - {name: es_ota, data_type: boolean, description: "Verdadero si es de una agencia en línea."}
+      - name: tarifa_sk
+        description: "Clave sustituta del plan de tarifa (dim_tarifa)."
+        data_type: bigint
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_tarifa'), field: tarifa_sk}}
+      - name: huesped_sk
+        description: "Clave sustituta de la versión del huésped (dim_huesped)."
+        data_type: bigint
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_huesped'), field: huesped_sk}}
+      - {name: huesped_golden_id, data_type: bigint, description: "Golden record del titular; −1 si su ficha no existe (no contarlo como huésped)."}
+      - name: perfil_sk
+        description: "Clave sustituta del perfil del huésped (dim_perfil_huesped)."
+        data_type: bigint
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_perfil_huesped'), field: perfil_sk}}
+      - name: campana_sk
+        description: "Clave sustituta de la campaña de marketing (dim_campana); -2 sin campaña (no aplica), -1 campaña desconocida."
+        data_type: bigint
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_campana'), field: campana_sk}}
+      - name: indicadores_sk
+        description: "Clave sustituta de la combinación de indicadores de la reserva (dim_indicadores_reserva)."
+        data_type: bigint
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_indicadores_reserva'), field: indicadores_sk}}
+      - name: mercado_sk
+        description: "Clave sustituta del mercado emisor (dim_mercado)."
+        data_type: bigint
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_mercado'), field: mercado_sk}}
+      - {name: tipo_habitacion_id, data_type: bigint, description: "Tipo de habitación reservada."}
+      - {name: fecha_reserva, data_type: date, description: "Fecha en que se hizo la reserva."}
+      - {name: fecha_llegada, data_type: date, description: "Fecha de llegada (check-in) de la reserva."}
+      - {name: fecha_salida, data_type: date, description: "Fecha de salida (check-out) de la reserva."}
+      - {name: reservada_en, data_type: timestamp with time zone, description: "Instante en que se hizo la reserva."}
+      - {name: estado, data_type: text, description: "Estado actual de la reserva."}
+      - {name: es_cancelada, data_type: boolean, description: "Verdadero si la reserva está cancelada (por el cliente o por reubicación)."}
+      - {name: es_cancelacion_cliente, data_type: boolean, description: "Verdadero si la cancelación la hizo el cliente."}
+      - {name: es_reubicacion, data_type: boolean, description: "Verdadero si la cancelación es una reubicación del hotel (no es del cliente)."}
+      - {name: fecha_cancelacion, data_type: date, description: "Fecha de cancelación (del cliente o reubicación del hotel); nula si no se canceló."}
+      - {name: noches, data_type: integer, description: "Aditiva (noches reservadas)."}
+      - {name: adultos, data_type: integer, description: "Aditiva."}
+      - {name: ninos, data_type: integer, description: "Aditiva."}
+      - {name: importe_total, data_type: numeric, description: "No aditiva entre divisas: solo se suma dentro de una misma divisa; para sumar, importe_total_eur."}
+      - {name: divisa, data_type: text, description: "Divisa original del importe."}
+      - {name: importe_total_eur, data_type: numeric, description: "Aditiva (EUR, neto de IGIC)."}
+      - {name: lead_time_dias, data_type: integer, description: "No aditiva: se promedia (antelación media), nunca se suma."}
+      - {name: importe_penalizacion_cliente, data_type: numeric, description: "Aditiva (EUR); 0 si no es cancelación del cliente."}
+      - {name: ingreso_reventa_eur, data_type: numeric, description: "Aditiva (EUR)."}
+      - {name: tasa_comision, data_type: numeric, description: "No aditiva (es un tipo): la comisión total se calcula con fct_noche_estancia.comision."}
+  - name: fct_noche_estancia
+    description: >-
+      Hecho de transacción, una fila por noche y habitación ocupada (grano: noche_id). El número de
+      filas son las habitaciones-noche vendidas (aditivo). Hotel y huésped: versión vigente al empezar
+      el día de estancia (hora canaria).
+    columns:
+      - {name: noche_id, data_tests: [unique, not_null], description: "Identificador de la noche de una habitación ocupada."}
+      - name: hotel_sk
+        description: "Clave sustituta de la versión del hotel (dim_hotel)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_hotel'), field: hotel_sk}}
+      - name: habitacion_sk
+        description: "Clave sustituta de la habitación (dim_habitacion)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_habitacion'), field: habitacion_sk}}
+      - name: canal_sk
+        description: "Clave sustituta del canal de venta (dim_canal)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_canal'), field: canal_sk}}
+      - name: tarifa_sk
+        description: "Clave sustituta del plan de tarifa (dim_tarifa)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_tarifa'), field: tarifa_sk}}
+      - name: huesped_sk
+        description: "Clave sustituta de la versión del huésped (dim_huesped)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_huesped'), field: huesped_sk}}
+      - name: meteo_sk
+        description: "Clave sustituta del día meteorológico de la isla (dim_meteo)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_meteo'), field: meteo_sk}}
+      - name: mercado_sk
+        description: "Clave sustituta del mercado emisor (dim_mercado)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_mercado'), field: mercado_sk}}
+      - {name: huesped_golden_id, description: "Golden record del titular; −1 si su ficha no existe."}
+      - {name: ingreso_habitacion, description: "Aditiva (EUR, neto de IGIC, solo alojamiento)."}
+      - {name: comision, description: "Aditiva (EUR)."}
+      - {name: reserva_id, description: "Identificador de la reserva en el PMS."}
+      - {name: fecha_estancia, description: "Noche de la estancia (día en que empieza la noche)."}
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: canal_id, description: "Identificador natural del canal en el PMS."}
+      - {name: tipo_canal, description: "Tipo de canal de venta: directo, ota, turoperador o agencia."}
+      - {name: es_directo, description: "Verdadero si la reserva es de canal directo."}
+  - name: fct_cancelacion
+    description: >-
+      Hecho de transacción, una fila por cancelación (grano: cancelacion_id). Las reubicaciones van
+      marcadas (es_reubicacion) y no son cancelaciones del cliente.
+    columns:
+      - {name: cancelacion_id, data_tests: [unique, not_null], description: "Identificador de la cancelación en el PMS."}
+      - name: hotel_sk
+        description: "Clave sustituta de la versión del hotel (dim_hotel)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_hotel'), field: hotel_sk}}
+      - name: canal_sk
+        description: "Clave sustituta del canal de venta (dim_canal)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_canal'), field: canal_sk}}
+      - {name: dias_antelacion_cancelacion, description: "No aditiva: se promedia."}
+      - {name: importe_penalizacion, description: "Aditiva (EUR)."}
+      - {name: ingreso_cancelado_eur, description: "Aditiva (EUR)."}
+      - {name: reserva_id, description: "Identificador de la reserva en el PMS."}
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: tipo_canal, description: "Tipo de canal de venta: directo, ota, turoperador o agencia."}
+      - {name: fecha_cancelacion, description: "Fecha de la cancelación (también de las reubicaciones)."}
+      - {name: fecha_llegada, description: "Fecha de llegada de la reserva cancelada."}
+      - {name: es_reubicacion, description: "Verdadero si la cancelación es una reubicación del hotel (no es del cliente)."}
+      - {name: motivo, description: "Motivo registrado de la cancelación."}
+  - name: fct_resena
+    description: Hecho de transacción, una fila por reseña (grano resena_id).
+    columns:
+      - {name: resena_id, data_tests: [unique, not_null], description: "Identificador de la reseña."}
+      - name: hotel_sk
+        description: "Clave sustituta de la versión del hotel (dim_hotel)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_hotel'), field: hotel_sk}}
+      - name: canal_sk
+        description: "Clave sustituta del canal de venta (dim_canal)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_canal'), field: canal_sk}}
+      - name: huesped_sk
+        description: "Clave sustituta de la versión del huésped (dim_huesped)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_huesped'), field: huesped_sk}}
+      - {name: puntuacion, description: "No aditiva: se promedia."}
+      - {name: recomendacion, description: "No aditiva: se promedia; el NPS es un cociente de recuentos."}
+      - {name: es_promotor, description: "Su recuento es aditivo."}
+      - {name: es_detractor, description: "Su recuento es aditivo."}
+      - {name: tiene_recomendacion, description: "Su recuento es aditivo (denominador del NPS)."}
+      - {name: reserva_id, description: "Identificador de la reserva en el PMS."}
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: fecha_publicacion, description: "Fecha en que se publicó la reseña."}
+      - {name: fuente, description: "Origen de la reseña: plataforma de reseñas o encuesta."}
+  - name: fct_coste
+    description: Hecho de transacción, una fila por apunte de coste (grano coste_id).
+    columns:
+      - {name: coste_id, data_tests: [unique, not_null], description: "Identificador del apunte de coste."}
+      - name: hotel_sk
+        description: "Clave sustituta de la versión del hotel (dim_hotel)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_hotel'), field: hotel_sk}}
+      - {name: importe, description: "Aditiva (EUR)."}
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: fecha_coste, description: "Fecha a la que se imputa el coste."}
+      - {name: categoria, description: "Categoría del coste."}
+  - name: fct_cargo_folio
+    description: >-
+      Hecho de transacción incremental, una fila por cargo de folio (grano cargo_id), imputado a su
+      fecha de servicio aunque llegue tarde.
+    columns:
+      - {name: cargo_id, data_tests: [unique, not_null], description: "Identificador del cargo de folio en el PMS."}
+      - name: hotel_sk
+        description: "Clave sustituta de la versión del hotel (dim_hotel)."
+        data_tests:
+          - relationships: {arguments: {to: ref('dim_hotel'), field: hotel_sk}}
+      - {name: importe, description: "Aditiva (EUR, neto de IGIC)."}
+      - {name: dias_retraso, description: "No aditiva: se promedia."}
+      - {name: reserva_id, description: "Identificador de la reserva en el PMS."}
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: fecha_servicio, description: "Fecha del servicio al que se imputa el cargo."}
+      - {name: fecha_registro, description: "Fecha en que se registró el cargo."}
+      - {name: departamento, description: "Departamento que genera el cargo (restaurante, spa, etc.)."}
+      - {name: es_tardio, description: "Verdadero si el cargo se registró después de su fecha de servicio."}
+      - {name: cargado_en, description: "Instante en que el cargo llegó al almacén."}
+  - name: fct_estancia_huesped
+    columns:
+      - {name: reserva_id, description: "Identificador de la reserva en el PMS."}
+      - {name: huesped_golden_id, description: "Identificador del huésped en el golden record (tras resolver fichas duplicadas)."}
+      - {name: hotel_id, description: "Identificador natural del hotel en el PMS."}
+      - {name: fecha_llegada, description: "Fecha de llegada de la estancia."}
+      - {name: repite_24m, description: "Verdadero si el huésped tuvo otra estancia en los 24 meses anteriores."}
+    description: >-
+      Tabla de hechos sin hechos, una fila por estancia finalizada del titular (grano reserva_id):
+      su medida es el recuento de filas.
+    data_tests:
+      - unique: {arguments: {column_name: "reserva_id || '-' || huesped_golden_id"}}
+unit_tests:
+  # Las noches de un hotel-día sin inventario no se pierden (inventario 0, hotel -1 si no está
+  # en la dimensión).
+  - name: noches_sin_inventario_se_conservan
+    model: fct_ocupacion_diaria
+    given:
+      - input: ref('fct_noche_estancia')
+        rows:
+          - {hotel_id: 1, fecha_estancia: 2030-01-01, es_directo: true, ingreso_habitacion: 100}
+          - {hotel_id: 9, fecha_estancia: 2030-01-01, es_directo: false, ingreso_habitacion: 80}
+      - input: ref('int_inventario_diario')
+        rows:
+          - {hotel_id: 1, fecha: 2030-01-01, habitaciones: 10, bloqueadas: 0, disponibles: 10}
+      - input: ref('dim_hotel')
+        rows:
+          - {hotel_sk: 11, hotel_id: 1, valido_desde: "1900-01-01 00:00:00+00", valido_hasta: "9999-12-31 00:00:00+00"}
+    expect:
+      rows:
+        - {hotel_id: 1, hotel_sk: 11, fecha: 2030-01-01, habitaciones: 10, disponibles: 10, noches_vendidas: 1}
+        - {hotel_id: 9, hotel_sk: -1, fecha: 2030-01-01, habitaciones: 0, disponibles: 0, noches_vendidas: 1}

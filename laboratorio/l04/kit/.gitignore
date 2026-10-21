@@ -1,0 +1,7 @@
+# Nunca a git: la sal de los seudónimos, lo que genera dbt y el entorno de Python.
+.env
+target/
+logs/
+dbt_packages/
+.user.yml
+.venv/

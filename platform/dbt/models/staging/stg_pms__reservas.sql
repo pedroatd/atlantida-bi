@@ -1,0 +1,21 @@
+select
+    reservation_id as reserva_id,
+    locator as localizador,
+    hotel_id,
+    guest_id as huesped_id,
+    channel_id as canal_id,
+    rate_plan_id as plan_tarifa_id,
+    room_type_id as tipo_habitacion_id,
+    campaign_id as campana_id,
+    booked_at as reservada_en,
+    {{ fecha_local('booked_at') }} as fecha_reserva,
+    arrival_date as fecha_llegada,
+    departure_date as fecha_salida,
+    departure_date - arrival_date as noches,
+    adults as adultos,
+    children as ninos,
+    {{ traducir('status', {'confirmed': 'confirmada', 'cancelled': 'cancelada', 'no_show': 'no_presentada', 'checked_in': 'en_casa', 'checked_out': 'finalizada'}) }} as estado,
+    total_amount as importe_total,
+    currency as divisa,
+    {{ columnas_tecnicas() }}
+from {{ source('raw_pms', 'reservation') }}

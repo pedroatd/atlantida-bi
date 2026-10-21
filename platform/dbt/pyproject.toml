@@ -1,0 +1,26 @@
+[project]
+name = "atlantida-dbt"
+version = "0.1.0"
+description = "Proyecto dbt de Atlántida Hoteles y utilidades: fórmulas de KPI, logro y orquestación mínima"
+readme = "README.md"
+requires-python = "==3.12.*"
+dependencies = [
+  "atlantida-def", "atlantida-el",
+  "dbt-core==1.12.5", "dbt-postgres==1.11.0", "dbt-metricflow==0.15.0",
+  "pandas==3.0.6", "psycopg[binary]==3.3.6", "pyyaml==6.0.3",
+]
+
+[project.scripts]
+atlantida-dbt = "atlantida_dbt.cli:main"
+atlantida-dbt-exec = "atlantida_dbt.ejecutable:main"
+
+[build-system]
+requires = ["hatchling==1.32.4"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/atlantida_dbt"]
+
+[tool.uv.sources]
+atlantida-def = { workspace = true }
+atlantida-el = { workspace = true }

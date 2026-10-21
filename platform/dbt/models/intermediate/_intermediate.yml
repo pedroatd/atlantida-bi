@@ -1,0 +1,134 @@
+version: 2
+models:
+  - name: int_canales_conformados
+    columns:
+      - {name: canal_id, data_tests: [unique, not_null]}
+      - name: tipo_canal
+        data_tests:
+          - accepted_values: {arguments: {values: [directo, ota, turoperador, agencia]}}
+  - name: int_reservas
+    columns:
+      - {name: reserva_id, data_tests: [unique, not_null]}
+      - {name: importe_total_eur, data_tests: [not_null]}
+  - name: int_inventario_diario
+    data_tests:
+      - unique: {arguments: {column_name: "hotel_id || '-' || fecha"}}
+  - name: int_tipos_cambio_diarios
+    data_tests:
+      - unique: {arguments: {column_name: "divisa || '-' || fecha"}}
+  - name: int_reventa
+    # Plan fijo: el planificador estima 1000 noches por reserva (generate_series) y una sola celda
+    # llena, y según tenga o no estadísticas de int_reservas (recién construida en el mismo build)
+    # elige un bucle anidado que repite la cadena de ventanas por cada noche cancelada (más de
+    # 10 min a escala 0,1) o cruza cada celda con todas las reservas de su tipo (disco lleno a
+    # escala 1). Con las uniones en el orden escrito y sin bucles anidados, unos segundos.
+    config:
+      pre_hook:
+        - "set local join_collapse_limit = 1"
+        - "set local enable_nestloop = off"
+    columns:
+      - {name: reserva_id, data_tests: [unique, not_null]}
+unit_tests:
+  # S17. Celda llena (hotel 1, tipo 10, 05-10: 3 habitaciones, 1 bloqueada, 5 noches vendidas) con
+  # cancelaciones y ventas intercaladas: cada venta posterior repone la noche liberada más antigua
+  # aún sin reponer (orden de llegada). Una venta en el mismo instante que la cancelación, o
+  # anterior, no la repone; una reubicación no libera reventa. Noches que no se llenan (06-01 y
+  # 06-02: 3 disponibles, 1 y 2 vendidas): la venta posterior es demanda ordinaria, sin reventa.
+  # Tope (hotel 2, tipo 20, 07-01: 1 habitación): dos parejas, pero solo se repone una noche.
+  - name: reventa_por_orden_de_llegada
+    model: int_reventa
+    given:
+      - input: ref('int_reservas')
+        rows:
+          # canceladas por el cliente
+          - {reserva_id: 1, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2029-11-01 10:00:00+00", cancelada_en: "2030-01-01 10:00:00+00", fecha_llegada: 2030-05-10, fecha_salida: 2030-05-11, noches: 1, importe_total_eur: 100, es_cancelacion_cliente: true}
+          - {reserva_id: 2, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2029-11-01 10:00:00+00", cancelada_en: "2030-01-05 10:00:00+00", fecha_llegada: 2030-05-10, fecha_salida: 2030-05-11, noches: 1, importe_total_eur: 100, es_cancelacion_cliente: true}
+          - {reserva_id: 3, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2029-11-01 10:00:00+00", cancelada_en: "2030-01-07 10:00:00+00", fecha_llegada: 2030-05-10, fecha_salida: 2030-05-11, noches: 1, importe_total_eur: 100, es_cancelacion_cliente: true}
+          - {reserva_id: 4, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2029-11-01 10:00:00+00", cancelada_en: "2030-02-01 10:00:00+00", fecha_llegada: 2030-06-01, fecha_salida: 2030-06-03, noches: 2, importe_total_eur: 300, es_cancelacion_cliente: true}
+          - {reserva_id: 5, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2029-11-01 10:00:00+00", cancelada_en: "2030-02-03 10:00:00+00", fecha_llegada: 2030-06-02, fecha_salida: 2030-06-03, noches: 1, importe_total_eur: 100, es_cancelacion_cliente: true}
+          # reubicación: no es cancelación del cliente
+          - {reserva_id: 6, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2029-11-01 10:00:00+00", cancelada_en: "2030-01-06 10:00:00+00", fecha_llegada: 2030-05-10, fecha_salida: 2030-05-11, noches: 1, importe_total_eur: 100, es_cancelacion_cliente: false}
+          # ventas
+          - {reserva_id: 10, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2029-12-01 10:00:00+00", fecha_llegada: 2030-05-10, fecha_salida: 2030-05-11, noches: 1, importe_total_eur: 90, es_cancelacion_cliente: false}
+          - {reserva_id: 12, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2030-01-02 10:00:00+00", fecha_llegada: 2030-05-10, fecha_salida: 2030-05-11, noches: 1, importe_total_eur: 80, es_cancelacion_cliente: false}
+          - {reserva_id: 13, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2030-01-03 10:00:00+00", fecha_llegada: 2030-05-10, fecha_salida: 2030-05-11, noches: 1, importe_total_eur: 90, es_cancelacion_cliente: false}
+          - {reserva_id: 16, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2030-01-06 12:00:00+00", fecha_llegada: 2030-05-10, fecha_salida: 2030-05-11, noches: 1, importe_total_eur: 120, es_cancelacion_cliente: false}
+          - {reserva_id: 17, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2030-01-07 10:00:00+00", fecha_llegada: 2030-05-10, fecha_salida: 2030-05-11, noches: 1, importe_total_eur: 70, es_cancelacion_cliente: false}
+          - {reserva_id: 18, hotel_id: 1, tipo_habitacion_id: 11, reservada_en: "2030-01-08 10:00:00+00", fecha_llegada: 2030-05-10, fecha_salida: 2030-05-11, noches: 1, importe_total_eur: 70, es_cancelacion_cliente: false}
+          - {reserva_id: 20, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2030-02-02 10:00:00+00", fecha_llegada: 2030-06-01, fecha_salida: 2030-06-02, noches: 1, importe_total_eur: 200, es_cancelacion_cliente: false}
+          - {reserva_id: 21, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2030-01-15 10:00:00+00", fecha_llegada: 2030-06-02, fecha_salida: 2030-06-03, noches: 1, importe_total_eur: 90, es_cancelacion_cliente: false}
+          - {reserva_id: 22, hotel_id: 1, tipo_habitacion_id: 10, reservada_en: "2030-02-04 10:00:00+00", fecha_llegada: 2030-06-02, fecha_salida: 2030-06-03, noches: 1, importe_total_eur: 60, es_cancelacion_cliente: false}
+          - {reserva_id: 7, hotel_id: 2, tipo_habitacion_id: 20, reservada_en: "2029-11-01 10:00:00+00", cancelada_en: "2030-01-01 10:00:00+00", fecha_llegada: 2030-07-01, fecha_salida: 2030-07-02, noches: 1, importe_total_eur: 100, es_cancelacion_cliente: true}
+          - {reserva_id: 8, hotel_id: 2, tipo_habitacion_id: 20, reservada_en: "2029-11-01 10:00:00+00", cancelada_en: "2030-01-02 10:00:00+00", fecha_llegada: 2030-07-01, fecha_salida: 2030-07-02, noches: 1, importe_total_eur: 100, es_cancelacion_cliente: true}
+          - {reserva_id: 30, hotel_id: 2, tipo_habitacion_id: 20, reservada_en: "2030-01-03 10:00:00+00", fecha_llegada: 2030-07-01, fecha_salida: 2030-07-02, noches: 1, importe_total_eur: 90, es_cancelacion_cliente: false}
+          - {reserva_id: 31, hotel_id: 2, tipo_habitacion_id: 20, reservada_en: "2030-01-04 10:00:00+00", fecha_llegada: 2030-07-01, fecha_salida: 2030-07-02, noches: 1, importe_total_eur: 95, es_cancelacion_cliente: false}
+      - input: ref('stg_pms__noches')
+        rows:
+          - {noche_id: 100, reserva_id: 10, fecha_estancia: 2030-05-10, ingreso_habitacion: 90}
+          - {noche_id: 102, reserva_id: 12, fecha_estancia: 2030-05-10, ingreso_habitacion: 80}
+          - {noche_id: 103, reserva_id: 13, fecha_estancia: 2030-05-10, ingreso_habitacion: 90}
+          - {noche_id: 106, reserva_id: 16, fecha_estancia: 2030-05-10, ingreso_habitacion: 120}
+          - {noche_id: 107, reserva_id: 17, fecha_estancia: 2030-05-10, ingreso_habitacion: 70}
+          - {noche_id: 108, reserva_id: 18, fecha_estancia: 2030-05-10, ingreso_habitacion: 70}
+          - {noche_id: 120, reserva_id: 20, fecha_estancia: 2030-06-01, ingreso_habitacion: 200}
+          - {noche_id: 121, reserva_id: 21, fecha_estancia: 2030-06-02, ingreso_habitacion: 90}
+          - {noche_id: 122, reserva_id: 22, fecha_estancia: 2030-06-02, ingreso_habitacion: 60}
+          - {noche_id: 130, reserva_id: 30, fecha_estancia: 2030-07-01, ingreso_habitacion: 90}
+          - {noche_id: 131, reserva_id: 31, fecha_estancia: 2030-07-01, ingreso_habitacion: 95}
+      - input: ref('stg_pms__habitaciones')
+        rows:
+          - {habitacion_id: 1, hotel_id: 1, tipo_habitacion_id: 10}
+          - {habitacion_id: 2, hotel_id: 1, tipo_habitacion_id: 10}
+          - {habitacion_id: 3, hotel_id: 1, tipo_habitacion_id: 10}
+          - {habitacion_id: 4, hotel_id: 1, tipo_habitacion_id: 11}
+          - {habitacion_id: 10, hotel_id: 2, tipo_habitacion_id: 20}
+      - input: ref('stg_pms__bloqueos')
+        rows:
+          - {bloqueo_id: 1, habitacion_id: 3, fecha_inicio: 2030-05-08, fecha_fin: 2030-05-11}
+    expect:
+      rows:
+        # 1 ← venta de 01-02 (80); la de 01-03 no tiene noche liberada pendiente
+        - {reserva_id: 1, ingreso_reventa_eur: 80, noches_revendidas: 1}
+        # 2 ← venta de 01-06 (límite: lo cancelado, 100); la reubicación de 01-06 no cuenta
+        - {reserva_id: 2, ingreso_reventa_eur: 100, noches_revendidas: 1}
+        # 3: la única venta posterior es del mismo instante (no la repone) o de otro tipo
+        # 4 y 5: sus noches no se llenaron (sin reventa)
+        # 7 ← venta de 01-03 (90); la de 01-04 repondría a 8, pero el tipo solo tiene 1 habitación
+        - {reserva_id: 7, ingreso_reventa_eur: 90, noches_revendidas: 1}
+  # Ningún hecho se pierde por una dimensión que aún no ha llegado.
+  - name: reserva_con_canal_sin_cargar_se_conserva
+    model: int_reservas
+    given:
+      - input: ref('stg_pms__reservas')
+        rows:
+          - {reserva_id: 1, hotel_id: 1, canal_id: 1, divisa: EUR, importe_total: 100, fecha_reserva: 2030-01-01, fecha_llegada: 2030-02-01, fecha_salida: 2030-02-02, noches: 1}
+          - {reserva_id: 2, hotel_id: 1, canal_id: 99, divisa: EUR, importe_total: 100, fecha_reserva: 2030-01-01, fecha_llegada: 2030-02-01, fecha_salida: 2030-02-02, noches: 1}
+      - input: ref('int_canales_conformados')
+        rows:
+          - {canal_id: 1, canal_canonico_id: 1, tipo_canal: directo}
+      - input: ref('stg_pms__planes_tarifa')
+        rows: []
+      - input: ref('stg_pms__cancelaciones')
+        rows: []
+      - input: ref('int_tipos_cambio_diarios')
+        rows: []
+      - input: ref('stg_pms__comisiones_canal')
+        rows: []
+    expect:
+      rows:
+        - {reserva_id: 1, tipo_canal: directo, es_directo: true, es_ota: false}
+        - {reserva_id: 2, tipo_canal: null, es_directo: false, es_ota: false}
+  - name: cargo_con_reserva_sin_cargar_se_conserva
+    model: int_cargos_folio
+    given:
+      - input: ref('stg_pms__cargos_folio')
+        rows:
+          - {cargo_id: 1, reserva_id: 1, registrado_en: "2030-01-01 10:00:00+00", fecha_servicio: 2030-01-01, departamento: spa, importe: 10, dias_retraso: 0}
+          - {cargo_id: 2, reserva_id: 99, registrado_en: "2030-01-01 10:00:00+00", fecha_servicio: 2030-01-01, departamento: spa, importe: 10, dias_retraso: 0}
+      - input: ref('stg_pms__reservas')
+        rows:
+          - {reserva_id: 1, hotel_id: 7}
+    expect:
+      rows:
+        - {cargo_id: 1, hotel_id: 7}
+        - {cargo_id: 2, hotel_id: null}

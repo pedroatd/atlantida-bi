@@ -1,0 +1,58 @@
+# Proyecto dbt del almacén de Atlántida Hoteles. Cada capa es un esquema fijo del DWH (contrato
+# C4): staging, snapshots, intermediate, marts_* y vault. Sin paquetes externos: funciona sin red.
+name: atlantida
+version: "0.1.0"
+config-version: 2
+require-dbt-version: [">=1.12.0", "<1.13.0"]
+profile: atlantida
+
+model-paths: ["models"]
+snapshot-paths: ["snapshots"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+test-paths: ["pruebas"]
+analysis-paths: []
+target-path: target
+clean-targets: [target, logs]
+
+flags:
+  send_anonymous_usage_stats: false
+
+vars:
+  # Días hacia atrás que se vuelven a procesar en los modelos incrementales (hechos tardíos).
+  ventana_reproceso_dias: 30
+  # Un cargo de folio es tardío si se anota más de estos días después del servicio.
+  retraso_tardio_dias: 2
+  # MDM: una clave compartida por más fichas que esto no se usa para unir (bloqueo por frecuencia).
+  mdm_max_fichas_por_clave: 5
+
+models:
+  atlantida:
+    +materialized: table
+    staging:
+      +schema: staging
+      +materialized: view
+    intermediate:
+      +schema: intermediate
+    marts:
+      core:
+        +schema: marts_core
+      revenue:
+        +schema: marts_revenue
+      marketing:
+        +schema: marts_marketing
+      experiencia:
+        +schema: marts_experiencia
+      kpi:
+        +schema: marts_kpi
+    vault:
+      +schema: vault
+      +materialized: incremental
+
+seeds:
+  atlantida:
+    +schema: staging
+
+snapshots:
+  atlantida:
+    +schema: snapshots

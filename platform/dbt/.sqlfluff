@@ -1,0 +1,12 @@
+[sqlfluff]
+dialect = postgres
+templater = dbt
+max_line_length = 120
+exclude_rules = AM04, ST06, RF04, ST05, LT05
+
+[sqlfluff:templater:dbt]
+project_dir = .
+profiles_dir = .
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = lower

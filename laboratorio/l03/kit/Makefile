@@ -41,23 +41,23 @@ origen: ## Restaura tus datos SQL en proyecto_origen: make origen F=fichero.sql 
 	@echo "Restaurado $(F) en proyecto_origen."
 
 contrato: ## Valida contrato.yml y tus ficheros de datos/ sin cargar nada
-	uv run python comprobar_carga.py --contrato contrato.yml --solo-contrato
+	uv run --locked python comprobar_carga.py --contrato contrato.yml --solo-contrato
 
 columnas: ## Nombres que dejará dlt para tus cabeceras: make columnas (o F=datos/fichero.csv)
-	uv run python comprobar_carga.py --contrato contrato.yml --columnas $(F)
+	uv run --locked python comprobar_carga.py --contrato contrato.yml --columnas $(F)
 
 cargar: ## Ejecuta tu carga (carga.py) de datos/ y proyecto_origen a proyecto.raw
-	uv run python carga.py
+	uv run --locked python carga.py
 
 comprobar: ## Carga dos veces y comprueba contrato, idempotencia, registro y origen
-	uv run python comprobar_carga.py --contrato contrato.yml --orden "uv run python carga.py"
+	uv run --locked python comprobar_carga.py --contrato contrato.yml --orden "uv run --locked python carga.py"
 
 recargar: ## Borra una tabla de raw y su estado incremental y la carga de cero: make recargar T=tabla
 	@if [ -z "$(T)" ]; then echo "Uso: make recargar T=tabla" >&2; exit 2; fi
-	uv run python carga.py --recargar "$(T)"
+	uv run --locked python carga.py --recargar "$(T)"
 
 descartar: ## Descarta la carga pendiente que dejó un fallo de dlt (se reintenta en cada ejecución)
-	uv run dlt -y pipeline --pipelines-dir "$${PROYECTO_ESTADO_DLT:-.dlt-estado}" proyecto abort-packages
+	uv run --locked dlt -y pipeline --pipelines-dir "$${PROYECTO_ESTADO_DLT:-.dlt-estado}" proyecto abort-packages
 
 psql: ## Consola SQL: make psql (destino) o make psql BASE=proyecto_origen
 	$(COMPOSE) exec base psql -U "$$PROYECTO_USUARIO" -d "$(or $(BASE),proyecto)"
